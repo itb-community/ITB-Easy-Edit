@@ -14,6 +14,7 @@ local function finalizeInit(self)
 	LOGDF("Easy Edit %s initializing", self.version)
 
 	require(path.."datastructures/BinarySearch")
+	require(path.."modules/indexedList")
 
 	LOGDF("Easy Edit %s initialized", self.version)
 end
