@@ -32,6 +32,7 @@ local function finalizeInit(self)
 	require(path.."modules/world")
 	require(path.."modules/currentTileset")
 	require(path.."alter")
+	require(path.."ui/widget/ui")
 
 	LOGDF("Easy Edit %s initialized", self.version)
 end
