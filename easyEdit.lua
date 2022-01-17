@@ -26,6 +26,7 @@ local function finalizeInit(self)
 	require(path.."modules/structure")
 	require(path.."modules/structureList")
 	require(path.."modules/enemyList")
+	require(path.."modules/bossList")
 
 	LOGDF("Easy Edit %s initialized", self.version)
 end
