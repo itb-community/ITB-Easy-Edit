@@ -34,6 +34,8 @@ local function finalizeInit(self)
 	require(path.."alter")
 	require(path.."ui/widget/ui")
 	require(path.."ui/textevent")
+	require(path.."ui/widget/UiTextBox")
+	require(path.."ui/deco/DecoTextBox")
 
 	LOGDF("Easy Edit %s initialized", self.version)
 end
