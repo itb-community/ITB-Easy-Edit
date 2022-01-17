@@ -13,6 +13,7 @@ local path = GetParentPath(...)
 local function finalizeInit(self)
 	LOGDF("Easy Edit %s initializing", self.version)
 
+	require(path.."datastructures/BinarySearch")
 
 	LOGDF("Easy Edit %s initialized", self.version)
 end
