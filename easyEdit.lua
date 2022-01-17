@@ -17,6 +17,7 @@ local function finalizeInit(self)
 	require(path.."modules/events")
 	require(path.."modules/gameState")
 	require(path.."modules/indexedList")
+	require(path.."modules/weapons")
 
 	LOGDF("Easy Edit %s initialized", self.version)
 end
