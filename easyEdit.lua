@@ -22,6 +22,7 @@ local function finalizeInit(self)
 	require(path.."modules/missions")
 	require(path.."modules/structures")
 	require(path.."modules/corporation")
+	require(path.."modules/tileset")
 
 	LOGDF("Easy Edit %s initialized", self.version)
 end
