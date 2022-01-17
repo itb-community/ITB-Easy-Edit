@@ -1,4 +1,12 @@
 
+local skipInit = true
+	and easyEdit ~= nil
+	and easyEdit.initialized == true
+
+if skipInit then
+	return easyEdit
+end
+
 local VERSION = "0.0.0"
 
 local function finalizeInit(self)
