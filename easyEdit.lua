@@ -33,6 +33,7 @@ local function finalizeInit(self)
 	require(path.."modules/currentTileset")
 	require(path.."alter")
 	require(path.."ui/widget/ui")
+	require(path.."ui/textevent")
 
 	LOGDF("Easy Edit %s initialized", self.version)
 end
