@@ -8,8 +8,13 @@ if skipInit then
 end
 
 local VERSION = "0.0.0"
+local path = GetParentPath(...)
 
 local function finalizeInit(self)
+	LOGDF("Easy Edit %s initializing", self.version)
+
+
+	LOGDF("Easy Edit %s initialized", self.version)
 end
 
 local function onModsMetadataDone()
@@ -33,6 +38,7 @@ local isNewestVersion = false
 if isNewestVersion then
 	easyEdit = easyEdit or {}
 	easyEdit.version = VERSION
+	easyEdit.path = path
 	easyEdit.finalizeInit = finalizeInit
 
 	-- easyEdit needs to be initialized after all mods have been enumerated,
