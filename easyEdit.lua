@@ -31,6 +31,7 @@ local function finalizeInit(self)
 	require(path.."modules/island")
 	require(path.."modules/world")
 	require(path.."modules/currentTileset")
+	require(path.."alter")
 
 	LOGDF("Easy Edit %s initialized", self.version)
 end
