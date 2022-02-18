@@ -3,6 +3,14 @@ local vanillaCorporations = { "Corp_Grass", "Corp_Desert", "Corp_Snow", "Corp_Fa
 
 modApi.world = {}
 
+function modApi.world:save()
+	-- unimplemented
+end
+
+function modApi.world:update()
+	-- unimplemented
+end
+
 function modApi.world:setUnit(unit_id, unit)
 	if not unit then return end
 
@@ -42,7 +50,7 @@ function modApi.world:setIsland(islandSlot, island)
 	island.copyAssets({_id = n}, island)
 end
 
-function modApi.world:setCorp(islandSlot, corp)
+function modApi.world:setCorporation(islandSlot, corp)
 	if not corp then return end
 
 	local corp_id = vanillaCorporations[islandSlot]

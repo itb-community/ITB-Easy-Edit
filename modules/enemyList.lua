@@ -9,11 +9,18 @@ function shuffle_list(list)
 end
 
 local EnemyList = Class.inherit(IndexedEntry)
+EnemyList._debugName = "EnemyList"
+EnemyList._entryType = "enemyList"
 
 function EnemyList:new(id, base)
-	self.enemies = {}
-	self.categories = { "Core", "Core", "Core", "Leaders", "Unique", "Unique" },
 	IndexedEntry.new(self, id, base)
+	self.enemies = {
+		Core = {},
+		Unique = {},
+		Leaders = {},
+		Bots = {}
+	}
+	self.categories = { "Core", "Core", "Core", "Leaders", "Unique", "Unique" }
 end
 
 function EnemyList:copy(base)
@@ -104,6 +111,14 @@ function EnemyList:pickEnemies(islandNumber, timesPicked)
 	Assert.Equals(6, #result, "Result")
 
 	return result
+end
+
+function EnemyList:getCategories()
+	return self.enemies
+end
+
+function EnemyList:getObject(unitId)
+	return modApi.units:get(unitId)
 end
 
 

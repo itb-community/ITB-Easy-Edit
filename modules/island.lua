@@ -5,6 +5,15 @@ local function getModPath()
 end
 
 local Island = Class.inherit(IndexedEntry)
+Island._entryType = "island"
+Island._iconDef = {
+	width = 80,
+	height = 60,
+	scale = 2,
+	clip = true,
+	outlinesize = 0,
+	pathformat = "img/strategy/island1x_%s.png",
+}
 
 function Island:new(id, base)
 	IndexedEntry.new(self, id, base)
@@ -89,5 +98,6 @@ function Island:appendAssets(islandPath)
 		end
 	end
 end
+
 
 modApi.island = IndexedList(Island)

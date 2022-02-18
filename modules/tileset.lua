@@ -18,13 +18,22 @@ local function getModPath()
 end
 
 local Tileset = Class.inherit(IndexedEntry)
+Tileset._entryType = "tileset"
+Tileset._iconDef = {
+	width = 120,
+	height = 120,
+	scale = 1,
+	clip = true,
+	outlinesize = 0,
+	pathformat = "img/strategy/corp/%s_env.png",
+}
 
 function Tileset:new(id, base)
 	self._id = id
+	IndexedEntry.new(self, id, base)
 	self.tileLoc = {}
 	self.tileTooltip = {}
 	self:setEmitters()
-	IndexedEntry.new(self, id, base)
 	self:copyAssets(base)
 end
 

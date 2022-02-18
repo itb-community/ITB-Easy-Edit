@@ -1,19 +1,21 @@
 
 local StructureList = Class.inherit(IndexedEntry)
+StructureList._debugName = "StructureList"
+StructureList._entryType = "structureList"
 
 function StructureList:new(id, base)
+	IndexedEntry.new(self, id, base)
 	self.PowAssets = {}
 	self.TechAssets = {}
 	self.RepAssets = {}
-	IndexedEntry.new(self, id, base)
 end
 
 function StructureList:copy(base)
 	if type(base) ~= 'table' then return end
 
+	self.RepAssets = copy_table(base.RepAssets)
 	self.PowAssets = copy_table(base.PowAssets)
 	self.TechAssets = copy_table(base.TechAssets)
-	self.RepAssets = copy_table(base.RepAssets)
 end
 
 function StructureList:addAssets(...)
@@ -64,6 +66,14 @@ function StructureList:addRepAssets(...)
 
 		table.insert(self.RepAssets, structure)
 	end
+end
+
+function StructureList:getCategories()
+	return self
+end
+
+function StructureList:getObject(structureId)
+	return modApi.structures:get(structureId)
 end
 
 

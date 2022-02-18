@@ -1,23 +1,35 @@
 
 local BossList = Class.inherit(IndexedEntry)
+BossList._debugName = "BossList"
+BossList._entryType = "bossList"
 
 function BossList:new(id, base)
-	self.Bosses = {}
-	self.UniqueBosses = {}
 	IndexedEntry.new(self, id, base)
+	self["Bosses"] = {}
 end
 
 function BossList:copy(base)
 	if type(base) ~= 'table' then return end
 
-	self.Bosses = copy_table(base.Bosses)
-	self.UniqueBosses = copy_table(base.UniqueBosses)
+	if base.UniqueBosses then
+		self.Bosses = add_arrays(base.Bosses, base.UniqueBosses)
+	else
+		self.Bosses = copy_table(base.Bosses)
+	end
 end
 
 function BossList:addBoss(boss)
 	Assert.Equals('string', type(boss), "Argument #1")
 
-	table.insert(self.UniqueBosses, boss)
+	table.insert(self.Bosses, boss)
+end
+
+function BossList:getCategories()
+	return self
+end
+
+function BossList:getObject(missionId)
+	return modApi.missions:get(missionId)
 end
 
 
