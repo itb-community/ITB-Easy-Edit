@@ -23,6 +23,7 @@ function UiTextBox:new()
 end
 
 function UiTextBox:init()
+	self._debugName = "UiTextBox"
 	self.textfield = ""
 	self.editable = true
 	self.selection = nil
@@ -369,9 +370,13 @@ function UiTextBox:relayout()
 	local focused_prev = self.focused_prev
 
 	if focused ~= focused_prev then
-		self.onFocusChangedEvent:dispatch(self, focused, focused_prev)
+
+		if not focused then
+			self.selection = nil
+		end
+
 		self.focused_prev = focused
-		self.selection = nil
+		self.onFocusChangedEvent:dispatch(self, focused, focused_prev)
 	end
 end
 
