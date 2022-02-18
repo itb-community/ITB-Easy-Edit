@@ -103,7 +103,7 @@ local function subscribe(event, subscription)
 	local addSubscription = true
 		and type(event) == 'table'
 		and type(subscription) == 'function'
-		and Class.instanceOf(event, Event) == true
+		and Event.instanceOf(event, Event) == true
 		and event:isSubscribed(subscription) == false
 
 	if addSubscription then
@@ -115,7 +115,7 @@ local function unsubscribe(event, subscription)
 	local remSubscription = true
 		and type(event) == 'table'
 		and type(subscription) == 'function'
-		and Class.instanceOf(event, Event) == true
+		and Event.instanceOf(event, Event) == true
 		and event:isSubscribed(subscription) == true
 
 	if remSubscription then
