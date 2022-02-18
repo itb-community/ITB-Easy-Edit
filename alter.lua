@@ -29,62 +29,62 @@ local mechList = {
 	"LeapMech", "UnstableTank", "NanoMech",
 }
 
+local function registerWeapon(id)
+	local base = _G[id]
+
+	if not modApi.weapons:get(id) then
+		local weapon = modApi.weapons:add(id)
+		weapon:copy(base)
+		weapon.__Id = id
+		weapon.Name = GetText(id.."_Name") or base.Name
+		weapon.Description = GetText(id.."_Description") or base.Description
+		weapon:lock()
+	end
+end
+
 local function registerUnits()
+	local units = modApi.units
+	local unitImages = modApi.unitImage
+	local isValidUnit = units._class.isValid
+
 	for id, base in pairs(_G) do
 		local isUnit = true
 			and type(base) == 'table'
 			and type(base.Name) == 'string'
 			and type(base.Class) == 'string'
 			and type(base.Image) == 'string'
+			and type(base.ImageOffset) == 'number'
 			and type(base.Health) == 'number'
 			and type(base.MoveSpeed) == 'number'
 			and type(base.SkillList) == 'table'
 
 		if isUnit then
-			if not modApi.units:get(id) then
-				modApi.units:addSoundBase(base.SoundLocation)
+			local unit = units:get(id)
 
-				local anim = ANIMS[base.Image]
-				local isValidUnit
-				local isMech
-				local isEnemy
-				local isBot
-				local isMission
-				local isImage = true
-					and type(anim) == 'table'
-					and type(anim.Image) == 'string'
-					and modApi:assetExists("img/"..anim.Image)
+			if base.Name == "Unnamed Pawn" or base.Name == "PawnTable" then
+				base.Name = GetText(id)
+			end
 
-				if isImage then
-					if anim.Image:find("^units/player/") then
-						isValidUnit = true
-						isMech = true
+			if isValidUnit(base) then
+				unit = unit or units:add(id, base)
+				unit:lock()
 
-					elseif anim.Image:find("^units/aliens/") then
-						isValidUnit = true
-						isEnemy = true
+				units:addSoundBase(unit)
+			end
 
-					elseif anim.Image:find("^units/snowbots/") then
-						isValidUnit = true
-						isEnemy = true
-						isBot = true
+			unitImageId = base.Image
+			unitImage = unitImages:get(unitImageId)
 
-					elseif anim.Image:find("^units/mission/") then
-						isValidUnit = true
-						isMission = true
-					end
+			if unitImage == nil then
+				unitImage = unitImages:add(unitImageId)
+				unitImage.Name = unitImageId
+				unitImage.Image = base.Image
+				unitImage.ImageOffset = base.ImageOffset
+				unitImage:lock()
+			end
 
-					if isValidUnit then
-						local unit = modApi.units:add(id)
-						unit:copy(base)
-						unit.Name = GetText(id) or base.Name
-						unit._isUnit = isValidUnit
-						unit._isMech = isMech
-						unit._isEnemy = isEnemy
-						unit._isBot = isBot
-						unit._isMission = isMission
-					end
-				end
+			for _, weaponId in ipairs(base.SkillList) do
+				registerWeapon(weaponId)
 			end
 		end
 	end
@@ -92,15 +92,7 @@ end
 
 local function registerWeapons()
 	for id, _ in pairs(modApi.weaponDeck) do
-		local base = _G[id]
-
-		if not modApi.weapons:get(id) then
-			local weapon = modApi.weapons:add(id)
-			weapon:copy(base)
-			weapon.__Id = id
-			weapon.Name = GetText(id.."_Name") or base.Name
-			weapon.Description = GetText(id.."_Description") or base.Description
-		end
+		registerWeapon(id)
 	end
 end
 
@@ -115,6 +107,21 @@ local function registerMissions()
 					local base = _G[mission_id]
 					local mission = modApi.missions:add(mission_id)
 					mission:copy(base)
+					mission:lock()
+				end
+
+				local appendLoc = string.format("img/strategy/mission/%s.png", mission_id)
+				local filename = string.format("%simg/mission/%s.png", path, mission_id)
+
+				if modApi:fileExists(filename) then
+					modApi:appendAsset(appendLoc, filename)
+				end
+
+				local appendLoc = string.format("img/strategy/mission/small/%s.png", mission_id)
+				local filename = string.format("%simg/mission/small/%s.png", path, mission_id)
+
+				if modApi:fileExists(filename) then
+					modApi:appendAsset(appendLoc, filename)
 				end
 			end
 		end
@@ -136,7 +143,9 @@ local function registerStructures()
 				if not modApi.structures:get(structure_id) then
 					local base = _G[structure_id]
 					local structure = modApi.structures:add(structure_id)
+					structure.Name = GetText(structure_id.."_Name") or base.Name
 					structure:copy(base)
+					structure:lock()
 				end
 			end
 		end
@@ -167,6 +176,8 @@ local function registerIslands()
 				table.insert(island.network, _G["Network_Island_".. n][tostring(k)])
 			end
 		end
+
+		island:lock()
 	end
 end
 
@@ -179,17 +190,20 @@ local function registerCorporations()
 		corp:copy(base)
 		corp.Name = GetText(corp_id .."_Name") or ""
 		corp.Description = GetText(corp_id .."_Description") or ""
+		corp:lock()
 	end
 end
 
 local function registerCEOs()
 	for i, id in ipairs(ceos) do
-		local ceo = modApi.corporation.ceo:add(id)
+		local ceo = modApi.ceo:add(id)
 		local corp_id = vanillaCorporations[i]
 		local base = _G[corp_id]
 
+		ceo:copyAssets({_id = "ceo_"..corporations[i]})
 		ceo:copy(base)
 		ceo.CEO_Name = GetText(corp_id .."_CEO_Name") or ""
+		ceo:lock()
 	end
 end
 
@@ -290,6 +304,7 @@ local function registerEnemyLists()
 	local id = "vanilla"
 	local enemyList = modApi.enemyList:add(id)
 	enemyList.enemies = copy_table(EnemyLists)
+	enemyList:lock()
 
 	for i, corp_id in ipairs(vanillaCorporations) do
 		local corp = _G[corp_id]
@@ -317,6 +332,7 @@ local function registerBossLists()
 		local base = _G[corp_id]
 
 		bossList:copy(base)
+		bossList:lock()
 	end
 end
 
@@ -327,6 +343,7 @@ local function registerMissionLists()
 		local base = _G[corp_id]
 
 		missionList:copy(base)
+		missionList:lock()
 	end
 end
 
@@ -334,6 +351,36 @@ local function registerStructureLists()
 	local id = "vanilla"
 	local structureList = modApi.structureList:add(id)
 	structureList:copy(Corp_Default)
+	structureList:lock()
+end
+
+local function registerIslandComposites()
+	for i = 1, 4 do
+		local id = islands[i]
+		local islandComposite = modApi.islandComposite:add(id)
+		islandComposite.island = islands[i]
+		islandComposite.ceo = ceos[i]
+		islandComposite.tileset = tilesets[i]
+		islandComposite.missionList = missionLists[i]
+		islandComposite.bossList = bossLists[i]
+		islandComposite.enemyList = "vanilla"
+		islandComposite.structureList = "vanilla"
+
+		islandComposite:lock()
+	end
+end
+
+local function registerIcons()
+	local icons = {
+		"delete",
+		"reset",
+	}
+
+	for _, name in ipairs(icons) do
+		local appendLoc = string.format("img/ui/easyEdit/%s.png", name)
+		local filename = string.format("%simg/icons/%s.png", path, name)
+		modApi:appendAsset(appendLoc, filename)
+	end
 end
 
 local function markRegisteredAsVanilla()
@@ -344,6 +391,7 @@ local function markRegisteredAsVanilla()
 	end
 
 	markAsVanilla(modApi.units)
+	markAsVanilla(modApi.unitImage)
 	markAsVanilla(modApi.weapons)
 	markAsVanilla(modApi.missions)
 	markAsVanilla(modApi.structures)
@@ -354,6 +402,40 @@ local function markRegisteredAsVanilla()
 	markAsVanilla(modApi.bossList)
 	markAsVanilla(modApi.missionList)
 	markAsVanilla(modApi.island)
+	markAsVanilla(modApi.islandComposite)
+end
+
+local function markRegisteredAsMod()
+	local function markAsMod(indexedList)
+		for _, indexedEntry in pairs(indexedList._children) do
+			indexedEntry._mod = true
+		end
+	end
+
+	markAsMod(modApi.units)
+	markAsMod(modApi.unitImage)
+	markAsMod(modApi.weapons)
+	markAsMod(modApi.missions)
+	markAsMod(modApi.structures)
+	markAsMod(modApi.corporation)
+	markAsMod(modApi.tileset)
+	markAsMod(modApi.structureList)
+	markAsMod(modApi.enemyList)
+	markAsMod(modApi.bossList)
+	markAsMod(modApi.missionList)
+	markAsMod(modApi.island)
+	markAsMod(modApi.islandComposite)
+end
+
+local function onModsInitialized()
+	markRegisteredAsVanilla()
+	registerUnits()
+	registerWeapons()
+	registerMissions()
+	registerStructures()
+	markRegisteredAsMod()
+	easyEdit.savedata:load()
+	easyEdit.savedata:apply()
 end
 
 registerUnits()
@@ -368,9 +450,7 @@ registerEnemyLists()
 registerBossLists()
 registerMissionLists()
 registerStructureLists()
+registerIslandComposites()
+registerIcons()
 
-modApi.events.onModsInitialized:subscribe(markRegisteredAsVanilla)
-modApi.events.onModsInitialized:subscribe(registerUnits)
-modApi.events.onModsInitialized:subscribe(registerWeapons)
-modApi.events.onModsInitialized:subscribe(registerMissions)
-modApi.events.onModsInitialized:subscribe(registerStructures)
+modApi.events.onModsInitialized:subscribe(onModsInitialized)
