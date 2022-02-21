@@ -1,4 +1,8 @@
 
+-- increase max cached surfaces
+-- for surface dense uis
+sdlext.surface_cache_max = 1024
+
 local path = GetParentPath(...)
 
 local vanillaCorporations = { "Corp_Grass", "Corp_Desert", "Corp_Snow", "Corp_Factory" }
