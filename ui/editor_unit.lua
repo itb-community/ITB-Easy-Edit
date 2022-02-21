@@ -3,10 +3,13 @@ local path = GetParentPath(...)
 local helpers = require(path.."helpers")
 local decorate = require(path.."helper_decorate")
 local DecoEditorButton = require(path.."deco/DecoEditorButton")
+local DecoButtonExt = require(path.."deco/DecoButtonExt")
+local DecoMultiClickButton = require(path.."deco/DecoMultiClickButton")
 local DecoHealth = require(path.."deco/DecoHealth")
 local DecoMove = require(path.."deco/DecoMove")
 local DecoCheckbox = require(path.."deco/DecoCheckbox")
 local DecoLabel = require(path.."deco/DecoLabel")
+local UiMultiClickButton = require(path.."widget/UiMultiClickButton")
 local UiEditorButton = require(path.."widget/UiEditorButton")
 local UiEditBox = require(path.."widget/UiEditBox")
 local UiNumberBox = require(path.."widget/UiNumberBox")
@@ -19,6 +22,11 @@ local UiPopup = require(path.."widget/UiPopup")
 local createUiEditBox = helpers.createUiEditBox
 local createUiTitle = helpers.createUiTitle
 local decorate_button = decorate.button
+local getSurface_delete = helpers.getSurface_delete
+local getSurface_reset = helpers.getSurface_reset
+local getSurface_warning = helpers.getSurface_warning
+local getSurface_delete_small = helpers.getSurface_delete_small
+local getSurface_warning_small = helpers.getSurface_warning_small
 
 -- defs
 local EDITOR_TITLE = "Mech Editor"
@@ -35,6 +43,7 @@ local CHECKBOX_WIDTH = 25
 local CHECKBOX_HEIGHT = 25
 local CHECKBOX_CONTAINER_WIDTH = 120
 local CHECKBOX_CONTAINER_HEIGHT = 50
+local COLOR_RED = helpers.COLOR_RED
 
 -- debug
 local DEBUG_COLOR_CONTENT = sdl.rgba(100, 100, 255, 100)
@@ -105,6 +114,12 @@ local function onTextBoxEnter(self)
 	end
 end
 
+local function resetParentData(self)
+	self.parent.data = nil
+	self.parent:send()
+	return true
+end
+
 local function onRecieve_id(reciever, sender)
 	reciever:updateText(sender.data._id)
 end
@@ -156,9 +171,12 @@ local function onSend_weapon(sender, reciever, weaponSlot)
 	local weaponId = weapon and weapon._id
 	if weaponId then
 		weapon = modApi.weapons:get(weaponId)
-		if weapon then
-			unit.SkillList[weaponSlot] = weaponId
-		end
+	end
+
+	if weapon then
+		unit.SkillList[weaponSlot] = weaponId
+	else
+		unit.SkillList[weaponSlot] = nil
 	end
 
 	decorate_button.weapon(sender, weapon)
@@ -509,6 +527,25 @@ local function buildFrameContent(parentUi)
 							decorate_button.weapon,
 							onPopupEntryClicked
 						)
+						:beginUi(UiMultiClickButton, 2)
+							:anchor("right", "bottom")
+							:sizepx(20, 20)
+							:setTooltips{
+								"Remove weapon",
+								"WARNING: clicking once more will remove this weapon from the unit"
+							}
+							:setVar("onclicked", resetParentData)
+							:decorate{
+								DecoButtonExt(nil, COLOR_RED),
+								DecoAnchor(),
+								DecoMultiClickButton(
+									{ getSurface_delete_small(), getSurface_warning_small(), },
+									"center",
+									"center"
+								)
+							}
+							:bringToTop()
+						:endUi()
 					:endUi()
 					:beginUi(uiEditBox.weaponSecondary)
 						:widthpx(icon_weapon_width)
@@ -520,6 +557,25 @@ local function buildFrameContent(parentUi)
 							decorate_button.weapon,
 							onPopupEntryClicked
 						)
+						:beginUi(UiMultiClickButton, 2)
+							:anchor("right", "bottom")
+							:sizepx(20, 20)
+							:setTooltips{
+								"Remove weapon",
+								"WARNING: clicking once more will remove this weapon from the unit"
+							}
+							:setVar("onclicked", resetParentData)
+							:decorate{
+								DecoButtonExt(nil, COLOR_RED),
+								DecoAnchor(),
+								DecoMultiClickButton(
+									{ getSurface_delete_small(), getSurface_warning_small(), },
+									"center",
+									"center"
+								)
+							}
+							:bringToTop()
+						:endUi()
 					:endUi()
 					:beginUi(UiWeightLayout)
 						:width(1)
