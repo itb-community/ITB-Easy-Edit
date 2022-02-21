@@ -1,6 +1,4 @@
 
-local BASE_PAWN = TankMech.__index
-
 local keys = {}
 for key, _ in pairs(Pawn) do
 	local addKey = true
@@ -108,6 +106,8 @@ end
 
 local Units = IndexedList(Unit)
 Units._soundBases = {}
+Units._basePawn = TankMech.__index
+Units._baseMech = PunchMech:new()
 
 function Units:addSoundBase(unit)
 	local soundBase = unit.SoundLocation
@@ -129,11 +129,11 @@ function Units:update()
 		local livedata = modApi[entryType]:get(cache_id)
 
 		if _G[cache_id] == nil then
-			_G[cache_id] = BASE_PAWN:new(cache_data)
+			_G[cache_id] = self._baseMech:new(cache_data)
 		end
 
 		if livedata == nil then
-			livedata = modApi[entryType]:add(cache_id)
+			livedata = modApi[entryType]:add(cache_id, self._baseMech)
 			livedata:lock()
 		end
 
