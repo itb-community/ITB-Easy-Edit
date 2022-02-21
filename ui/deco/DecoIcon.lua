@@ -115,7 +115,9 @@ function DecoIcon:draw(screen, widget)
 	local surf_x
 	local surf_y
 
-	if alignH == "center" then
+	if alignH == "selfcenter" then
+		surf_x = math.floor(widget_x - surf_w / 2)
+	elseif alignH == "center" then
 		surf_x = math.floor(widget_x + widget_w / 2 - surf_w / 2)
 	elseif alignH == "right" then
 		surf_x = widget_x + widget_w - surf_w
@@ -123,7 +125,9 @@ function DecoIcon:draw(screen, widget)
 		surf_x = widget_x
 	end
 
-	if alignV == "center" then
+	if alignV == "selfcenter" then
+		surf_y = math.floor(widget_y - surf_h / 2)
+	elseif alignV == "center" then
 		surf_y = math.floor(widget_y + widget_h / 2 - surf_h / 2)
 	elseif alignV == "bottom" then
 		surf_y = widget_y + widget_h - surf_h
