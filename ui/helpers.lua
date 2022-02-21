@@ -59,6 +59,13 @@ local function getSurface_delete_small()
 	}
 end
 
+local function getSurface_reset_small()
+	return sdlext.getSurface{
+		path = "img/ui/easyEdit/reset_small.png",
+		transformations = { { multiply = COLOR_RED } }
+	}
+end
+
 local function getSurface_warning_small()
 	return sdlext.getSurface{
 		path = "img/ui/easyEdit/warning_small.png",
@@ -171,6 +178,7 @@ return {
 	getSurface_delete = getSurface_delete,
 	getSurface_reset = getSurface_reset,
 	getSurface_warning = getSurface_warning,
+	getSurface_reset_small = getSurface_reset_small,
 	getSurface_delete_small = getSurface_delete_small,
 	getSurface_warning_small = getSurface_warning_small,
 	onGroupClicked = onGroupClicked,
