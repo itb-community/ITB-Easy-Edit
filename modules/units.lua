@@ -25,6 +25,7 @@ Unit._tooltipDef = {
 	width = 90,
 	height = 60,
 	scale = 2,
+	clip = true,
 }
 
 function Unit:new(id, base)

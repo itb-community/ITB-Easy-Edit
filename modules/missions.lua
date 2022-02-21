@@ -12,6 +12,8 @@ Mission._tooltipDef = {
 	width = 120,
 	height = 120,
 	scale = 2,
+	clip = true,
+	outlinesize = 0,
 	pathformat = "img/strategy/mission/%s.png",
 }
 

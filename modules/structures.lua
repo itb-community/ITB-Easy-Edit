@@ -13,8 +13,14 @@ Structure._iconDef = {
 	width = 90,
 	height = 60,
 	scale = 2,
-	outlinecolor = deco.colors.buttonborder,
-	outlinecolorhl = deco.colors.buttonborderhl,
+	pathformat = "img/combat/structures/%s_on.png",
+	pathtoken = "Image",
+}
+Structure._tooltipDef = {
+	width = 90,
+	height = 60,
+	scale = 2,
+	clip = true,
 	pathformat = "img/combat/structures/%s_on.png",
 	pathtoken = "Image",
 }
