@@ -126,7 +126,7 @@ local function onRecieve_name(reciever, sender)
 end
 
 local function onSend_class(sender, reciever)
-	
+	-- unimplemented
 end
 
 local function onRecieve_class(reciever, sender)

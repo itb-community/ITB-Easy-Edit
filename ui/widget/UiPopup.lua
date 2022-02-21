@@ -29,14 +29,14 @@ function UiPopupWindow:new(popupOwner, title)
 			DecoFrameHeader(),
 			DecoFrame()
 		}
-			:beginUi(scroll)
-				:compact()
-				:beginUi(flow)
-					:padding(40)
-					:hgap(10)
-					:vgap(10)
-				:endUi()
+		:beginUi(scroll)
+			:compact()
+			:beginUi(flow)
+				:padding(40)
+				:hgap(10)
+				:vgap(10)
 			:endUi()
+		:endUi()
 end
 
 function UiPopupWindow:onGameWindowResized(screen)

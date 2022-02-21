@@ -26,9 +26,6 @@
 -- added containChildren
 -- added beginUi
 -- added endUi
--- added containChildren
--- added beginUi
--- added endUi
 -- added resizeOnce
 -- added setVar
 -- added format
