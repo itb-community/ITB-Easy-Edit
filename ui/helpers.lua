@@ -52,6 +52,20 @@ local function getSurface_warning()
 	}
 end
 
+local function getSurface_delete_small()
+	return sdlext.getSurface{
+		path = "img/ui/easyEdit/delete_small.png",
+		transformations = { { multiply = COLOR_RED } }
+	}
+end
+
+local function getSurface_warning_small()
+	return sdlext.getSurface{
+		path = "img/ui/easyEdit/warning_small.png",
+		transformations = { { multiply = COLOR_RED } }
+	}
+end
+
 
 local function createUiTitle(text)
 	return Ui()
@@ -157,6 +171,8 @@ return {
 	getSurface_delete = getSurface_delete,
 	getSurface_reset = getSurface_reset,
 	getSurface_warning = getSurface_warning,
+	getSurface_delete_small = getSurface_delete_small,
+	getSurface_warning_small = getSurface_warning_small,
 	onGroupClicked = onGroupClicked,
 	isGroupHighlighted = isGroupHighlighted,
 	createUiTitle = createUiTitle,

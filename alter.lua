@@ -378,6 +378,9 @@ local function registerIcons()
 	local icons = {
 		"delete",
 		"reset",
+		"delete_small",
+		"reset_small",
+		"warning_small",
 	}
 
 	for _, name in ipairs(icons) do
