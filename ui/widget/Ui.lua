@@ -105,7 +105,7 @@ end
 -- to itself, and returns the new ui instance.
 -- Intended to be used in function chaining when
 -- setting up the Ui hierarchy.
-function Ui:beginUi(class)
+function Ui:beginUi(class, ...)
 	if class == nil then
 		class = Ui
 	end
@@ -115,7 +115,7 @@ function Ui:beginUi(class)
 		return class:addTo(self)
 	elseif Class.isSubclassOf(class, Ui) then
 		-- if 'class' is a ui class
-		return class():addTo(self)
+		return class(...):addTo(self)
 	end
 
 	Assert.True(false, "Invalid Argument #1")
