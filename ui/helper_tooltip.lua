@@ -2,10 +2,13 @@
 local path = GetParentPath(...)
 local switch = require(path.."switch")
 local helpers = require(path.."helpers")
+local helper_decorate = require(path.."helper_decorate")
 local DecoIcon = require(path.."deco/DecoIcon")
 local DecoUnit = require(path.."deco/DecoUnit")
 local DecoTransHeader = require(path.."deco/DecoTransHeader")
 local DecoBounceLabel = require(path.."deco/DecoBounceLabel")
+
+local getReward = helper_decorate.getReward
 
 
 -- Default Object
@@ -110,11 +113,47 @@ function UiTooltipBossMission:onCustomTooltipShown(hoveredUi)
 end
 
 
+-- structure
+UiTooltipStructure = Class.inherit(UiTooltipObject)
+function UiTooltipStructure:new()
+	UiTooltipObject.new(self)
+	self._debugName = "UiTooltipStructure"
+	self.decoReward = DecoIcon(
+		nil,
+		{
+			outlinesize = 0,
+			alignV = "bottom",
+			alignH = "right",
+		}
+	)
+
+	self:insertDeco(3, DecoAlign(-6, -10))
+	self:insertDeco(4, self.decoReward)
+	self:insertDeco(5, DecoAnchor())
+end
+
+function UiTooltipStructure:onCustomTooltipShown(hoveredUi)
+	local obj = hoveredUi.data
+
+	if obj == nil then
+		self.decoLabel:setsurface("")
+		self.decoReward:setObject(nil)
+		self.decoIcon:setObject(nil)
+		return
+	end
+
+	resize(self, obj)
+	self.decoIcon:setObject(obj, obj:getTooltipDef())
+	self.decoReward:setObject(getReward(obj.Reward))
+	self.decoLabel:setsurface(obj:getName())
+end
+
+
 local tooltips = {
 	mission = UiTooltipObject(),
 	bossMission = UiTooltipBossMission(),
 	unit = UiTooltipUnit(),
-	structure = UiTooltipObject(),
+	structure = UiTooltipStructure(),
 	island = UiTooltipObject(),
 	ceo = UiTooltipObject(),
 	tileset = UiTooltipObject(),

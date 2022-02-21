@@ -55,7 +55,7 @@ getReward[REWARD_TECH] = function()
 end
 
 getReward.default = function()
-	return "img/ui/star.png"
+	return nil
 end
 
 local function applyIconDef(ui, obj)
@@ -154,4 +154,7 @@ return {
 	island = getDecoration.default,
 	weapon = getDecoration.default,
 	icon = getDecoration.default,
+	getDecoration = getDecoration,
+	getName = getName,
+	getReward = getReward,
 }
