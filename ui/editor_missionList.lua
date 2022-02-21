@@ -122,12 +122,15 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 
-	for _, objectList in pairs(modApi.missionList._children) do
-		local contentListContainer = dynamicContentListContainer(objectList, dragObject)
+	local function addContentListContainer(contentListContainer)
 		contentListContainers:add(contentListContainer)
 		contentListContainer.contentList
 			:setVar("isGroupTooltip", true)
 			:settooltip("Drag-and-drop missions to edit the mission list", nil, true)
+	end
+
+	for _, objectList in pairs(modApi.missionList._children) do
+		addContentListContainer(dynamicContentListContainer(objectList, dragObject))
 	end
 
 	local missions_filtered = filter_table(modApi.missions._children, function(k, v)
@@ -152,7 +155,7 @@ local function buildFrameContent(parentUi)
 		if name:len() > 0 and modApi.missionList:get(name) == nil then
 			local objectList = modApi.missionList:add(name)
 			objectList:lock()
-			contentListContainers:add(dynamicContentListContainer(objectList, dragObject))
+			addContentListContainer(dynamicContentListContainer(objectList, dragObject))
 		end
 
 		self.root:setfocus(content)

@@ -122,12 +122,15 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 
-	for _, objectList in pairs(modApi.structureList._children) do
-		local contentListContainer = dynamicContentListContainer(objectList, dragObject)
+	local function addContentListContainer(contentListContainer)
 		contentListContainers:add(contentListContainer)
 		contentListContainer.contentList
 			:setVar("isGroupTooltip", true)
 			:settooltip("Drag-and-drop structures to edit the structure list", nil, true)
+	end
+
+	for _, objectList in pairs(modApi.structureList._children) do
+		addContentListContainer(dynamicContentListContainer(objectList, dragObject))
 	end
 
 	for _, structure in pairs(modApi.structures._children) do
@@ -148,7 +151,7 @@ local function buildFrameContent(parentUi)
 		if name:len() > 0 and modApi.structureList:get(name) == nil then
 			local objectList = modApi.structureList:add(name)
 			objectList:lock()
-			contentListContainers:add(dynamicContentListContainer(objectList, dragObject))
+			addContentListContainer(dynamicContentListContainer(objectList, dragObject))
 		end
 
 		self.root:setfocus(content)

@@ -122,12 +122,15 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 
-	for _, objectList in pairs(modApi.bossList._children) do
-		local contentListContainer = dynamicContentListContainer(objectList, dragObject)
+	local function addContentListContainer(contentListContainer)
 		contentListContainers:add(contentListContainer)
 		contentListContainer.contentList
 			:setVar("isGroupTooltip", true)
 			:settooltip("Drag-and-drop units to edit the boss list", nil, true)
+	end
+
+	for _, objectList in pairs(modApi.bossList._children) do
+		addContentListContainer(dynamicContentListContainer(objectList, dragObject))
 	end
 
 	local bossMissions_filtered = filter_table(modApi.missions._children, function(k, v)
@@ -153,7 +156,7 @@ local function buildFrameContent(parentUi)
 		if name:len() > 0 and modApi.bossList:get(name) == nil then
 			local objectList = modApi.bossList:add(name)
 			objectList:lock()
-			contentListContainers:add(dynamicContentListContainer(objectList, dragObject))
+			addContentListContainer(dynamicContentListContainer(objectList, dragObject))
 		end
 
 		self.root:setfocus(content)
