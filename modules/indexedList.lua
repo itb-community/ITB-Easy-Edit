@@ -195,9 +195,6 @@ function IndexedEntry:extend()
 end
 
 function IndexedEntry:instanceOf(cls)
-	if type(cls) ~= 'table' then
-		LOG(type(cls))
-	end
 	Assert.Equals(type(self), 'table', "Argument #0")
 	Assert.Equals(type(cls), 'table', "Argument #1")
 
