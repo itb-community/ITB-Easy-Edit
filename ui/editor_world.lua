@@ -159,10 +159,7 @@ local function onExit()
 		islandSlots[4].data._id,
 	}
 
-	easyEdit.savedata:save()
-
-	-- This does more than necessary
-	modApi.islandComposite:update()
+	easyEdit.savedata:saveAsFile("world", easyEdit.savedata.cache.world)
 end
 
 function worldEditor.mainButton()

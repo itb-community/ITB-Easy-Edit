@@ -186,7 +186,6 @@ end
 
 local function onExit()
 	modApi.missionList:save()
-	modApi.missionList:update()
 end
 
 -- main button

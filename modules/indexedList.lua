@@ -1,5 +1,9 @@
 
+-- defs
+local DEFAULT_ISLAND_SLOTS = { "archive", "rst", "pinnacle", "detritus" }
 local NULLTABLE = {}
+
+
 local __index = function(self, key)
 	return self._default[key] or self._classtable[key]
 end
@@ -128,10 +132,9 @@ function IndexedList:rem(id)
 end
 
 function IndexedList:save()
-	-- LOGDF("Save cached data for %s", tostring(self:getEntryType()))
 	-- overrideable method
-	easyEdit.savedata.cache[self:getEntryType()] = copy_table(self._children)
-	easyEdit.savedata:save()
+	local entryType = self:getEntryType()
+	easyEdit.savedata:saveAsDir(entryType, self._children)
 end
 
 -- Update lists from savedata,
@@ -156,7 +159,7 @@ function IndexedList:update()
 		end
 	end
 
-	local cache_world = easyEdit.savedata.cache.world or NULLTABLE
+	local cache_world = easyEdit.savedata.cache.world or DEFAULT_ISLAND_SLOTS
 
 	for islandSlot, cache_data in ipairs(cache_world) do
 		local cache_islandComposite = modApi.islandComposite:get(cache_data)

@@ -1,35 +1,150 @@
 
-local savedata = {}
+-- header
+local path = GetParentPath(...)
+local explorer = require(path.."explorer")
+local direxists = explorer.direxists
+local fileexists = explorer.fileexists
+local listdirs = explorer.listdirs
+local listfiles = explorer.listfiles
+local listobjects = explorer.listobjects
+local pruneExtension = explorer.pruneExtension
+local remdir = explorer.remdir
+local isdir = explorer.isdir
+local isfile = explorer.isfile
+local findroot = explorer.findroot
 
--- Force load savedata from disc.
-local function load(self)
+-- defs
+local LOGD = easyEdit.LOG
+local LOGDF = easyEdit.LOGF
+local DIRS = {
+	"units",
+	"enemyList",
+	"bossList",
+	"missionList",
+	"structureList",
+	"islandComposite",
+}
+
+local savedata = {}
+local saveRoot = GetSavedataLocation()
+local saveLoc = modApi:getCurrentProfilePath().."easyEdit/"
+local fullSaveLoc = saveRoot..saveLoc
+
+
+local function loadFromFile(path)
+	LOGD("EasyEdit - loadFromFile ../"..path)
+	local result
+
+	if path:sub(-4, -1) == ".lua" then
+		sdlext.config(
+			path,
+			function(obj)
+				result = obj
+			end
+		)
+	end
+
+	return result
+end
+
+local function loadFromDir(path, depth)
+	LOGD("EasyEdit - loadFromDir ../"..path)
+	local result = {}
+
+	if not depth or depth > 0 then
+		for _, dir in ipairs(listdirs(saveRoot..path)) do
+			result[dir] = loadFromDir(path..dir.."/", depth - 1)
+		end
+	end
+
+	for _, file in ipairs(listfiles(saveRoot..path)) do
+		local id = pruneExtension(file)
+		result[id] = loadFromFile(path..file)
+	end
+
+	if not next(result) then
+		LOGD("EasyEdit - discard result ../"..path)
+		return nil
+	end
+
+	return result
+end
+
+local function saveToFile(cache, path)
+	LOGD("EasyEdit - saveToFile ../"..path)
+
 	sdlext.config(
-		modApi:getCurrentProfilePath().."easyEdit.lua",
+		path..".lua",
 		function(obj)
-			-- flush cache
-			clear_table(self.cache)
-			-- save obj to cache
-			clone_table(self.cache, obj)
+			clear_table(obj)
+			clone_table(obj, cache)
 		end
 	)
 end
 
--- Save cache to savedata on disc.
--- Load savedata from disc first if cache is empty.
-local function save(self)
-	sdlext.config(
-		modApi:getCurrentProfilePath().."easyEdit.lua",
-		function(obj)
-			-- flush obj
-			clear_table(obj)
-			-- save cache to obj
-			clone_table(obj, self.cache)
+local function saveToDir(cache, path)
+	LOGD("EasyEdit - saveToDir ../"..path)
+
+	for key, value in pairs(cache) do
+		saveToFile(value, path..key)
+	end
+end
+
+-- Force load savedata from disc.
+function savedata:load()
+	self.cache = loadFromDir(saveLoc, 2) or {}
+	self:updateLiveData()
+end
+
+function savedata:saveAsFile(id, data)
+	data = copy_table(data)
+	self.cache[id] = data
+	saveToFile(data, saveLoc..id)
+end
+
+function savedata:saveAsDir(id, data)
+	data = copy_table(data)
+	self.cache[id] = data
+
+	if pruneExtension(id) ~= id then
+		LOGF("EasyEdit - %q is not a directory", id)
+		return
+	end
+
+	-- delete lua file with same name as dir
+	if isfile(fullSaveLoc..id..".lua") then
+		LOGD("EasyEdit - delete "..fullSaveLoc..id..".lua")
+		os.remove(fullSaveLoc..id..".lua")
+	end
+
+	local dir = id.."/"
+	saveToDir(data, saveLoc..dir)
+
+	-- delete lua files of removed objects
+	for _, file in ipairs(listfiles(fullSaveLoc..dir)) do
+		local id = pruneExtension(file)
+		if data[id] == nil then
+			if isfile(fullSaveLoc..dir..file) then
+				LOGD("EasyEdit - delete "..fullSaveLoc..dir..file)
+				os.remove(fullSaveLoc..dir..file)
+			end
 		end
-	)
+	end
+
+	self:updateLiveData()
+end
+
+function savedata:mkdirs()
+	findroot()
+	os.mkdir(fullSaveLoc)
+
+	for _, dir in pairs(DIRS) do
+		os.mkdir(fullSaveLoc..dir)
+	end
 end
 
 -- Apply cached savedata to lists and update game objects.
-local function apply(self)
+function savedata:updateLiveData()
 	for category_id, category in pairs(self.cache) do
 		local module = modApi[category_id]
 		if module then
@@ -38,9 +153,10 @@ local function apply(self)
 	end
 end
 
-savedata.save = save
-savedata.load = load
-savedata.apply = apply
-savedata.cache = {}
 
 easyEdit.savedata = savedata
+
+modApi.events.onProfileChanged:subscribe(function(_, newProfile)
+	saveLoc = modApi:getCurrentProfilePath().."easyEdit/"
+	fullSaveLoc = saveRoot..saveLoc
+end)

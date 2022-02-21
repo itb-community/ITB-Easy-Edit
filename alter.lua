@@ -434,8 +434,8 @@ local function onModsInitialized()
 	registerMissions()
 	registerStructures()
 	markRegisteredAsMod()
+	easyEdit.savedata:mkdirs()
 	easyEdit.savedata:load()
-	easyEdit.savedata:apply()
 end
 
 registerUnits()

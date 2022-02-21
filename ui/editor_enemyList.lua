@@ -189,7 +189,6 @@ end
 
 local function onExit()
 	modApi.enemyList:save()
-	modApi.enemyList:update()
 end
 
 -- main button

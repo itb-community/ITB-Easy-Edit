@@ -182,7 +182,6 @@ end
 
 local function onExit()
 	modApi.structureList:save()
-	modApi.structureList:update()
 end
 
 -- main button

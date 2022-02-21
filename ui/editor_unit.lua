@@ -850,7 +850,6 @@ local function onExit()
 	UiEditorButton:resetGlobalVariables()
 
 	modApi.units:save()
-	modApi.units:update()
 end
 
 function unitEditor.mainButton()

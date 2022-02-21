@@ -187,7 +187,6 @@ end
 
 local function onExit()
 	modApi.bossList:save()
-	modApi.bossList:update()
 end
 
 -- main button

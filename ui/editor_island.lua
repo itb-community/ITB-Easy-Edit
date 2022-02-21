@@ -407,7 +407,6 @@ local function onExit()
 	UiEditorButton:resetGlobalVariables()
 
 	modApi.islandComposite:save()
-	modApi.islandComposite:update()
 end
 
 function islandEditor.mainButton()
