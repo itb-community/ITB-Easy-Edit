@@ -40,6 +40,7 @@
 -- added onGameWindowResized
 -- added gameWindowResized
 -- added isTooltipUi
+-- changed updateTooltipState
 -- added enumerateAncestors
 -- added enumerateDescendents
 -- added findDescendentWhere
@@ -297,6 +298,19 @@ function Ui:isTooltipUi()
 end
 function UiTooltip:isTooltipUi()
 	return true
+end
+
+-- Adjust Ui.updateTooltipState to take into account
+-- tooltips which explicitly set tooltip_static
+local old_Ui_updateTooltipState = Ui.updateTooltipState
+function Ui:updateTooltipState()
+	if old_Ui_updateTooltipState(self) then return end
+
+	if self.tooltip_static then
+		self.root.tooltip_static = self.tooltip_static
+	else
+		self.root.tooltip_static = self.draggable and self.dragged
+	end
 end
 
 
