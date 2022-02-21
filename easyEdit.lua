@@ -13,7 +13,9 @@ local path = GetParentPath(...)
 local function finalizeInit(self)
 	LOGDF("Easy Edit %s initializing", self.version)
 	Assert.Traceback = true
+	self.debug = false
 
+	require(path.."debug")
 	require(path.."global")
 	require(path.."datastructures/binarySearch")
 	require(path.."datastructures/sort")
