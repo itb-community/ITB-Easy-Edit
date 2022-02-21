@@ -86,10 +86,10 @@ local function buildFrameContent(parentUi)
 						:beginUi()
 							:heightpx(OBJECT_LIST_HEIGHT)
 							:padding(-5) -- unpad button
-							:setVar("padl", 5) -- pad text
 							:decorate{ createDecoGroupButton() }
 							:beginUi(createNewList)
 								:setVar("textfield", TITLE_CREATE_NEW_LIST)
+								:settooltip("Create a new mission list", nil, true)
 								:decorate{
 									DecoTextBox{
 										font = FONT_TITLE,
@@ -123,7 +123,11 @@ local function buildFrameContent(parentUi)
 		:endUi()
 
 	for _, objectList in pairs(modApi.missionList._children) do
-		contentListContainers:add(dynamicContentListContainer(objectList, dragObject))
+		local contentListContainer = dynamicContentListContainer(objectList, dragObject)
+		contentListContainers:add(contentListContainer)
+		contentListContainer.contentList
+			:setVar("isGroupTooltip", true)
+			:settooltip("Drag-and-drop missions to edit the mission list", nil, true)
 	end
 
 	local missions_filtered = filter_table(modApi.missions._children, function(k, v)
