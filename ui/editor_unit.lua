@@ -554,7 +554,6 @@ local function buildFrameContent(parentUi)
 									"center"
 								)
 							}
-							:bringToTop()
 						:endUi()
 					:endUi()
 					:beginUi(uiEditBox.weaponSecondary)
@@ -584,7 +583,6 @@ local function buildFrameContent(parentUi)
 									"center"
 								)
 							}
-							:bringToTop()
 						:endUi()
 					:endUi()
 					:beginUi(UiWeightLayout)
