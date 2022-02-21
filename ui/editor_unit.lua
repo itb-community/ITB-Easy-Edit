@@ -21,15 +21,18 @@ local UiPopup = require(path.."widget/UiPopup")
 
 local createUiEditBox = helpers.createUiEditBox
 local createUiTitle = helpers.createUiTitle
+local createDecoGroupButton = helpers.createDecoGroupButton
 local decorate_button = decorate.button
 local getSurface_delete = helpers.getSurface_delete
 local getSurface_reset = helpers.getSurface_reset
 local getSurface_warning = helpers.getSurface_warning
+local getSurface_reset_small = helpers.getSurface_reset_small
 local getSurface_delete_small = helpers.getSurface_delete_small
 local getSurface_warning_small = helpers.getSurface_warning_small
 
 -- defs
 local EDITOR_TITLE = "Mech Editor"
+local TITLE_CREATE_NEW_UNIT = "New unit"
 local SCROLL_BAR_WIDTH = helpers.SCROLL_BAR_WIDTH
 local PADDING = 8
 local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
@@ -413,6 +416,12 @@ local function resetAll()
 	end
 end
 
+local function resetParentUnit(self)
+	reset(self.parent)
+
+	return true
+end
+
 local function buildFrameContent(parentUi)
 	unitList = UiBoxLayout()
 	currentContent = UiScrollArea()
@@ -469,6 +478,7 @@ local function buildFrameContent(parentUi)
 	local icon_weapon_height = iconDef_weapon.height * iconDef_weapon.scale
 
 	local unitBox = UiBoxLayout()
+	local createNewUnit = UiTextBox()
 
 	unitBox
 		:widthpx(500)
@@ -639,6 +649,24 @@ local function buildFrameContent(parentUi)
 				:orientation(ORIENTATION_VERTICAL)
 				-- title on top
 				:add(createUiTitle("Mechs"))
+				:beginUi()
+					:heightpx(40)
+					:padding(-5) -- unpad button
+					:decorate{ createDecoGroupButton() }
+					:beginUi(createNewUnit)
+						:setVar("textfield", TITLE_CREATE_NEW_UNIT)
+						:setAlphabet(UiTextBox._ALPHABET_CHARS.."_")
+						:settooltip("Create a new unit", nil, true)
+						:decorate{
+							DecoTextBox{
+								font = FONT_TITLE,
+								textset = TEXT_SETTINGS_TITLE,
+								alignH = "center",
+								alignV = "center",
+							}
+						}
+					:endUi()
+				:endUi()
 				-- mech list
 				:beginUi(UiScrollArea)
 					:decorate{ DecoFrame() }
@@ -842,6 +870,79 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 
+	local function addUnitObject(obj)
+		local scrollarea = unitList.parent
+		local decorations = decorate_button.unit(nil, obj)
+		local surface_reset
+		local tooltips
+		decorations[1] = DecoEditorButton()
+
+		if obj:isCustom() then
+			surface_reset = getSurface_delete_small()
+			tooltips = {
+				"Remove unit",
+				"WARNING: clicking once more will remove this unit"
+			}
+		else
+			surface_reset = getSurface_reset_small()
+			tooltips = {
+				"Reset unit",
+				"WARNING: clicking once more will reset this unit to its default"
+			}
+		end
+		local entry = UiEditorButton(scrollarea)
+			:widthpx(icon_unit_width)
+			:heightpx(icon_unit_height)
+			:setVar("data", obj)
+			:setVar("decoImage", decorations[3])
+			:setVar("decoName", decorations[5])
+			:decorate(decorations)
+			:beginUi(UiMultiClickButton, 2)
+				:anchor("right", "bottom")
+				:sizepx(20, 20)
+				:setTooltips(tooltips)
+				:setVar("onclicked", resetParentUnit)
+				:decorate{
+					DecoButtonExt(nil, COLOR_RED),
+					DecoAnchor(),
+					DecoMultiClickButton(
+						{ surface_reset, getSurface_warning_small(), },
+						"center",
+						"center"
+					)
+				}
+			:endUi()
+			:addTo(unitList)
+
+		return entry
+	end
+
+	function createNewUnit:onEnter()
+		local name = self.textfield
+		if name:len() > 0 and modApi.units:get(name) == nil then
+			if _G[name] == nil then
+				_G[name] = modApi.units._baseMech:new()
+				local unit = modApi.units:add(name, modApi.units._baseMech)
+				unit.Name = name
+				unit:lock()
+				addUnitObject(unit)
+					:bringToTop()
+			end
+		end
+
+		self.root:setfocus(content)
+	end
+
+	createNewUnit.onFocusChangedEvent:subscribe(function(uiTextBox, focused, focused_prev)
+		if focused then
+			uiTextBox.textfield = ""
+			uiTextBox:setCaret(0)
+			uiTextBox.selection = nil
+		else
+			uiTextBox.textfield = TITLE_CREATE_NEW_UNIT
+		end
+	end)
+
 	local units_filtered = filter_table(modApi.units._children, function(k, unit)
 		return unit._default:isMech()
 	end)
@@ -855,18 +956,7 @@ local function buildFrameContent(parentUi)
 
 	-- populate unit list
 	for _, obj in ipairs(mechs_sorted) do
-		local scrollarea = unitList.parent
-		local decorations = decorate_button.unit(nil, obj)
-		decorations[1] = DecoEditorButton()
-		local entry = UiEditorButton(scrollarea)
-			:widthpx(icon_unit_width)
-			:heightpx(icon_unit_height)
-			:setVar("data", obj)
-			:setVar("decoImage", decorations[3])
-			:setVar("decoName", decorations[5])
-			:decorate(decorations)
-			:addTo(unitList)
-
+		addUnitObject(obj)
 	end
 
 	local function onEditorButtonSet(widget)
