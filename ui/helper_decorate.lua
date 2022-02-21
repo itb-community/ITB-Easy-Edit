@@ -26,6 +26,7 @@ end
 
 local getDecoration = switch()
 local getName = switch()
+local getReward = switch()
 
 function getDecoration.unit(unit)
 	local iconDef = getIconDef(unit)
@@ -39,6 +40,22 @@ end
 
 function getName.default(obj)
 	return obj:getName() or ""
+end
+
+getReward[REWARD_REP] = function()
+	return "img/ui/star.png"
+end
+
+getReward[REWARD_POWER] = function()
+	return "img/ui/power.png"
+end
+
+getReward[REWARD_TECH] = function()
+	return "img/ui/core.png"
+end
+
+getReward.default = function()
+	return "img/ui/star.png"
 end
 
 local function applyIconDef(ui, obj)
@@ -85,12 +102,34 @@ local function button_unit(ui, unit)
 	return button_base(ui, unit, "unit")
 end
 
-local function button_weapon(ui, weapon)
-	return button_base(ui, weapon, "weapon")
-end
-
 local function button_obj(ui, obj)
 	return button_base(ui, obj, "default")
+end
+
+local function button_structure(ui, obj)
+	local decorations = button_obj(nil, obj)
+	local decoReward = DecoIcon(
+		nil,
+		{
+			outlinesize = 0,
+			alignV = "bottom",
+			alignH = "right",
+		}
+	)
+	table.insert(decorations, 4, DecoAlign(0, -4))
+	table.insert(decorations, 5, decoReward)
+	table.insert(decorations, 6, DecoAnchor())
+
+	if ui then
+		ui:decorate(decorations)
+		applyIconDef(ui, obj)
+	end
+
+	if obj then
+		decoReward:setObject(getReward(obj.Reward))
+	end
+
+	return base
 end
 
 local function button_islandComposite(ui, islandComposite)
@@ -105,9 +144,9 @@ end
 return {
 	button = {
 		unit = button_unit,
-		weapon = button_weapon,
+		weapon = button_obj,
 		mission = button_obj,
-		structure = button_obj,
+		structure = button_structure,
 		islandComposite = button_islandComposite,
 		obj = button_obj,
 	},
