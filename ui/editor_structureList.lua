@@ -133,7 +133,7 @@ local function buildFrameContent(parentUi)
 			:widthpx(structure_iconDef.width * structure_iconDef.scale)
 			:heightpx(structure_iconDef.height * structure_iconDef.scale)
 			:setVar("data", structure)
-			:setCustomTooltip(tooltip.structure)
+			:settooltip("Drag-and-drop on a structure list", nil, true)
 			:addTo(structures)
 
 		decorate_button_structure(entry, structure)

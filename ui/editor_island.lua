@@ -240,7 +240,7 @@ local function buildFrameContent(parentUi)
 									:anchorH("center")
 									:setVar("onRecieve", onRecieve.island)
 									:setVar("onSend", onSend.island)
-									:setCustomTooltip(tooltip.island)
+									:settooltip("Change island graphics", nil, true)
 									:addList(
 										modApi.island._children,
 										decorate_button.obj,
@@ -261,7 +261,7 @@ local function buildFrameContent(parentUi)
 									:anchorH("center")
 									:setVar("onRecieve", onRecieve.ceo)
 									:setVar("onSend", onSend.ceo)
-									:setCustomTooltip(tooltip.ceo)
+									:settooltip("Change island ceo", nil, true)
 									:addList(
 										modApi.ceo._children,
 										decorate_button.obj,
@@ -282,7 +282,7 @@ local function buildFrameContent(parentUi)
 									:anchorH("center")
 									:setVar("onRecieve", onRecieve.tileset)
 									:setVar("onSend", onSend.tileset)
-									:setCustomTooltip(tooltip.tileset)
+									:settooltip("Change island tileset", nil, true)
 									:addList(
 										modApi.tileset._children,
 										decorate_button.obj,
@@ -300,6 +300,8 @@ local function buildFrameContent(parentUi)
 								:format(format_contentList)
 								:setVar("onRecieve", onRecieve.enemyList)
 								:setVar("onSend", onSend.enemyList)
+								:setVar("isGroupTooltip", true)
+								:settooltip("Change the list of enemies available on the island", nil, true)
 								:addList(
 									modApi.enemyList._children,
 									staticContentList,
@@ -310,6 +312,8 @@ local function buildFrameContent(parentUi)
 								:format(format_contentList)
 								:setVar("onRecieve", onRecieve.missionList)
 								:setVar("onSend", onSend.missionList)
+								:setVar("isGroupTooltip", true)
+								:settooltip("Change the list of missions available on the island", nil, true)
 								:addList(
 									modApi.missionList._children,
 									staticContentList,
@@ -320,6 +324,8 @@ local function buildFrameContent(parentUi)
 								:format(format_contentList)
 								:setVar("onRecieve", onRecieve.bossList)
 								:setVar("onSend", onSend.bossList)
+								:setVar("isGroupTooltip", true)
+								:settooltip("Change the list of bosses available on the island", nil, true)
 								:addList(
 									modApi.bossList._children,
 									staticContentList,
@@ -330,6 +336,8 @@ local function buildFrameContent(parentUi)
 								:format(format_contentList)
 								:setVar("onRecieve", onRecieve.structureList)
 								:setVar("onSend", onSend.structureList)
+								:setVar("isGroupTooltip", true)
+								:settooltip("Change the list of structures available on the island", nil, true)
 								:addList(
 									modApi.structureList._children,
 									staticContentList,
@@ -354,7 +362,6 @@ local function buildFrameContent(parentUi)
 			:heightpx(icon_island_height)
 			:setVar("data", islandComposite)
 			:decorate(decorations)
-			:setCustomTooltip(tooltip_islandComposite)
 			:addTo(islandList)
 
 	end

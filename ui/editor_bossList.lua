@@ -137,7 +137,7 @@ local function buildFrameContent(parentUi)
 			:widthpx(unit_iconDef.width * unit_iconDef.scale)
 			:heightpx(unit_iconDef.height * unit_iconDef.scale)
 			:setVar("data", bossMission)
-			:setCustomTooltip(tooltip.bossMission)
+			:settooltip("Drag-and-drop on a boss list", nil, true)
 			:addTo(bossMissions)
 
 		local unit = modApi.units:get(bossMission.BossPawn)

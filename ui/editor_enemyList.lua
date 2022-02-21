@@ -140,7 +140,7 @@ local function buildFrameContent(parentUi)
 			:widthpx(unit_iconDef.width * unit_iconDef.scale)
 			:heightpx(unit_iconDef.height * unit_iconDef.scale)
 			:setVar("data", enemy)
-			:setCustomTooltip(tooltip.unit)
+			:settooltip("Drag-and-drop on an enemy list", nil, true)
 			:addTo(enemies)
 
 		decorate_button_unit(entry, enemy)
