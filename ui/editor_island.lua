@@ -27,8 +27,6 @@ local EDITOR_TITLE = "Island Editor"
 local BORDER_SIZE = 2
 local SCROLL_BAR_WIDTH = 16
 local PADDING = 8
--- local ISLAND_ICON_WIDTH = 160
--- local ISLAND_ICON_HEIGHT = 120
 local ORIENTATION_HORIZONTAL = helpers.ORIENTATION_HORIZONTAL
 local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
 
@@ -78,7 +76,7 @@ local function onSend_island(sender, reciever)
 	local obj = modApi.island:get(sender.id)
 	reciever.data.island = sender.id
 	decorate_button.obj(sender, obj)
-	decorate_button.islandComposite(reciever, reciever.data)
+	reciever.decorations[3]:setObject(obj)
 end
 
 local function mkSend_popup(objName)
@@ -154,7 +152,7 @@ local function reset(reciever)
 		end
 	else
 		objectList:reset()
-		decorate_button.islandComposite(reciever, reciever.data)
+		reciever.decorations[3]:setObject(reciever.data)
 	end
 
 	for _, ui in pairs(uiEditBox) do
@@ -234,7 +232,6 @@ local function buildFrameContent(parentUi)
 						:beginUi(UiWeightLayout)
 							:heightpx(200)
 							:beginUi(UiBoxLayout)
-								:anchorH("left")
 								:width(.30)
 								:vgap(7)
 								:setVar("padt", 8)
@@ -252,14 +249,10 @@ local function buildFrameContent(parentUi)
 								:endUi()
 							:endUi()
 							:beginUi()
-								:beginUi()
-									:widthpx(2)
-									:decorate{ DecoSolid(deco.colors.buttonborder) }
-									:anchorH("center")
-								:endUi()
+								:widthpx(2)
+								:decorate{ DecoSolid(deco.colors.buttonborder) }
 							:endUi()
 							:beginUi(UiBoxLayout)
-								:anchorH("center")
 								:width(.30)
 								:vgap(7)
 								:setVar("padt", 8)
@@ -277,14 +270,10 @@ local function buildFrameContent(parentUi)
 								:endUi()
 							:endUi()
 							:beginUi()
-								:beginUi()
-									:widthpx(2)
-									:decorate{ DecoSolid(deco.colors.buttonborder) }
-									:anchorH("center")
-								:endUi()
+								:widthpx(2)
+								:decorate{ DecoSolid(deco.colors.buttonborder) }
 							:endUi()
 							:beginUi(UiBoxLayout)
-								:anchorH("right")
 								:width(.30)
 								:vgap(7)
 								:setVar("padt", 8)
