@@ -1,7 +1,7 @@
 
 local NULLTABLE = {}
 local IslandComposite = Class.inherit(IndexedEntry)
-IslandComposite._entryType = "IslandComposite"
+IslandComposite._entryType = "islandComposite"
 IslandComposite._iconDef = {
 	width = 120,
 	height = 120,
