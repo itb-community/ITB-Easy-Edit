@@ -143,6 +143,10 @@ local function decorate_contentList(ui, objList)
 		ui.contentList:detach()
 	end
 
+	if objList == nil then
+		return
+	end
+
 	ui.contentList = UiBoxLayout()
 		:width(nil)
 		:hgap(0)
