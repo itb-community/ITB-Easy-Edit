@@ -3,57 +3,44 @@
 local path = GetParentPath(...)
 local path_prev = GetParentPath(path)
 local UiDragObject = require(path.."UiDragObject")
-local DecoIcon = require(path_prev.."deco/DecoIcon")
-
--- defs
-local ISLAND_ICON_DEF = modApi.island:getIconDef()
-local ISLAND_ICON_DEF_OUTLINED = copy_table(modApi.island:getIconDef())
-ISLAND_ICON_DEF_OUTLINED.outlinesize = 2
+local DecoImmutable = require(path_prev.."deco/DecoImmutable")
 
 
 local UiDragObject_Island = Class.inherit(UiDragObject)
 
 function UiDragObject_Island:new(...)
 	UiDragObject.new(self, ...)
-	self:size(nil, nil)
+	self.decoIsland = DecoImmutable.ObjectSurface2x
+	self
+		:size(nil, nil)
+		:decorate{ self.decoIsland }
 end
 
 function UiDragObject_Island:onDropTargetDropped(dropTarget)
-	local islandComposite = self.data
-
-	dropTarget.data = islandComposite
+	self.data_prev = nil
 end
 
 function UiDragObject_Island:onDropTargetExited(dropTarget)
-	local islandComposite = dropTarget.data
-	local island = modApi.island:get(islandComposite.island)
-
-	dropTarget:decorate{
-		DecoIcon(island, ISLAND_ICON_DEF_OUTLINED)
-	}
+	dropTarget.data = self.data_prev
 end
 
 function UiDragObject_Island:onDropTargetEntered(dropTarget)
-	local islandComposite = self.data
-	local island = modApi.island:get(islandComposite.island)
-
-	dropTarget:decorate{
-		DecoIcon(island, ISLAND_ICON_DEF_OUTLINED)
-	}
+	self.data_prev = dropTarget.data
+	dropTarget.data = self.data
 end
 
 function UiDragObject_Island:onDragSourceGrabbed(dragSource)
-	local obj = dragSource.data
-	local islandId = obj.island
-	local island = modApi.island:get(islandId)
-	local decoIcon = DecoIcon(island, ISLAND_ICON_DEF)
+	self.data = dragSource.data
+	self.decoIsland:updateSurfacesForce(self)
 
-	self:sizepx(decoIcon.surface:w(), decoIcon.surface:h())
+	local decoId = self.decoIsland.id
+	local decoDef = self[decoId]
+	local surface = decoDef.surface
+
+	self:sizepx(surface:w(), surface:h())
+
 	self.x = dragSource.screenx + math.floor((dragSource.w - self.w) / 2)
 	self.y = dragSource.screeny + math.floor((dragSource.h - self.h) / 2)
-
-	self.data = obj
-	self:decorate{ decoIcon }
 end
 
 return UiDragObject_Island

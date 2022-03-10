@@ -23,36 +23,27 @@
 -- changed widthpx
 -- changed heightpx
 -- added sizepx
--- added containChildren
 -- added beginUi
 -- added endUi
--- added resizeOnce
 -- added setVar
 -- added format
--- added getDebugName
--- added setDebugName
--- added debug names to known ui elements in UiRoot
--- added updateFrozenSizeState
 -- added updateDragHoverState
+-- added updateGroupHoverState
 -- added onGameWindowResized
 -- added gameWindowResized
 -- added isTooltipUi
--- changed updateTooltipState
--- added enumerateAncestors
--- added enumerateDescendents
--- added findDescendentWhere
--- added findAncestorWhere
--- added isDescendentOf
--- added isAncestorOf
+-- extended updateTooltipState
 -- added setGroupOwner
 -- added getGroupOwner
--- added getDragSourceType
+-- added isGroupHovered
+-- added isGroupDragHovered
 -- added setCustomTooltip
 -- added addDeco
 -- added replaceDeco
 -- added insertDeco
 -- added removeDeco
 -- added compact
+-- added makeCullable
 
 -- UiRoot
 -- added setDragHoveredChild
@@ -90,17 +81,6 @@ function Ui:sizepx(w, h)
 	return self
 end
 
--- Limits children's width/height to be contained
--- within parent ui element
-function Ui:containChildren(containChildren)
-	local noFit = containChildren == false or nil
-
-	self.nofitx = noFit
-	self.nofity = noFit
-
-	return self
-end
-
 -- Adds a ui instance of class 'class' (or Ui if nil)
 -- to itself, and returns the new ui instance.
 -- Intended to be used in function chaining when
@@ -127,40 +107,16 @@ function Ui:endUi()
 	return self.parent
 end
 
--- Freezes the size of the Ui instance after the first
--- update
-function Ui:resizeOnce()
-	self.freezeSize = true
-	return self
-end
-
 -- Sets a variable in the table to the given value
 function Ui:setVar(var, value)
 	self[var] = value
 	return self
 end
 
-function Ui:format(fn)
-	fn(self)
+function Ui:format(fn, ...)
+	fn(self, ...)
 	return self
 end
-
-function Ui:getDebugName()
-	return self._debugName or "nonameUi"
-end
-
-function Ui:setDebugName(debugName)
-	self._debugName = debugName
-	return self
-end
-
-modApi.events.onUiRootCreated:subscribe(function(screen, root)
-	root:setDebugName("UiRoot")
-	root.priorityUi:setDebugName("priorityUi")
-	root.tooltipUi:setDebugName("tooltipUi")
-	root.draggableUi:setDebugName("draggableUi")
-	root.dropdownUi:setDebugName("dropdownUi")
-end)
 
 function UiRoot:setDragHoveredChild(child)
 	if self.draghoveredchild then
@@ -171,28 +127,6 @@ function UiRoot:setDragHoveredChild(child)
 
 	if child then
 		child.dragHovered = true
-	end
-end
-
-function Ui:updateFrozenSizeState()
-	local isDynamicSize = false
-		or self.wPercent ~= nil
-		or self.hPercent ~= nil
-
-	local isFreezeSize = true
-		and isDynamicSize == true
-		and self.freezeSize == true
-		and self.w > 0
-		and self.h > 0
-
-	if isFreezeSize then
-		self.wPercent = nil
-		self.hPercent = nil
-		self.freezeSize = nil
-	end
-
-	for _, child in ipairs(self.children) do
-		child:updateFrozenSizeState()
 	end
 end
 
@@ -242,13 +176,30 @@ function Ui:updateDragHoverState()
 	return self.dragHovered
 end
 
+function Ui:updateGroupHoverState()
+	self.groupHovered = false
+	self.groupDragHovered = false
+
+	if self.hovered then
+		self:getGroupOwner().groupHovered = true
+	end
+
+	if self.dragHovered then
+		self:getGroupOwner().groupDragHovered = true
+	end
+
+	for _, child in ipairs(self.children) do
+		child:updateGroupHoverState()
+	end
+end
+
 -- Adds more steps to the update phase of uiRoot.
 old_UiRoot_updateStates = UiRoot.updateStates
 function UiRoot:updateStates()
 	old_UiRoot_updateStates(self)
 
-	self:updateFrozenSizeState()
 	self:updateDragHoverState()
+	self:updateGroupHoverState()
 end
 
 function Ui:onGameWindowResized(screen, oldSize)
@@ -310,125 +261,6 @@ function Ui:updateTooltipState()
 	end
 end
 
-
--- Enumerates all ancestors (including itself)
--- and calls the function 'func(uiElement)', for
--- each ancestor.
---
--- Search depth can be specified.
--- A depth of 0 only queries itself.
--- A depth of 1 queries itself and its parent.
--- A depth of 2 queries itself, its parent and
--- its grand parent.
--- etc.
-function Ui:enumerateAncestors(func, depth)
-	depth = depth or INT_MAX
-
-	func(self)
-
-	if depth > 0 then
-		depth = depth - 1
-		if self.parent then
-			self.parent:enumerateAncestors(func, depth)
-		end
-	end
-end
-
--- Enumerates all descendents (including itself)
--- and calls the function 'func(uiElement)', for
--- each descendent.
---
--- Search depth can be specified.
--- A depth of 0 only queries itself.
--- A depth of 1 queries itself and its children.
--- A depth of 2 queries itself, its children and
--- its grand children.
--- etc.
-function Ui:enumerateDescendents(func, depth)
-	depth = depth or INT_MAX
-
-	func(self)
-
-	if depth > 0 then
-		depth = depth - 1
-		for _, child in ipairs(self.children) do
-			child:enumerateDescendents(func, depth)
-		end
-	end
-end
-
--- Returns true if _any_ descendent (including
--- itself) returns true for the function
--- 'bool predicate(uiElement)'
--- Returns false otherwise.
---
--- Search depth can be specified.
--- A depth of 0 only queries itself.
--- A depth of 1 queries itself and its parent.
--- A depth of 2 queries itself, its parent and
--- its grand parent.
--- etc.
-function Ui:findDescendentWhere(predicate, depth)
-	depth = depth or INT_MAX
-
-	if predicate(self) then
-		return true
-	end
-
-	if depth > 0 then
-		depth = depth - 1
-		for _, child in ipairs(self.children) do
-			if child:findDescendentWhere(predicate, depth) then
-				return true
-			end
-		end
-	end
-
-	return false
-end
-
--- Returns true if _any_ ancestor (including
--- itself) returns true for the function
--- 'bool predicate(uiElement)'
--- Returns false otherwise.
---
--- Search depth can be specified.
--- A depth of 0 only queries itself.
--- A depth of 1 queries itself and its children.
--- A depth of 2 queries itself, its children and
--- its grand children.
--- etc.
-function Ui:findAncestorWhere(predicate, depth)
-	depth = depth or INT_MAX
-
-	if predicate(self) then
-		return true
-	end
-
-	if depth > 0 then
-		depth = depth - 1
-		for _, child in ipairs(self.children) do
-			if child:findAncestorWhere(predicate, depth) then
-				return true
-			end
-		end
-	end
-
-	return false
-end
-
-function Ui:isDescendentOf(ancestor)
-	return self:findAncestorWhere(function(element)
-		return element == ancestor
-	end)
-end
-
-function Ui:isAncestorOf(descendent)
-	return self:findDescendentWhere(function(element)
-		return element == descendent
-	end)
-end
-
 function Ui:setGroupOwner(groupOwner)
 	self.groupOwner = groupOwner
 	return self
@@ -438,22 +270,12 @@ function Ui:getGroupOwner()
 	return self.groupOwner or self
 end
 
--- A drag source can initiate drag objects.
-function Ui:getDragSourceType()
-	return self.dragSourceType
+function Ui:isGroupHovered()
+	return self:getGroupOwner().groupHovered
 end
 
--- A drag object is a draggable object
--- which will react to hovering drop targets
--- of the same type.
-function Ui:getDragObjectType()
-	return self.dragObjectType
-end
-
--- A drop target is an object that will
--- react to drag objects hovering it.
-function Ui:getDropTargetType()
-	return self.dropTargetType
+function Ui:isGroupDragHovered()
+	return self:getGroupOwner().groupDragHovered
 end
 
 function Ui:setCustomTooltip(ui)
@@ -550,3 +372,32 @@ function Ui:crop(flag)
 end
 
 Ui.compact = Ui.crop
+
+local function relayoutCullable(self)
+	self._nocull = self.parent.rect:intersects(self.rect)
+
+	if self._nocull then
+		self:_relayout()
+	end
+end
+
+local function drawCullable(self, screen)
+	if self._nocull then
+		self:_draw(screen)
+	end
+end
+
+-- Make ui element cullable by wrapping its
+-- relayout and draw functions in a function
+-- which checks whether the element intersects
+-- its parent. This can be reversed by setting
+-- self.relayout = self._relayout
+-- self.draw = self._draw
+function Ui:makeCullable()
+	self._relayout = self.relayout
+	self._draw = self.draw
+	self.relayout = relayoutCullable
+	self.draw = drawCullable
+
+	return self
+end

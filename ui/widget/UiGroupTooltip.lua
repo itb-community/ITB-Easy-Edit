@@ -14,6 +14,7 @@ function UiGroupTooltip:relayout()
 	local groupOwner = hoveredchild and hoveredchild:getGroupOwner()
 
 	local isChildOfGroupTooltip = true
+		and root.tooltip == nil
 		and groupOwner ~= nil
 		and groupOwner ~= hoveredchild
 		and groupOwner.isGroupTooltip == true

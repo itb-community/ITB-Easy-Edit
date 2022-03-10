@@ -6,6 +6,8 @@ function UiDropTarget:new(dropTargetType)
 
 	self._debugName = "UiDropTarget"
 	self.dropTargetType = dropTargetType
+
+	Assert.Equals('string', type(self.dropTargetType), "Argument #1")
 end
 
 function UiDropTarget:getDragType()
@@ -22,6 +24,14 @@ end
 
 function UiDropTarget:onDragObjectExited(dragObject)
 	-- overridable method
+end
+
+function UiDropTarget.registerAsDropTarget(ui, dropTargetType)
+	ui.dropTargetType = dropTargetType
+
+	for i, fn in pairs(UiDropTarget) do
+		ui[i] = fn
+	end
 end
 
 return UiDropTarget

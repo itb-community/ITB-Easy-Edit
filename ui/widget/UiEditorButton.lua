@@ -1,9 +1,8 @@
 
 local UiEditorButton = Class.inherit(Ui)
-function UiEditorButton:new(scrollarea)
+function UiEditorButton:new()
 	Ui.new(self)
 	self._debugName = "UiEditorButton"
-	self.scrollarea = scrollarea
 end
 
 function UiEditorButton:resetGlobalVariables()
@@ -21,14 +20,14 @@ end
 
 function UiEditorButton:updateState()
 	local hovered_prev = self.hovered_prev
-	local hovered = self.hovered
+	local hovered = self:isGroupHovered()
 	self.hovered_prev = hovered
 
 	local displayedEditorButton = easyEdit.displayedEditorButton
 	local selectedEditorButton = easyEdit.selectedEditorButton
 	local isDisplayedEditorButtonHovered = true
 		and easyEdit.displayedEditorButton
-		and easyEdit.displayedEditorButton.hovered
+		and easyEdit.displayedEditorButton:isGroupHovered()
 
 	if hovered ~= hovered_prev then
 		if hovered then
@@ -47,48 +46,6 @@ function UiEditorButton:updateState()
 	end
 
 	Ui.updateState(self)
-end
-
-function UiEditorButton:relayout()
-	local scrollarea = self.scrollarea
-
-	if scrollarea then
-		local y = self.screeny
-		local h = self.h
-		local scroll_y = scrollarea.screeny
-		local scroll_h = scrollarea.h
-
-		local cull = false
-			or y > scroll_y + scroll_h
-			or y + h < scroll_y
-
-		if cull then
-			return
-		end
-	end
-
-	Ui.relayout(self)
-end
-
-function UiEditorButton:draw(screen)
-	local scrollarea = self.scrollarea
-
-	if scrollarea then
-		local y = self.screeny
-		local h = self.h
-		local scroll_y = scrollarea.screeny
-		local scroll_h = scrollarea.h
-
-		local cull = false
-			or y > scroll_y + scroll_h
-			or y + h < scroll_y
-
-		if cull then
-			return
-		end
-	end
-
-	Ui.draw(self, screen)
 end
 
 return UiEditorButton

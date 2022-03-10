@@ -2,11 +2,12 @@
 -- header
 local path = GetParentPath(...)
 local helpers = require(path.."helpers")
-local decorate = require(path.."helper_decorate")
-local dragEntry = require(path.."helper_dragEntry")
-local tooltip = require(path.."helper_tooltip")
 local tooltip_islandComposite = require(path.."helper_tooltip_islandComposite")
 local DecoIcon = require(path.."deco/DecoIcon")
+local DecoImmutable = require(path.."deco/DecoImmutable")
+local DecoImmutableIsland = DecoImmutable.ObjectSurface2xCenterClip
+local DecoImmutableIslandOutline = DecoImmutable.IslandCompositeIsland
+local DecoImmutableIslandCompositeTitle = DecoImmutable.ObjectNameLabelBounceCenterHClip
 local UiDragSource = require(path.."widget/UiDragSource")
 local UiDragObject_Island = require(path.."widget/UiDragObject_Island")
 local UiDropTarget = require(path.."widget/UiDropTarget")
@@ -14,10 +15,9 @@ local UiScrollAreaExt = require(path.."widget/UiScrollAreaExt")
 local UiScrollArea = UiScrollAreaExt.vertical
 local UiScrollAreaH = UiScrollAreaExt.horizontal
 
-local createUiTitle = helpers.createUiTitle
-
 -- defs
 local EDITOR_TITLE = "World Editor"
+local ENTRY_HEIGHT = helpers.ENTRY_HEIGHT
 local PADDING = 8
 local SCROLLBAR_WIDTH = 16
 local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
@@ -25,8 +25,7 @@ local ORIENTATION_HORIZONTAL = helpers.ORIENTATION_HORIZONTAL
 local DRAG_TARGET_TYPE = modApi.islandComposite:getDragType()
 local TOOLTIP_ISLAND_COMPOSITE = tooltip_islandComposite
 local DEFAULT_ISLAND_SLOTS = { "archive", "rst", "pinnacle", "detritus" }
-local ISLAND_ICON_DEF_OUTLINED = copy_table(modApi.island:getIconDef())
-ISLAND_ICON_DEF_OUTLINED.outlinesize = 2
+local ISLAND_ICON_DEF = modApi.island:getIconDef()
 
 -- ui
 local islandSlots
@@ -39,11 +38,7 @@ local function resetAll()
 		local island = modApi.island:get(islandComposite.island)
 		local islandInSlot = islandSlots[i]
 
-		islandInSlot
-			:setVar("data", islandComposite)
-			:decorate{
-				DecoIcon(island, ISLAND_ICON_DEF_OUTLINED)
-			}
+		islandInSlot.data = islandComposite
 	end
 end
 
@@ -66,10 +61,19 @@ local function buildFrameContent(parentUi)
 				:width(1)
 				:vgap(8)
 				:orientation(ORIENTATION_VERTICAL)
-				:add(createUiTitle("World"))
+				:beginUi()
+					:heightpx(ENTRY_HEIGHT)
+					:setVar("padl", 8)
+					:setVar("padr", 8)
+					:setVar("text_title_centerv", "World")
+					:decorate{
+						DecoImmutable.Frame,
+						DecoImmutable.TextTitleCenterV,
+					}
+				:endUi()
 				:beginUi()
 					:decorate{
-						DecoFrame(),
+						DecoImmutable.Frame,
 						DecoIcon("img/strategy/waterbg.png", { clip = true }),
 					}
 					:beginUi(islandSlots[1])
@@ -93,7 +97,7 @@ local function buildFrameContent(parentUi)
 		:endUi()
 		:beginUi()
 			:widthpx(0
-				+ ISLAND_ICON_DEF_OUTLINED.width * ISLAND_ICON_DEF_OUTLINED.scale
+				+ ISLAND_ICON_DEF.width * ISLAND_ICON_DEF.scale
 				+ 4 * PADDING + SCROLLBAR_WIDTH
 			)
 			:padding(PADDING)
@@ -101,9 +105,18 @@ local function buildFrameContent(parentUi)
 				:width(1)
 				:vgap(8)
 				:orientation(ORIENTATION_VERTICAL)
-				:add(createUiTitle("Islands"))
+				:beginUi()
+					:heightpx(ENTRY_HEIGHT)
+					:setVar("padl", 8)
+					:setVar("padr", 8)
+					:setVar("text_title_centerv", "Islands")
+					:decorate{
+						DecoImmutable.Frame,
+						DecoImmutable.TextTitleCenterV,
+					}
+				:endUi()
 				:beginUi(UiScrollArea)
-					:decorate{ DecoFrame() }
+					:decorate{ DecoImmutable.Frame }
 					:beginUi(islandComposites)
 						:padding(PADDING)
 						:vgap(7)
@@ -122,22 +135,25 @@ local function buildFrameContent(parentUi)
 		islandInSlot
 			:setVar("data", islandComposite)
 			:setCustomTooltip(TOOLTIP_ISLAND_COMPOSITE)
-			:decorate{
-				DecoIcon(island, ISLAND_ICON_DEF_OUTLINED)
-			}
+			:decorate{ DecoImmutableIslandOutline }
 	end
 
 	for _, islandComposite in pairs(modApi.islandComposite._children) do
 		local entry = UiDragSource(dragObject)
 
 		entry
-			:widthpx(ISLAND_ICON_DEF_OUTLINED.width * ISLAND_ICON_DEF_OUTLINED.scale)
-			:heightpx(ISLAND_ICON_DEF_OUTLINED.height * ISLAND_ICON_DEF_OUTLINED.scale)
+			:widthpx(ISLAND_ICON_DEF.width * ISLAND_ICON_DEF.scale)
+			:heightpx(ISLAND_ICON_DEF.height * ISLAND_ICON_DEF.scale)
 			:setVar("data", islandComposite)
 			:setCustomTooltip(TOOLTIP_ISLAND_COMPOSITE)
+			:decorate{
+				DecoImmutable.Button,
+				DecoImmutable.Anchor,
+				DecoImmutableIsland,
+				DecoImmutable.TransHeader,
+				DecoImmutableIslandCompositeTitle,
+			}
 			:addTo(islandComposites)
-
-		decorate.button.islandComposite(entry, islandComposite)
 	end
 
 	return content

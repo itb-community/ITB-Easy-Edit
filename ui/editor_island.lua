@@ -2,33 +2,43 @@
 -- header
 local path = GetParentPath(...)
 local helpers = require(path.."helpers")
-local decorate = require(path.."helper_decorate")
-local tooltip = require(path.."helper_tooltip")
-local tooltip_islandComposite = require(path.."helper_tooltip_islandComposite")
 local UiEditBox = require(path.."widget/UiEditBox")
 local UiEditorButton = require(path.."widget/UiEditorButton")
+local UiMultiClickButton = require(path.."widget/UiMultiClickButton")
 local UiScrollAreaExt = require(path.."widget/UiScrollAreaExt")
 local UiScrollAreaH = UiScrollAreaExt.horizontal
 local UiScrollArea = UiScrollAreaExt.vertical
 local UiPopup = require(path.."widget/UiPopup")
 local DecoObj = require(path.."deco/DecoObj")
 local DecoEditorButton = require(path.."deco/DecoEditorButton")
-local staticContentList = require(path.."helper_staticContentList")
+local DecoImmutable = require(path.."deco/DecoImmutable")
 
-local createUiLabel = helpers.createUiLabel
-local createUiTitle = helpers.createUiTitle
+
+local addStaticContentList2x = helpers.addStaticContentList2x
+local createStaticContentList2x = helpers.createStaticContentList2x
+local createPopupEntryFunc_icon1x = helpers.createPopupEntryFunc_icon1x
+local createPopupEntryFunc_icon2x = helpers.createPopupEntryFunc_icon2x
 local createUiEditBox = helpers.createUiEditBox
-local createVerticalBar = helpers.createVerticalBar
-local createDecoGroupButton = helpers.createDecoGroupButton
-local decorate_button = decorate.button
+local setIconDef = helpers.setIconDef
+local resetButton_entry = helpers.resetButton_entry
+local deleteButton_entry = helpers.deleteButton_entry
 
 -- defs
 local EDITOR_TITLE = "Island Editor"
+local TITLE_CREATE_NEW_ISLAND = "New island"
+local ENTRY_HEIGHT = helpers.ENTRY_HEIGHT
 local BORDER_SIZE = 2
 local SCROLL_BAR_WIDTH = 16
 local PADDING = 8
+local LABEL_HEIGHT = 20
 local ORIENTATION_HORIZONTAL = helpers.ORIENTATION_HORIZONTAL
 local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
+local FONT_TITLE = helpers.FONT_TITLE
+local TEXT_SETTINGS_TITLE = helpers.TEXT_SETTINGS_TITLE
+local COLOR_RED = helpers.COLOR_RED
+local ISLAND_ICON_DEF = modApi.island:getIconDef()
+local CEO_ICON_DEF = modApi.ceo:getIconDef()
+local TILESET_ICON_DEF = modApi.tileset:getIconDef()
 
 -- ui
 local currentContent
@@ -37,24 +47,17 @@ local uiEditBox
 local islandEditor = {}
 local sortLessThan = get_sort_less_than("_id")
 
-local function format_contentList(ui)
-	ui
-		:decorate{ createDecoGroupButton() }
-		:heightpx(40)
-
-	ui.popupWindow
+local function format_popupWindow(self)
+	self.popupWindow
 		:width(0.6)
 		:height(0.6)
 
-	ui.popupWindow.flowlayout
-		:padding(20)
+	self.popupWindow.flowlayout
+		:setVar("padl", 50)
+		:setVar("padr", 50)
+		:setVar("padt", 60)
+		:setVar("padb", 70)
 		:vgap(60)
-end
-
-local function format_contentListContainer(ui)
-	ui
-		:heightpx(100)
-		:padding(20)
 end
 
 local function onPopupEntryClicked(self)
@@ -73,25 +76,15 @@ local function onPopupEntryClicked(self)
 end
 
 local function onSend_island(sender, reciever)
-	local obj = modApi.island:get(sender.id)
+	local island = modApi.island:get(sender.id)
 	reciever.data.island = sender.id
-	decorate_button.obj(sender, obj)
-	reciever.decorations[3]:setObject(obj)
+	reciever.decorations[3]:updateSurfacesForce(reciever)
 end
 
 local function mkSend_popup(objName)
 	return function(sender, reciever)
 		local obj = modApi[objName]:get(sender.id)
 		reciever.data[objName] = sender.id
-		decorate_button.obj(sender, obj)
-	end
-end
-
-local function mkSend_list(objName)
-	return function(sender, reciever)
-		local objList = modApi[objName]:get(sender.data)
-		reciever.data[objName] = sender.data
-		staticContentList(sender, objList)
 	end
 end
 
@@ -99,19 +92,32 @@ local function mkRecieve_popup(objName)
 	return function(reciever, sender)
 		local obj = modApi[objName]:get(sender.data[objName])
 		reciever.data = obj
-		decorate_button.obj(reciever, obj)
+	end
+end
+
+local function mkSend_list(objName)
+	return function(sender, reciever)
+		local objList = modApi[objName]:get(sender.data)
+		reciever.data[objName] = sender.data._id
+		sender.staticContentList.data = sender.data
+		sender.staticContentListLabel.data = sender.data
 	end
 end
 
 local function mkRecieve_list(objName)
 	return function(reciever, sender)
 		local objList = modApi[objName]:get(sender.data[objName])
-		staticContentList(reciever, objList)
+		reciever.staticContentList.data = objList
+		reciever.staticContentListLabel.data = objList
 	end
 end
 
 local function onRecieve_id(reciever, sender)
-	reciever:updateText(sender.data._id)
+	local text = sender.data._id
+	if text ~= nil then
+		text = "Island id: "..text
+	end
+	reciever.text_title_bounce_centerv_clip = text
 end
 
 local onSend = {
@@ -142,17 +148,15 @@ local function reset(reciever)
 	local objectList = reciever.data
 
 	if objectList:isCustom() then
-		-- TODO: test if this makes sense
 		if reciever == easyEdit.displayedEditorButton then
 			easyEdit.displayedEditorButton = nil
 		end
-		-- TODO: test what happens to custom created islands
 		if objectList:delete() then
 			reciever:detach()
 		end
 	else
 		objectList:reset()
-		reciever.decorations[3]:setObject(reciever.data)
+		reciever.decorations[3]:updateSurfacesForce(reciever)
 	end
 
 	for _, ui in pairs(uiEditBox) do
@@ -166,16 +170,31 @@ local function resetAll()
 	end
 end
 
+local function onclicked_resetButton(self)
+	reset(self.parent)
+	return true
+end
+
+local function draw_resetButton(self, screen)
+	if self.parent:isGroupHovered() then
+		UiMultiClickButton.draw(self, screen)
+	end
+end
+
+local function isHighlighted_decoEditorButton(self, widget)
+	return widget:isGroupHovered()
+end
+
 local function buildFrameContent(parentUi)
 	islandList = UiBoxLayout()
 	currentContent = UiScrollArea()
 
-	local iconDef_island = modApi.units:getIconDef()
-	local icon_island_width = iconDef_island.width * iconDef_island.scale
-	local icon_island_height = iconDef_island.height * iconDef_island.scale
+	local icon_island_width = ISLAND_ICON_DEF.width * ISLAND_ICON_DEF.scale
+	local icon_island_height = ISLAND_ICON_DEF.height * ISLAND_ICON_DEF.scale
+	local createNewIsland = UiTextBox()
 
 	uiEditBox = {
-		id = createUiEditBox(createUiTitle, "Selected Island"),
+		id = createUiEditBox(),
 		island = createUiEditBox(UiPopup, "Islands"),
 		ceo = createUiEditBox(UiPopup, "Ceos"),
 		tileset = createUiEditBox(UiPopup, "Tilesets"),
@@ -200,9 +219,37 @@ local function buildFrameContent(parentUi)
 				:width(1)
 				:vgap(8)
 				:orientation(ORIENTATION_VERTICAL)
-				:add(createUiTitle("Islands"))
+				:beginUi()
+					:heightpx(ENTRY_HEIGHT)
+					:setVar("padl", 8)
+					:setVar("padr", 8)
+					:setVar("text_title_centerv", "Islands")
+					:decorate{
+						DecoImmutable.Frame,
+						DecoImmutable.TextTitleCenterV,
+					}
+				:endUi()
+				:beginUi()
+					:heightpx(40)
+					:padding(-5) -- unpad button
+					:decorate{ DecoImmutable.GroupButton }
+					:beginUi(createNewIsland)
+						:format(function(self) self.groupOwner = self.parent end)
+						:setVar("textfield", TITLE_CREATE_NEW_ISLAND)
+						:setAlphabet(UiTextBox._ALPHABET_CHARS.."_")
+						:settooltip("Create a new island", nil, true)
+						:decorate{
+							DecoTextBox{
+								font = FONT_TITLE,
+								textset = TEXT_SETTINGS_TITLE,
+								alignH = "center",
+								alignV = "center",
+							}
+						}
+					:endUi()
+				:endUi()
 				:beginUi(UiScrollArea)
-					:decorate{ DecoFrame() }
+					:decorate{ DecoImmutable.Frame }
 					:beginUi(islandList)
 						:padding(PADDING)
 						:vgap(7)
@@ -218,7 +265,15 @@ local function buildFrameContent(parentUi)
 				:vgap(8)
 				:orientation(ORIENTATION_VERTICAL)
 				:beginUi(uiEditBox.id)
+					:heightpx(ENTRY_HEIGHT)
+					:setVar("padl", 8)
+					:setVar("padr", 8)
 					:setVar("onRecieve", onRecieve.id)
+					:setVar("text_title_bounce_centerv_clip", "Selected Island")
+					:decorate{
+						DecoImmutable.Frame,
+						DecoImmutable.TextTitleBounceCenterVClip,
+					}
 				:endUi()
 				:beginUi(currentContent)
 					:hide()
@@ -235,15 +290,27 @@ local function buildFrameContent(parentUi)
 								:width(.30)
 								:vgap(7)
 								:setVar("padt", 8)
-								:add(createUiLabel("ISLAND"))
+								:beginUi()
+									:heightpx(LABEL_HEIGHT)
+									:setVar("text_label_center", "ISLAND")
+									:decorate{ DecoImmutable.TextLabelCenter }
+								:endUi()
 								:beginUi(uiEditBox.island)
 									:anchorH("center")
+									:format(setIconDef, ISLAND_ICON_DEF)
 									:setVar("onRecieve", onRecieve.island)
 									:setVar("onSend", onSend.island)
+									:decorate{
+										DecoImmutable.Button,
+										DecoImmutable.Anchor,
+										DecoImmutable.ObjectSurface1xCenterClip,
+										DecoImmutable.TransHeader,
+										DecoImmutable.ObjectNameLabelBounceCenterHClip,
+									}
 									:settooltip("Change island graphics", nil, true)
 									:addList(
 										modApi.island._children,
-										decorate_button.obj,
+										createPopupEntryFunc_icon1x(ISLAND_ICON_DEF),
 										onPopupEntryClicked
 									)
 								:endUi()
@@ -256,15 +323,27 @@ local function buildFrameContent(parentUi)
 								:width(.30)
 								:vgap(7)
 								:setVar("padt", 8)
-								:add(createUiLabel("CEO"))
+								:beginUi()
+									:heightpx(LABEL_HEIGHT)
+									:setVar("text_label_center", "CEO")
+									:decorate{ DecoImmutable.TextLabelCenter }
+								:endUi()
 								:beginUi(uiEditBox.ceo)
 									:anchorH("center")
+									:format(setIconDef, CEO_ICON_DEF)
 									:setVar("onRecieve", onRecieve.ceo)
 									:setVar("onSend", onSend.ceo)
+									:decorate{
+										DecoImmutable.Button,
+										DecoImmutable.Anchor,
+										DecoImmutable.ObjectSurface2xCenterClip,
+										DecoImmutable.TransHeader,
+										DecoImmutable.ObjectNameLabelBounceCenterHClip,
+									}
 									:settooltip("Change island ceo", nil, true)
 									:addList(
 										modApi.ceo._children,
-										decorate_button.obj,
+										createPopupEntryFunc_icon2x(CEO_ICON_DEF),
 										onPopupEntryClicked
 									)
 								:endUi()
@@ -277,15 +356,27 @@ local function buildFrameContent(parentUi)
 								:width(.30)
 								:vgap(7)
 								:setVar("padt", 8)
-								:add(createUiLabel("TILESET"))
+								:beginUi()
+									:heightpx(LABEL_HEIGHT)
+									:setVar("text_label_center", "TILESET")
+									:decorate{ DecoImmutable.TextLabelCenter }
+								:endUi()
 								:beginUi(uiEditBox.tileset)
 									:anchorH("center")
+									:format(setIconDef, TILESET_ICON_DEF)
 									:setVar("onRecieve", onRecieve.tileset)
 									:setVar("onSend", onSend.tileset)
+									:decorate{
+										DecoImmutable.Button,
+										DecoImmutable.Anchor,
+										DecoImmutable.ObjectSurface1xCenterClip,
+										DecoImmutable.TransHeader,
+										DecoImmutable.ObjectNameLabelBounceCenterHClip,
+									}
 									:settooltip("Change island tileset", nil, true)
 									:addList(
 										modApi.tileset._children,
-										decorate_button.obj,
+										createPopupEntryFunc_icon1x(TILESET_ICON_DEF),
 										onPopupEntryClicked
 									)
 								:endUi()
@@ -295,52 +386,63 @@ local function buildFrameContent(parentUi)
 							:heightpx(400)
 							:padding(20)
 							:vgap(40)
-							:format(format_contentListContainer)
 							:beginUi(uiEditBox.enemyList)
-								:format(format_contentList)
+								:heightpx(40)
+								:padding(-5)
+								:decorate{ DecoImmutable.GroupButton }
+								:format(addStaticContentList2x)
+								:format(format_popupWindow)
 								:setVar("onRecieve", onRecieve.enemyList)
 								:setVar("onSend", onSend.enemyList)
-								:setVar("isGroupTooltip", true)
 								:settooltip("Change the list of enemies available on the island", nil, true)
 								:addList(
 									modApi.enemyList._children,
-									staticContentList,
-									onPopupEntryClicked
-								)
-							:endUi()
-							:beginUi(uiEditBox.missionList)
-								:format(format_contentList)
-								:setVar("onRecieve", onRecieve.missionList)
-								:setVar("onSend", onSend.missionList)
-								:setVar("isGroupTooltip", true)
-								:settooltip("Change the list of missions available on the island", nil, true)
-								:addList(
-									modApi.missionList._children,
-									staticContentList,
+									createStaticContentList2x,
 									onPopupEntryClicked
 								)
 							:endUi()
 							:beginUi(uiEditBox.bossList)
-								:format(format_contentList)
+								:heightpx(40)
+								:padding(-5)
+								:decorate{ DecoImmutable.GroupButton }
+								:format(addStaticContentList2x)
+								:format(format_popupWindow)
 								:setVar("onRecieve", onRecieve.bossList)
 								:setVar("onSend", onSend.bossList)
-								:setVar("isGroupTooltip", true)
 								:settooltip("Change the list of bosses available on the island", nil, true)
 								:addList(
 									modApi.bossList._children,
-									staticContentList,
+									createStaticContentList2x,
+									onPopupEntryClicked
+								)
+							:endUi()
+							:beginUi(uiEditBox.missionList)
+								:heightpx(40)
+								:padding(-5)
+								:decorate{ DecoImmutable.GroupButton }
+								:format(addStaticContentList2x)
+								:format(format_popupWindow)
+								:setVar("onRecieve", onRecieve.missionList)
+								:setVar("onSend", onSend.missionList)
+								:settooltip("Change the list of missions available on the island", nil, true)
+								:addList(
+									modApi.missionList._children,
+									createStaticContentList2x,
 									onPopupEntryClicked
 								)
 							:endUi()
 							:beginUi(uiEditBox.structureList)
-								:format(format_contentList)
+								:heightpx(40)
+								:padding(-5)
+								:decorate{ DecoImmutable.GroupButton }
+								:format(addStaticContentList2x)
+								:format(format_popupWindow)
 								:setVar("onRecieve", onRecieve.structureList)
 								:setVar("onSend", onSend.structureList)
-								:setVar("isGroupTooltip", true)
 								:settooltip("Change the list of structures available on the island", nil, true)
 								:addList(
 									modApi.structureList._children,
-									staticContentList,
+									createStaticContentList2x,
 									onPopupEntryClicked
 								)
 							:endUi()
@@ -350,21 +452,74 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 
+	local function addIslandCompositeObject(islandComposite)
+		local entry = UiEditorButton()
+		local decoEditorButton = DecoEditorButton()
+		local resetButton
+
+		if islandComposite:isCustom() then
+			resetButton = deleteButton_entry()
+		else
+			resetButton = resetButton_entry()
+		end
+
+		resetButton.onclicked = onclicked_resetButton
+		resetButton.draw = draw_resetButton
+		resetButton.tooltip_static = true
+		resetButton.groupOwner = entry
+		decoEditorButton.isHighlighted = isHighlighted_decoEditorButton
+
+		entry
+			:widthpx(icon_island_width)
+			:heightpx(icon_island_height)
+			:setVar("data", islandComposite)
+			:settooltip("Select which island to edit", nil, true)
+			:decorate{
+				decoEditorButton,
+				DecoImmutable.Anchor,
+				DecoImmutable.ObjectSurface1xCenterClip,
+				DecoImmutable.TransHeader,
+				DecoImmutable.ObjectNameLabelBounceCenterHClip,
+			}
+			:beginUi(resetButton)
+				:pospx(2, 2)
+				:anchor("left", "bottom")
+			:endUi()
+			:makeCullable()
+			:addTo(islandList)
+
+		return entry
+	end
+
 	local islands_sorted = to_sorted_array(modApi.islandComposite._children, sortLessThan)
 
 	-- populate island list
 	for _, islandComposite in ipairs(islands_sorted) do
-		local scrollarea = islandList.parent
-		local decorations = decorate_button.islandComposite(nil, islandComposite)
-		decorations[1] = DecoEditorButton()
-		local entry = UiEditorButton(scrollarea)
-			:widthpx(icon_island_width)
-			:heightpx(icon_island_height)
-			:setVar("data", islandComposite)
-			:decorate(decorations)
-			:addTo(islandList)
-
+		addIslandCompositeObject(islandComposite)
 	end
+
+	function createNewIsland:onEnter()
+		local name = self.textfield
+		if name:len() > 0 and modApi.islandComposite:get(name) == nil then
+			local islandComposite = modApi.islandComposite:add(name)
+			local scrollarea = islandList.parent
+			islandComposite:lock()
+			addIslandCompositeObject(islandComposite)
+			scrollarea:scrollTo(scrollarea.innerHeight)
+		end
+
+		self.root:setfocus(content)
+	end
+
+	createNewIsland.onFocusChangedEvent:subscribe(function(uiTextBox, focused, focused_prev)
+		if focused then
+			uiTextBox.textfield = ""
+			uiTextBox:setCaret(0)
+			uiTextBox.selection = nil
+		else
+			uiTextBox.textfield = TITLE_CREATE_NEW_ISLAND
+		end
+	end)
 
 	local function onEditorButtonSet(widget)
 		if widget then
@@ -374,7 +529,7 @@ local function buildFrameContent(parentUi)
 			end
 		else
 			currentContent:hide()
-			uiEditBox.id:updateText("Selected Island")
+			uiEditBox.id.text_title_bounce_centerv_clip = "Selected Island"
 		end
 	end
 
@@ -390,12 +545,6 @@ local function buildFrameButtons(buttonLayout)
 		"Default",
 		"Reset everything to default\n\nWARNING: This will delete all custom islands",
 		resetAll
- 	):addTo(buttonLayout)
-
-	sdlext.buildButton(
-		"Reset",
-		"Reset currently selected island",
-		reset
  	):addTo(buttonLayout)
 end
 

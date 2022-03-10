@@ -8,6 +8,8 @@ function UiDragSource:new(dragObject)
 	self.draggable = true
 	self.dragObject = dragObject
 	self.dragSourceType = dragObject.dragObjectType
+
+	Assert.Equals('string', type(self.dragSourceType), "Argument #1")
 end
 
 function UiDragSource:getDragType()
@@ -22,6 +24,14 @@ function UiDragSource:startDrag(mx, my, button)
 	-- pass pressed and dragged state to dragObject
 	self.root:setPressedChild(self.dragObject)
 	self.root:setDraggedChild(self.dragObject)
+end
+
+function UiDragSource.registerAsDragSource(ui, dragSourceType)
+	ui.dragSourceType = dragSourceType
+
+	for i, fn in pairs(UiDragSource) do
+		ui[i] = fn
+	end
 end
 
 return UiDragSource

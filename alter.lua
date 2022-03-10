@@ -33,100 +33,145 @@ local mechList = {
 	"LeapMech", "UnstableTank", "NanoMech",
 }
 
-local function registerWeapon(id)
-	local base = _G[id]
+local UNIT_EXCLUSION = {
+}
 
-	if not modApi.weapons:get(id) then
-		local weapon = modApi.weapons:add(id)
-		weapon:copy(base)
-		weapon.__Id = id
-		weapon.Name = GetText(id.."_Name") or base.Name
-		weapon.Description = GetText(id.."_Description") or base.Description
-		weapon:lock()
+local WEAPON_EXCLUSION = {
+}
+
+local MISSION_EXCLUSION = {
+	"Mission",
+	"Mission_Test",
+	"Mission_Auto",
+	"Mission_Battle",
+	"Mission_Infinite",
+	"Mission_Tutorial",
+	"Mission_Critical",
+	"Mission_MineBase",
+	"Mission_Final",
+	"Mission_Final_Cave",
+	"Mission_Boss",
+
+	"Mission_Sandstorm",
+}
+
+local STRUCTURE_EXCLUSION = {
+	
+}
+
+local function registerWeapon(weapon_id)
+	if list_contains(WEAPON_EXCLUSION, weapon_id) then
+		return
+	end
+
+	local base = _G[weapon_id]
+	local weapon = modApi.weapons:get(weapon_id)
+
+	weapon = weapon or modApi.weapons:add(weapon_id)
+	weapon:copy(base)
+	weapon.__Id = weapon_id
+	weapon.Name = GetText(weapon_id.."_Name") or base.Name
+	weapon.Description = GetText(weapon_id.."_Description") or base.Description
+	weapon:lock()
+end
+
+local function registerWeapons()
+	for weapon_id, _ in pairs(modApi.weaponDeck) do
+		registerWeapon(weapon_id)
+	end
+end
+
+local units = modApi.units
+local unitImages = modApi.unitImage
+local isValidUnit = units._class.isValid
+local function registerUnit(unit_id)
+	if list_contains(UNIT_EXCLUSION, unit_id) then
+		return
+	end
+
+	local base = _G[unit_id]
+	local unit = units:get(unit_id)
+
+	if base.Name == "Unnamed Pawn" or base.Name == "PawnTable" then
+		base.Name = GetText(unit_id)
+	end
+
+	if isValidUnit(base) then
+		unit = unit or units:add(unit_id, base)
+		unit:lock()
+
+		units:addSoundBase(unit)
+	end
+
+	unitImageId = base.Image
+	unitImage = unitImages:get(unitImageId)
+
+	if unitImage == nil then
+		unitImage = unitImages:add(unitImageId)
+		unitImage.Name = unitImageId
+		unitImage.Image = base.Image
+		unitImage.ImageOffset = base.ImageOffset
+		unitImage:lock()
+	end
+
+	for _, weaponId in ipairs(base.SkillList) do
+		registerWeapon(weaponId)
 	end
 end
 
 local function registerUnits()
-	local units = modApi.units
-	local unitImages = modApi.unitImage
-	local isValidUnit = units._class.isValid
-
-	for id, base in pairs(_G) do
+	for unit_id, unit in pairs(_G) do
 		local isUnit = true
-			and type(base) == 'table'
-			and type(base.Name) == 'string'
-			and type(base.Class) == 'string'
-			and type(base.Image) == 'string'
-			and type(base.ImageOffset) == 'number'
-			and type(base.Health) == 'number'
-			and type(base.MoveSpeed) == 'number'
-			and type(base.SkillList) == 'table'
+			and type(unit) == 'table'
+			and type(unit.Name) == 'string'
+			and type(unit.Class) == 'string'
+			and type(unit.Image) == 'string'
+			and type(unit.ImageOffset) == 'number'
+			and type(unit.Health) == 'number'
+			and type(unit.MoveSpeed) == 'number'
+			and type(unit.SkillList) == 'table'
 
 		if isUnit then
-			local unit = units:get(id)
-
-			if base.Name == "Unnamed Pawn" or base.Name == "PawnTable" then
-				base.Name = GetText(id)
-			end
-
-			if isValidUnit(base) then
-				unit = unit or units:add(id, base)
-				unit:lock()
-
-				units:addSoundBase(unit)
-			end
-
-			unitImageId = base.Image
-			unitImage = unitImages:get(unitImageId)
-
-			if unitImage == nil then
-				unitImage = unitImages:add(unitImageId)
-				unitImage.Name = unitImageId
-				unitImage.Image = base.Image
-				unitImage.ImageOffset = base.ImageOffset
-				unitImage:lock()
-			end
-
-			for _, weaponId in ipairs(base.SkillList) do
-				registerWeapon(weaponId)
-			end
+			registerUnit(unit_id)
 		end
 	end
 end
 
-local function registerWeapons()
-	for id, _ in pairs(modApi.weaponDeck) do
-		registerWeapon(id)
+local function registerMission(mission_id)
+	if list_contains(MISSION_EXCLUSION, mission_id) then
+		return
+	end
+
+	local base = _G[mission_id]
+	local mission = modApi.missions:get(mission_id)
+
+	mission = mission or modApi.missions:add(mission_id)
+	mission:copy(base)
+	mission:lock()
+
+	local appendLoc = string.format("img/strategy/mission/%s.png", mission_id)
+	local filename = string.format("%simg/mission/%s.png", path, mission_id)
+
+	if modApi:fileExists(filename) then
+		modApi:appendAsset(appendLoc, filename)
+	end
+
+	local appendLoc = string.format("img/strategy/mission/small/%s.png", mission_id)
+	local filename = string.format("%simg/mission/small/%s.png", path, mission_id)
+
+	if modApi:fileExists(filename) then
+		modApi:appendAsset(appendLoc, filename)
 	end
 end
 
 local function registerMissions()
-	for i, id in ipairs(corporations) do
+	for i, _ in ipairs(corporations) do
 		local corp_id = vanillaCorporations[i]
 		local base = _G[corp_id]
 
 		local function addMissions(missionTable)
 			for _, mission_id in ipairs(missionTable) do
-				if not modApi.missions:get(mission_id) then
-					local base = _G[mission_id]
-					local mission = modApi.missions:add(mission_id)
-					mission:copy(base)
-					mission:lock()
-				end
-
-				local appendLoc = string.format("img/strategy/mission/%s.png", mission_id)
-				local filename = string.format("%simg/mission/%s.png", path, mission_id)
-
-				if modApi:fileExists(filename) then
-					modApi:appendAsset(appendLoc, filename)
-				end
-
-				local appendLoc = string.format("img/strategy/mission/small/%s.png", mission_id)
-				local filename = string.format("%simg/mission/small/%s.png", path, mission_id)
-
-				if modApi:fileExists(filename) then
-					modApi:appendAsset(appendLoc, filename)
-				end
+				registerMission(mission_id)
 			end
 		end
 
@@ -135,22 +180,43 @@ local function registerMissions()
 		addMissions(base.Bosses)
 		addMissions(base.UniqueBosses)
 	end
+
+	for mission_id, mission in pairs(_G) do
+		local isMission = true
+			and type(mission) == 'table'
+			and type(mission.Name) == 'string'
+			and type(mission.MapList) == 'table'
+			and type(mission.MapTags) ~= 'nil'
+			and type(mission.MapVetoes) == 'table'
+
+		if isMission then
+			registerMission(mission_id)
+		end
+	end
+end
+
+local function registerStructure(structure_id)
+	if list_contains(STRUCTURE_EXCLUSION, structure_id) then
+		return
+	end
+
+	local base = _G[structure_id]
+	local structure = modApi.structures:get(structure_id)
+
+	structure = structure or modApi.structures:add(structure_id)
+	structure.Name = GetText(structure_id.."_Name") or base.Name
+	structure:copy(base)
+	structure:lock()
 end
 
 local function registerStructures()
-	for i, id in ipairs(corporations) do
+	for i, _ in ipairs(corporations) do
 		local corp_id = vanillaCorporations[i]
 		local base = _G[corp_id]
 
 		local function addStructures(structureTable)
 			for _, structure_id in ipairs(structureTable) do
-				if not modApi.structures:get(structure_id) then
-					local base = _G[structure_id]
-					local structure = modApi.structures:add(structure_id)
-					structure.Name = GetText(structure_id.."_Name") or base.Name
-					structure:copy(base)
-					structure:lock()
-				end
+				registerStructure(structure_id)
 			end
 		end
 

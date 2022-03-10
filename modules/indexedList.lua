@@ -103,10 +103,6 @@ function IndexedList:add(id, base)
 	return entry
 end
 
-function IndexedList:getDebugName()
-	return self._debugName
-end
-
 function IndexedList:getId()
 	return self._id
 end
@@ -209,10 +205,6 @@ function IndexedEntry:instanceOf(cls)
 	end
 
 	return classtable:isSubclassOf(cls)
-end
-
-function IndexedEntry:getDebugName()
-	return self._debugName
 end
 
 function IndexedEntry:getId()

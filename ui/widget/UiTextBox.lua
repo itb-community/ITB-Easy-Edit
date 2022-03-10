@@ -1,3 +1,5 @@
+-- TODO: remove characters not in 'alphabet', also when pasting text
+
 --[[
 	A UI element with a simple purpose. Whenever this element is focused
 	(and the console is closed), all keyboard input is overridden and fed
@@ -14,7 +16,7 @@ UiTextBox = Class.inherit(Ui)
 UiTextBox._ALPHABET_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 UiTextBox._ALPHABET_LOWER = "abcdefghjiklmnopqrstuvwxyz"
 UiTextBox._ALPHABET_NUMBERS = "1234567890"
-UiTextBox._ALPHABET_SYMBOLS = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+UiTextBox._ALPHABET_SYMBOLS = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ "
 UiTextBox._ALPHABET_CHARS = UiTextBox._ALPHABET_UPPER..UiTextBox._ALPHABET_LOWER
 
 function UiTextBox:new()

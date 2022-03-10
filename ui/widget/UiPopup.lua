@@ -1,13 +1,17 @@
 
 local path = GetParentPath(...)
+local parentPath = GetParentPath(path)
 local UiScrollAreaExt = require(path.."UiScrollAreaExt")
 local UiScrollArea = UiScrollAreaExt.vertical
 local UiScrollAreaH = UiScrollAreaExt.horizontal
+local DecoImmutable = require(parentPath.."deco/DecoImmutable")
+local DecoImmutableFrame = DecoImmutable.Frame
+local DecoImmutableFrameHeader = DecoImmutable.FrameHeader
+local DecoImmutableButton = DecoImmutable.Button
 
 -- defs
-local NULL_FUNCTION = function() end
-local TRUE_FUNCTION = function() return true end
 local SCROLL_BAR_WIDTH = 16
+
 
 local UiPopupWindow = Class.inherit(Ui)
 
@@ -26,8 +30,8 @@ function UiPopupWindow:new(popupOwner, title)
 		:caption(title)
 		:compact()
 		:decorate{
-			DecoFrameHeader(),
-			DecoFrame()
+			DecoImmutableFrameHeader,
+			DecoImmutableFrame
 		}
 		:beginUi(scroll)
 			:compact()
@@ -110,14 +114,22 @@ function UiPopupWindow:onGameWindowResized(screen)
 	end
 
 	local parent = self.parent
+	local dummy = Ui()
+		:sizepx(screen_w, screen_h)
 
-	if parent == nil then
-		local parent = sdlext:getUiRoot().priorityUi
-		parent:add(self)
-		parent:relayout()
-		parent:remove(self)
-	else
-		parent:relayout()
+	if parent then
+		self:detach()
+	end
+
+	dummy
+		:add(self)
+		:relayout()
+
+	self
+		:detach()
+
+	if parent then
+		self:addTo(parent)
 	end
 
 	self.x = (screen_w - self.w) / 2
@@ -133,8 +145,7 @@ function UiPopupButton:new(title)
 	self.popupWindow = UiPopupWindow(self, title)
 end
 
-function UiPopupButton:onEntryClicked()
-	-- overrideable method.
+local function onEntryClickedDefault(self)
 	-- self in this method is the element that was clicked.
 	-- self.owner is the UiPopupWindow element.
 	-- defaults to apply the entry's id and data to the
@@ -147,23 +158,27 @@ function UiPopupButton:onEntryClicked()
 	return true
 end
 
-function UiPopupButton:addList(entryList, onEntryAdded, onEntryClicked)
-	onEntryAdded = onEntryAdded or TRUE_FUNCTION
-	onEntryClicked = onEntryClicked or self.onEntryClicked
+local function createPopupEntryDefault(id, data)
+	local popupEntry = Ui()
+		:sizepx(100, 100)
+		:padding(-1) -- combines to 4px with DecoButton's 5px padding
+		:decorate{ DecoImmutableButton }
+
+	return popupEntry
+end
+
+function UiPopupButton:addList(entryList, createEntry, onEntryClicked)
+	createEntry = createEntry or createPopupEntryDefault
+	onEntryClicked = onEntryClicked or onEntryClickedDefault
 
 	for id, data in pairs(entryList) do
-		local popupEntry = Ui()
-			:padding(-1) -- combines to 4px with DecoButton's 5px padding
-			:decorate{ DecoButton() }
+		local popupEntry = createEntry(id, data)
 
-		popupEntry._debugName = "Ui (popupEntry)"
 		popupEntry.id = id
 		popupEntry.data = data
+		popupEntry.onclicked = popupEntry.onclicked or onEntryClicked
 		popupEntry.popupOwner = self
-		popupEntry.onclicked = onEntryClicked
 		popupEntry:addTo(self.popupWindow.flowlayout)
-
-		onEntryAdded(popupEntry, data)
 	end
 
 	return self

@@ -7,7 +7,11 @@ function UiDragObject:new(dragObjectType)
 	self._debugName = "UiDragObject"
 	self.draggable = true
 	self.dragObjectType = dragObjectType or "UNDEFINED_TYPE"
+	self.wPercent = nil
+	self.hPercent = nil
 	self:hide()
+
+	Assert.Equals('string', type(self.dragObjectType), "Argument #1")
 end
 
 function UiDragObject:getDragType()
@@ -44,7 +48,10 @@ function UiDragObject:processDropTargets()
 				dropTarget:onDragObjectDropped(self)
 			end
 
-			self:onDropTargetDropped(dropTarget)
+			if self.onDropTargetDropped then
+				self:onDropTargetDropped(dropTarget)
+			end
+
 			self.dropTarget = nil
 		end
 
@@ -60,31 +67,47 @@ function UiDragObject:processDropTargets()
 	-- equal to this element's dragObjectType.
 	if hoveredChild then
 		local target = hoveredChild:getGroupOwner()
-		if target:getDropTargetType() == self:getDragObjectType() then
+		if target.dropTargetType == self.dragObjectType then
 			new_dropTarget = target
 		end
 	end
 
-	if old_dropTarget and new_dropTarget ~= old_dropTarget then
+	if new_dropTarget == old_dropTarget then
+		if new_dropTarget then
+			if new_dropTarget.onDragObjectMoved then
+				new_dropTarget:onDragObjectMoved(self)
+			end
 
-		self.dropTarget = new_dropTarget
+			if self.onDropTargetTraversed then
+				self:onDropTargetTraversed(new_dropTarget)
+			end
+		end
+	else
+		if old_dropTarget then
 
-		if old_dropTarget.onDragObjectExited then
-			old_dropTarget:onDragObjectExited(self)
+			self.dropTarget = new_dropTarget
+
+			if old_dropTarget.onDragObjectExited then
+				old_dropTarget:onDragObjectExited(self)
+			end
+
+			if self.onDropTargetExited then
+				self:onDropTargetExited(old_dropTarget)
+			end
 		end
 
-		self:onDropTargetExited(old_dropTarget)
-	end
+		if new_dropTarget then
 
-	if new_dropTarget and new_dropTarget ~= old_dropTarget then
+			self.dropTarget = new_dropTarget
 
-		self.dropTarget = new_dropTarget
+			if new_dropTarget.onDragObjectEntered then
+				new_dropTarget:onDragObjectEntered(self)
+			end
 
-		if new_dropTarget.onDragObjectEntered then
-			new_dropTarget:onDragObjectEntered(self)
+			if self.onDropTargetEntered then
+				self:onDropTargetEntered(new_dropTarget)
+			end
 		end
-
-		self:onDropTargetEntered(new_dropTarget)
 	end
 end
 
@@ -118,6 +141,7 @@ end
 function UiDragObject:dragMove(mx, my)
 	local diffx = mx - self.dragX
 	local diffy = my - self.dragY
+
 	self.x = self.x + diffx
 	self.y = self.y + diffy
 	self.screenx = self.screenx + diffx
@@ -136,6 +160,14 @@ function UiDragObject:keydown(keycode)
 	end
 
 	return true
+end
+
+function UiDragObject.registerAsDragObject(ui, dragObjectType)
+	ui.dragObjectType = dragObjectType
+
+	for i, fn in pairs(UiDragObject) do
+		ui[i] = fn
+	end
 end
 
 return UiDragObject

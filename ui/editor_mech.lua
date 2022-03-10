@@ -1,7 +1,6 @@
 
 local path = GetParentPath(...)
 local helpers = require(path.."helpers")
-local decorate = require(path.."helper_decorate")
 local DecoEditorButton = require(path.."deco/DecoEditorButton")
 local DecoButtonExt = require(path.."deco/DecoButtonExt")
 local DecoMultiClickButton = require(path.."deco/DecoMultiClickButton")
@@ -9,6 +8,7 @@ local DecoHealth = require(path.."deco/DecoHealth")
 local DecoMove = require(path.."deco/DecoMove")
 local DecoCheckbox = require(path.."deco/DecoCheckbox")
 local DecoLabel = require(path.."deco/DecoLabel")
+local DecoImmutable = require(path.."deco/DecoImmutable")
 local UiMultiClickButton = require(path.."widget/UiMultiClickButton")
 local UiEditorButton = require(path.."widget/UiEditorButton")
 local UiEditBox = require(path.."widget/UiEditBox")
@@ -19,21 +19,22 @@ local UiScrollArea = UiScrollAreaExt.vertical
 local UiScrollAreaH = UiScrollAreaExt.horizontal
 local UiPopup = require(path.."widget/UiPopup")
 
+local createPopupEntryFunc_icon1x = helpers.createPopupEntryFunc_icon1x
+local createPopupEntryFunc_icon2x = helpers.createPopupEntryFunc_icon2x
+local setIconDef = helpers.setIconDef
 local createUiEditBox = helpers.createUiEditBox
 local createUiTitle = helpers.createUiTitle
-local createDecoGroupButton = helpers.createDecoGroupButton
-local decorate_button = decorate.button
-local getSurface_delete = helpers.getSurface_delete
-local getSurface_reset = helpers.getSurface_reset
-local getSurface_warning = helpers.getSurface_warning
-local getSurface_reset_small = helpers.getSurface_reset_small
-local getSurface_delete_small = helpers.getSurface_delete_small
-local getSurface_warning_small = helpers.getSurface_warning_small
+local decoUnitWithLabel = helpers.decoUnitWithLabel
+local decoIconWithLabel = helpers.decoIconWithLabel
+local resetButton_entry = helpers.resetButton_entry
+local deleteButton_entry = helpers.deleteButton_entry
+
 
 -- defs
 local EDITOR_TITLE = "Mech Editor"
 local TITLE_CREATE_NEW_UNIT = "New unit"
 local SCROLL_BAR_WIDTH = helpers.SCROLL_BAR_WIDTH
+local ENTRY_HEIGHT = helpers.ENTRY_HEIGHT
 local PADDING = 8
 local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
 local ORIENTATION_HORIZONTAL = helpers.ORIENTATION_HORIZONTAL
@@ -47,11 +48,8 @@ local CHECKBOX_HEIGHT = 25
 local CHECKBOX_CONTAINER_WIDTH = 120
 local CHECKBOX_CONTAINER_HEIGHT = 50
 local COLOR_RED = helpers.COLOR_RED
-
--- debug
-local DEBUG_COLOR_CONTENT = sdl.rgba(100, 100, 255, 100)
-local DEBUG_COLOR_SCROLL = sdl.rgba(255, 100, 100, 100)
-local DEBUG_COLOR_ENTRY = sdl.rgba(100, 255, 100, 100)
+local UNIT_ICON_DEF = modApi.units:getIconDef()
+local WEAPON_ICON_DEF = modApi.weapons:getIconDef()
 
 local CLASSES = { "Prime", "Brute", "Ranged", "Science", "TechnoVek" }
 
@@ -88,21 +86,6 @@ local unitList
 local uiEditBox
 local unitEditor = {}
 
-local function onPopupEntryClicked(self)
-	local popupButton = self.popupOwner
-
-	popupButton.id = self.id
-	popupButton.data = self.data
-
-	if easyEdit.displayedEditorButton then
-		popupButton:send()
-	end
-
-	popupButton.popupWindow:quit()
-
-	return true
-end
-
 local function onCheckboxClicked(self)
 	if easyEdit.displayedEditorButton then
 		self:send()
@@ -124,7 +107,11 @@ local function resetParentData(self)
 end
 
 local function onRecieve_id(reciever, sender)
-	reciever:updateText(sender.data._id)
+	local text = sender.data._id
+	if text ~= nil then
+		text = "Mech id: "..text
+	end
+	reciever.text_title_bounce_centerv_clip = text
 end
 
 local function onSend_name(sender, reciever)
@@ -136,7 +123,6 @@ local function onSend_name(sender, reciever)
 	unit.Name = name
 
 	sender:updateText(name)
-	reciever.decoName:setsurface(name)
 end
 
 local function onRecieve_name(reciever, sender)
@@ -152,48 +138,24 @@ local function onRecieve_class(reciever, sender)
 end
 
 local function onSend_image(sender, reciever)
-	local unit = reciever.data
-	local unitImage = sender.data
-
-	unit.Image = unitImage.Image
-	unit.ImageOffset = unitImage.ImageOffset
-
-	decorate_button.unit(sender, unitImage)
-	reciever.decoImage:setObject(unitImage)
+	reciever.data.Image = sender.data.Image
+	reciever.decorations[3]:updateSurfacesForce(reciever)
 end
 
 local function onRecieve_image(reciever, sender)
-	local unit = sender.data
-	local unitImage = modApi.unitImage:get(unit.Image)
-	decorate_button.unit(reciever, unitImage)
+	local unitImage = modApi.unitImage:get(sender.data.Image)
+	reciever.data = unitImage
 end
 
 local function onSend_weapon(sender, reciever, weaponSlot)
-	local unit = reciever.data
 	local weapon = sender.data
-	local weaponId = weapon and weapon._id
-	if weaponId then
-		weapon = modApi.weapons:get(weaponId)
-	end
-
-	if weapon then
-		unit.SkillList[weaponSlot] = weaponId
-	else
-		unit.SkillList[weaponSlot] = nil
-	end
-
-	decorate_button.weapon(sender, weapon)
+	local id = weapon and weapon._id or nil
+	reciever.data.SkillList[weaponSlot] = id
 end
 
 local function onRecieve_weapon(reciever, sender, weaponSlot)
-	local unit = sender.data
-	local weaponId = unit.SkillList[weaponSlot]
-	local weapon
-	if weaponId ~= nil then
-		weapon = modApi.weapons:get(weaponId)
-	end
-
-	decorate_button.weapon(reciever, weapon)
+	local weapon = modApi.weapons:get(sender.data.SkillList[weaponSlot])
+	reciever.data = weapon
 end
 
 local function onSend_weaponPrimary(sender, reciever)
@@ -389,20 +351,17 @@ local function reset(reciever)
 	local unit = reciever.data
 
 	if unit:isCustom() then
-		-- TODO: test if this makes sense
 		if reciever == easyEdit.displayedEditorButton then
 			easyEdit.displayedEditorButton = nil
 		end
-		-- TODO: test what happens to custom created units
 		if unit:delete() then
 			reciever:detach()
 		end
 	else
 		unit:reset()
+		reciever.decorations[3]:updateSurfacesForce(reciever)
 
 		modApi.modLoaderDictionary[unit._id] = nil
-		reciever.decoName:setsurface(unit.Name)
-		reciever.decoImage:setObject(unit)
 	end
 
 	for _, ui in pairs(uiEditBox) do
@@ -416,10 +375,23 @@ local function resetAll()
 	end
 end
 
-local function resetParentUnit(self)
+local function onclicked_resetButton(self)
 	reset(self.parent)
-
 	return true
+end
+
+local function draw_ifParentIsGroupHovered(self, screen)
+	if self.parent:isGroupHovered() then
+		self.__index.draw(self, screen)
+	end
+end
+
+local function isHighlighted_ifGroupHovered(self, widget)
+	return widget:isGroupHovered()
+end
+
+local function setParentAsGroupOwner(self)
+	self.groupOwner = self.parent
 end
 
 local function buildFrameContent(parentUi)
@@ -427,7 +399,7 @@ local function buildFrameContent(parentUi)
 	currentContent = UiScrollArea()
 
 	uiEditBox = {
-		id = createUiEditBox(createUiTitle, "Selected Mech"),
+		id = createUiEditBox(),
 		name = createUiEditBox(UiTextBox),
 		class = createUiEditBox(Ui),
 		health = createUiEditBox(UiNumberBox, 1, 12),
@@ -489,16 +461,20 @@ local function buildFrameContent(parentUi)
 		:beginUi()
 			:width(.3)
 			:beginUi(uiEditBox.image)
-				:widthpx(icon_unit_width)
-				:heightpx(icon_unit_height)
+				:sizepx(120, 120)
 				:anchor("center", "center")
 				:setVar("onRecieve", onRecieve.image)
 				:setVar("onSend", onSend.image)
-				:decorate( decorate_button.unit() )
+				:decorate{
+					DecoImmutable.Button,
+					DecoImmutable.Anchor,
+					DecoImmutable.ObjectSurface2xOutlineCenterClip,
+					DecoImmutable.TransHeader,
+					DecoImmutable.UnitImage,
+				}
 				:addList(
 					images_sorted,
-					decorate_button.unit,
-					onPopupEntryClicked
+					createPopupEntryFunc_icon2x(UNIT_ICON_DEF)
 				)
 			:endUi()
 		:endUi()
@@ -528,60 +504,60 @@ local function buildFrameContent(parentUi)
 					:hgap(5)
 					:orientation(ORIENTATION_HORIZONTAL)
 					:beginUi(uiEditBox.weaponPrimary)
-						:widthpx(icon_weapon_width)
+						:format(setIconDef, WEAPON_ICON_DEF)
 						:setVar("onRecieve", onRecieve.weaponPrimary)
 						:setVar("onSend", onSend.weaponPrimary)
-						:decorate( decorate_button.weapon() )
+						:decorate{
+							DecoImmutable.GroupButton,
+							DecoImmutable.Anchor,
+							DecoImmutable.ObjectSurface2xCenterClip,
+							DecoImmutable.TransHeader,
+							DecoImmutable.ObjectNameLabelBounceCenterHClip,
+						}
 						:addList(
 							weapons_sorted,
-							decorate_button.weapon,
-							onPopupEntryClicked
+							createPopupEntryFunc_icon2x(WEAPON_ICON_DEF)
 						)
-						:beginUi(UiMultiClickButton, 2)
-							:anchor("right", "bottom")
+						:beginUi()
+							:format(setParentAsGroupOwner)
+							:anchor("left", "bottom")
 							:sizepx(20, 20)
-							:setTooltips{
-								"Remove weapon",
-								"WARNING: clicking once more will remove this weapon from the unit"
-							}
+							:pospx(2, 2)
+							:setVar("draw", draw_ifParentIsGroupHovered)
+							:settooltip("Remove weapon", nil, true)
 							:setVar("onclicked", resetParentData)
 							:decorate{
-								DecoButtonExt(nil, COLOR_RED),
-								DecoAnchor(),
-								DecoMultiClickButton(
-									{ getSurface_delete_small(), getSurface_warning_small(), },
-									"center",
-									"center"
-								)
+								DecoImmutable.SolidHalfBlack,
+								DecoImmutable.Delete,
 							}
 						:endUi()
 					:endUi()
 					:beginUi(uiEditBox.weaponSecondary)
-						:widthpx(icon_weapon_width)
+						:format(setIconDef, WEAPON_ICON_DEF)
 						:setVar("onRecieve", onRecieve.weaponSecondary)
 						:setVar("onSend", onSend.weaponSecondary)
-						:decorate( decorate_button.weapon() )
+						:decorate{
+							DecoImmutable.GroupButton,
+							DecoImmutable.Anchor,
+							DecoImmutable.ObjectSurface2xCenterClip,
+							DecoImmutable.TransHeader,
+							DecoImmutable.ObjectNameLabelBounceCenterHClip,
+						}
 						:addList(
 							weapons_sorted,
-							decorate_button.weapon,
-							onPopupEntryClicked
+							createPopupEntryFunc_icon2x(WEAPON_ICON_DEF)
 						)
-						:beginUi(UiMultiClickButton, 2)
-							:anchor("right", "bottom")
+						:beginUi()
+							:format(setParentAsGroupOwner)
+							:anchor("left", "bottom")
 							:sizepx(20, 20)
-							:setTooltips{
-								"Remove weapon",
-								"WARNING: clicking once more will remove this weapon from the unit"
-							}
+							:pospx(2, 2)
+							:setVar("draw", draw_ifParentIsGroupHovered)
+							:settooltip("Remove weapon", nil, true)
 							:setVar("onclicked", resetParentData)
 							:decorate{
-								DecoButtonExt(nil, COLOR_RED),
-								DecoAnchor(),
-								DecoMultiClickButton(
-									{ getSurface_delete_small(), getSurface_warning_small(), },
-									"center",
-									"center"
-								)
+								DecoImmutable.SolidHalfBlack,
+								DecoImmutable.Delete,
 							}
 						:endUi()
 					:endUi()
@@ -650,7 +626,7 @@ local function buildFrameContent(parentUi)
 				:beginUi()
 					:heightpx(40)
 					:padding(-5) -- unpad button
-					:decorate{ createDecoGroupButton() }
+					:decorate{ DecoImmutable.GroupButton }
 					:beginUi(createNewUnit)
 						:setVar("textfield", TITLE_CREATE_NEW_UNIT)
 						:setAlphabet(UiTextBox._ALPHABET_CHARS.."_")
@@ -667,7 +643,7 @@ local function buildFrameContent(parentUi)
 				:endUi()
 				-- mech list
 				:beginUi(UiScrollArea)
-					:decorate{ DecoFrame() }
+					:decorate{ DecoImmutable.Frame }
 					:beginUi(unitList)
 						:padding(PADDING)
 						:vgap(7)
@@ -684,13 +660,21 @@ local function buildFrameContent(parentUi)
 				:orientation(ORIENTATION_VERTICAL)
 				-- id on top
 				:beginUi(uiEditBox.id)
+					:heightpx(ENTRY_HEIGHT)
+					:setVar("padl", 8)
+					:setVar("padr", 8)
 					:setVar("onRecieve", onRecieve.id)
+					:setVar("text_title_bounce_centerv_clip", "Selected Mech")
+					:decorate{
+						DecoImmutable.Frame,
+						DecoImmutable.TextTitleBounceCenterVClip,
+					}
 				:endUi()
 				-- mech details
 				:beginUi(currentContent)
 					:hide()
 					:padding(60)
-					:decorate{ DecoFrame() }
+					:decorate{ DecoImmutable.Frame }
 					:beginUi(UiBoxLayout)
 						:padding(PADDING)
 						:vgap(40)
@@ -868,48 +852,39 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 
-	local function addUnitObject(obj)
-		local scrollarea = unitList.parent
-		local decorations = decorate_button.unit(nil, obj)
-		local surface_reset
-		local tooltips
-		decorations[1] = DecoEditorButton()
+	local function addUnitObject(unit)
+		local entry = UiEditorButton()
+		local decoEditorButton = DecoEditorButton()
+		local resetButton
 
-		if obj:isCustom() then
-			surface_reset = getSurface_delete_small()
-			tooltips = {
-				"Remove unit",
-				"WARNING: clicking once more will remove this unit"
-			}
+		if unit:isCustom() then
+			resetButton = deleteButton_entry()
 		else
-			surface_reset = getSurface_reset_small()
-			tooltips = {
-				"Reset unit",
-				"WARNING: clicking once more will reset this unit to its default"
-			}
+			resetButton = resetButton_entry()
 		end
-		local entry = UiEditorButton(scrollarea)
-			:widthpx(icon_unit_width)
-			:heightpx(icon_unit_height)
-			:setVar("data", obj)
-			:setVar("decoImage", decorations[3])
-			:setVar("decoName", decorations[5])
-			:decorate(decorations)
-			:beginUi(UiMultiClickButton, 2)
-				:anchor("right", "bottom")
-				:sizepx(20, 20)
-				:setTooltips(tooltips)
-				:setVar("onclicked", resetParentUnit)
-				:decorate{
-					DecoButtonExt(nil, COLOR_RED),
-					DecoAnchor(),
-					DecoMultiClickButton(
-						{ surface_reset, getSurface_warning_small(), },
-						"center",
-						"center"
-					)
-				}
+
+		resetButton.onclicked = onclicked_resetButton
+		resetButton.draw = draw_ifParentIsGroupHovered
+		resetButton.tooltip_static = true
+		resetButton.groupOwner = entry
+		decoEditorButton.isHighlighted = isHighlighted_ifGroupHovered
+
+		entry
+			:format(setIconDef, UNIT_ICON_DEF)
+			:setVar("data", unit)
+			:settooltip("Select which mech to edit", nil, true)
+			:decorate{
+				decoEditorButton,
+				DecoImmutable.Anchor,
+				DecoImmutable.ObjectSurface2xCenterClip,
+				DecoImmutable.TransHeader,
+				DecoImmutable.ObjectNameLabelBounceCenterHClip,
+			}
+			:beginUi(resetButton)
+				:pospx(2, 2)
+				:anchor("left", "bottom")
 			:endUi()
+			:makeCullable()
 			:addTo(unitList)
 
 		return entry
@@ -953,8 +928,8 @@ local function buildFrameContent(parentUi)
 	end)
 
 	-- populate unit list
-	for _, obj in ipairs(mechs_sorted) do
-		addUnitObject(obj)
+	for _, unit in ipairs(mechs_sorted) do
+		addUnitObject(unit)
 	end
 
 	local function onEditorButtonSet(widget)
@@ -965,7 +940,7 @@ local function buildFrameContent(parentUi)
 			end
 		else
 			currentContent:hide()
-			uiEditBox.id:updateText("Selected Mech")
+			uiEditBox.id.text_title_bounce_centerv_clip = "Selected Mech"
 		end
 	end
 
@@ -981,12 +956,6 @@ local function buildFrameButtons(buttonLayout)
 		"Default",
 		"Reset everything to default\n\nWARNING: This will delete all custom mechs",
 		resetAll
- 	):addTo(buttonLayout)
-
-	sdlext.buildButton(
-		"Reset",
-		"Reset currently selected mech",
-		reset
  	):addTo(buttonLayout)
 end
 

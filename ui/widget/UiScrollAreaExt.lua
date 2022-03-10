@@ -135,10 +135,19 @@ function UiScrollAreaExtH:scrollTo(targetX)
 end
 
 function UiScrollAreaExtH:relayout()
+	local crop = self.cropped
+	self.cropped = false
+
 	UiScrollAreaH.relayout(self)
 
 	self.clipRect.y = 0
 	self.clipRect.h = sdl.screen():h()
+
+	if crop then
+		self.cropped = true
+		self.w = math.min(self.w, self.innerWidth)
+		self.h = math.min(self.h, self.innerHeight)
+	end
 end
 
 function UiScrollAreaExtH:draw(screen)

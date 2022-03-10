@@ -2,10 +2,12 @@
 -- header
 local path = GetParentPath(...)
 local helpers = require(path.."helpers")
-local decorate = require(path.."helper_decorate")
-local condensedContentList = require(path.."helper_condensedContentList")
 local DecoIcon = require(path.."deco/DecoIcon")
 local DecoLabel = require(path.."deco/DecoLabel")
+local DecoImmutable = require(path.."deco/DecoImmutable")
+
+local addStaticContentList1x = helpers.addStaticContentList
+local createStaticContentList1x = helpers.createStaticContentList
 
 -- defs
 local LIST_HEIGHT = 20
@@ -27,14 +29,14 @@ function UiTooltipIslandComposite:new()
 	self._debugName = "UiTooltipIslandComposite"
 
 	self.staticTooltip = true
-	self.decoCeo_label = DecoLabel(nil, "center", "bottom")
-	self.decoTileset_label = DecoLabel(nil, "center", "bottom")
 	self.uiCeo_icon = Ui()
+	self.uiCeo_label = Ui()
 	self.uiTileset_icon = Ui()
-	self.uiEnemyList = Ui()
-	self.uiBossList = Ui()
-	self.uiMissionList = Ui()
-	self.uiStructureList = Ui()
+	self.uiTileset_label = Ui()
+	self.uiEnemyList = createStaticContentList1x()
+	self.uiBossList = createStaticContentList1x()
+	self.uiMissionList = createStaticContentList1x()
+	self.uiStructureList = createStaticContentList1x()
 
 	self
 		:vgap(0)
@@ -48,43 +50,49 @@ function UiTooltipIslandComposite:new()
 			+ LIST_HEIGHT * 4
 			+ LIST_GAP * 5
 		)
-		:decorate{ DecoFrame() }
+		:decorate{ DecoImmutable.Frame }
 		:beginUi()
 			:heightpx(HEADER_HEIGHT)
 			:beginUi(UiWeightLayout)
 				:size(1,1)
 				:hgap(0)
 				:orientation(ORIENTATION_HORIZONTAL)
-				:beginUi()
+				:beginUi(self.uiCeo_label)
 					:width(0.5)
 					:decorate{
 						DecoLabel("CEO", "center", "top"),
-						DecoAnchor(),
-						self.decoCeo_label,
+						DecoImmutable.Anchor,
+						DecoImmutable.ObjectNameLabelBounceCenterBottomClip,
 					}
 					:beginUi(self.uiCeo_icon)
 						:anchor("center", "center")
 						:widthpx(CEO_ICON_DEF.width * CEO_ICON_DEF.scale)
 						:heightpx(CEO_ICON_DEF.height * CEO_ICON_DEF.scale)
-						:decorate{ DecoFrame() }
+						:decorate{
+							DecoImmutable.Frame,
+							DecoImmutable.ObjectSurface2xCenterClip,
+						}
 					:endUi()
 				:endUi()
 				:beginUi()
 					:widthpx(2)
 					:decorate{ DecoSolid(deco.colors.buttonborder) }
 				:endUi()
-				:beginUi()
+				:beginUi(self.uiTileset_label)
 					:width(0.5)
 					:decorate{
 						DecoLabel("TILESET", "center", "top"),
-						DecoAnchor(),
-						self.decoTileset_label,
+						DecoImmutable.Anchor,
+						DecoImmutable.ObjectNameLabelBounceCenterBottomClip,
 					}
 					:beginUi(self.uiTileset_icon)
 						:anchor("center", "center")
 						:widthpx(TILESET_ICON_DEF.width * TILESET_ICON_DEF.scale)
 						:heightpx(TILESET_ICON_DEF.height * TILESET_ICON_DEF.scale)
-						:decorate{ DecoFrame() }
+						:decorate{
+							DecoImmutable.Frame,
+							DecoImmutable.ObjectSurface1xCenterClip,
+						}
 					:endUi()
 				:endUi()
 			:endUi()
@@ -113,20 +121,19 @@ end
 function UiTooltipIslandComposite:onCustomTooltipShown(hoveredUi)
 	local islandComposite = hoveredUi.data
 
-	self.uiCeo_icon:removeDeco(2)
-	self.uiTileset_icon:removeDeco(2)
-
 	if islandComposite == nil then
-		self.decoCeo_label:setsurface("")
-		self.decoTileset_label:setsurface("")
-		condensedContentList(self.uiEnemyList, nil)
-		condensedContentList(self.uiBossList, nil)
-		condensedContentList(self.uiMissionList, nil)
-		condensedContentList(self.uiStructureList, nil)
+		self.uiCeo_icon.data = nil
+		self.uiCeo_label.data = nil
+		self.uiTileset_icon.data = nil
+		self.uiTileset_label.data = nil
+		self.uiEnemyList.staticContentList.data = nil
+		self.uiBossList.staticContentList.data = nil
+		self.uiMissionList.staticContentList.data = nil
+		self.uiStructureList.staticContentList.data = nil
 		return
 	end
 
-	-- local island = modApi.island:get(islandComposite.island)
+	local island = modApi.island:get(islandComposite.island)
 	local ceo = modApi.ceo:get(islandComposite.ceo)
 	local tileset = modApi.tileset:get(islandComposite.tileset)
 	local enemyList = modApi.enemyList:get(islandComposite.enemyList)
@@ -134,15 +141,18 @@ function UiTooltipIslandComposite:onCustomTooltipShown(hoveredUi)
 	local missionList = modApi.missionList:get(islandComposite.missionList)
 	local structureList = modApi.structureList:get(islandComposite.structureList)
 
-	self.decoCeo_label:setsurface(ceo:getName())
-	self.decoTileset_label:setsurface(tileset:getName())
-	self.uiCeo_icon:insertDeco(2, DecoIcon(ceo, ceo:getIconDef()))
-	self.uiTileset_icon:insertDeco(2, DecoIcon(tileset, tileset:getIconDef()))
-
-	condensedContentList(self.uiEnemyList, enemyList)
-	condensedContentList(self.uiBossList, bossList)
-	condensedContentList(self.uiMissionList, missionList)
-	condensedContentList(self.uiStructureList, structureList)
+	self.uiCeo_icon.data = ceo
+	self.uiCeo_label.data = ceo
+	self.uiTileset_icon.data = tileset
+	self.uiTileset_label.data = tileset
+	self.uiEnemyList.staticContentList.data = enemyList
+	self.uiBossList.staticContentList.data = bossList
+	self.uiMissionList.staticContentList.data = missionList
+	self.uiStructureList.staticContentList.data = structureList
+	self.uiEnemyList.staticContentListLabel.data = enemyList
+	self.uiBossList.staticContentListLabel.data = bossList
+	self.uiMissionList.staticContentListLabel.data = missionList
+	self.uiStructureList.staticContentListLabel.data = structureList
 end
 
 return UiTooltipIslandComposite()

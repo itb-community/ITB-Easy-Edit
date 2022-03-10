@@ -2,21 +2,20 @@
 -- header
 local path = GetParentPath(...)
 local helpers = require(path.."helpers")
-local decorate = require(path.."helper_decorate")
-local tooltip = require(path.."helper_tooltip")
-local dragEntry = require(path.."helper_dragEntry")
+local DecoImmutable = require(path.."deco/DecoImmutable")
 local UiDragSource = require(path.."widget/UiDragSource")
-local UiDragObject = require(path.."widget/UiDragObject")
-local UiDropTarget = require(path.."widget/UiDropTarget")
 local UiScrollAreaExt = require(path.."widget/UiScrollAreaExt")
 local UiScrollArea = UiScrollAreaExt.vertical
 local UiScrollAreaH = UiScrollAreaExt.horizontal
-local dynamicContentList = require(path.."helper_dynamicContentList")
-local dynamicContentListContainer = require(path.."helper_dynamicContentListContainer")
+local UiContentList = require(path.."widget/UiContentList")
 
-local createUiTitle = helpers.createUiTitle
-local createDecoGroupButton = helpers.createDecoGroupButton
-local decorate_button_unit = decorate.button.unit
+local getCreateUnitDragSourceCopyFunc = helpers.getCreateUnitDragSourceCopyFunc
+local getCreateUnitDragSourceFunc = helpers.getCreateUnitDragSourceFunc
+local contentListDragObject = helpers.contentListDragObject
+local resetButton_contentList = helpers.resetButton_contentList
+local deleteButton_contentList = helpers.deleteButton_contentList
+local getSurface = sdlext.getSurface
+local getTextSurface = sdl.text
 
 -- defs
 local DRAG_TYPE_MISSION = modApi.missions:getDragType()
@@ -24,18 +23,30 @@ local TITLE_EDITOR = "Boss List Editor"
 local TITLE_CREATE_NEW_LIST = "Create new list"
 local FONT_TITLE = helpers.FONT_TITLE
 local TEXT_SETTINGS_TITLE = helpers.TEXT_SETTINGS_TITLE
+local FONT_LABEL = helpers.FONT_LABEL
+local TEXT_SETTINGS_LABEL = helpers.TEXT_SETTINGS_LABEL
 local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
 local ORIENTATION_HORIZONTAL = helpers.ORIENTATION_HORIZONTAL
+local ENTRY_HEIGHT = helpers.ENTRY_HEIGHT
 local PADDING = 8
 local SCROLLBAR_WIDTH = 16
 local OBJECT_LIST_HEIGHT = helpers.OBJECT_LIST_HEIGHT
 local OBJECT_LIST_PADDING = helpers.OBJECT_LIST_PADDING
 local OBJECT_LIST_GAP = helpers.OBJECT_LIST_GAP
+local UNIT_ICON_DEF = modApi.units:getIconDef()
+local TRANSFORM_UNIT = helpers.transformUnit
+local TRANSFORM_UNIT_HL = helpers.transformUnitHl
+local TRANSFORM_UNIT_DRAG_HL = helpers.transformUnitDragHl
+local CONTENT_ENTRY_DEF = copy_table(UNIT_ICON_DEF)
+CONTENT_ENTRY_DEF.width = 25
+CONTENT_ENTRY_DEF.height = 25
+CONTENT_ENTRY_DEF.clip = false
 
 -- ui
 local contentListContainers
 local bossListEditor = {}
-local dragObject = dragEntry(modApi.missions)
+local dragObject = contentListDragObject(modApi.missions:getDragType())
+	:decorate{ DecoImmutable.ObjectSurface2xOutline }
 
 local function resetAll()
 	for i = #contentListContainers.children, 1, -1 do
@@ -49,7 +60,8 @@ local function resetAll()
 			end
 		else
 			objectList:reset()
-			dynamicContentList(contentList, objectList)
+			contentList:reset()
+			contentList:populate()
 		end
 	end
 end
@@ -57,7 +69,6 @@ end
 local function buildFrameContent(parentUi)
 	contentListContainers = UiBoxLayout()
 	local bossMissions = UiBoxLayout()
-	local unit_iconDef = modApi.units:getIconDef()
 	local createNewList = UiTextBox()
 	local dropTargets = {}
 
@@ -69,9 +80,15 @@ local function buildFrameContent(parentUi)
 				:width(1)
 				:vgap(8)
 				:orientation(ORIENTATION_VERTICAL)
-				:add(createUiTitle("Boss Lists"))
+				:beginUi()
+					:heightpx(ENTRY_HEIGHT)
+					:decorate{
+						DecoImmutable.Frame,
+						DecoText("Boss Lists", FONT_TITLE, TEXT_SETTINGS_TITLE),
+					}
+				:endUi()
 				:beginUi(UiScrollArea)
-					:decorate{ DecoFrame() }
+					:decorate{ DecoImmutable.Frame }
 					:beginUi(UiBoxLayout)
 						:height(nil)
 						:vgap(OBJECT_LIST_GAP)
@@ -86,8 +103,9 @@ local function buildFrameContent(parentUi)
 						:beginUi()
 							:heightpx(OBJECT_LIST_HEIGHT)
 							:padding(-5) -- unpad button
-							:decorate{ createDecoGroupButton() }
+							:decorate{ DecoImmutable.GroupButton }
 							:beginUi(createNewList)
+								:format(function(self) self:setGroupOwner(self.parent) end)
 								:setVar("textfield", TITLE_CREATE_NEW_LIST)
 								:settooltip("Create a new boss list", nil, true)
 								:decorate{
@@ -105,15 +123,24 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 		:beginUi(Ui)
-			:widthpx(unit_iconDef.width * unit_iconDef.scale + 4 * PADDING + SCROLLBAR_WIDTH)
+			:widthpx(0
+				+ UNIT_ICON_DEF.width * UNIT_ICON_DEF.scale
+				+ 4 * PADDING + SCROLLBAR_WIDTH
+			)
 			:padding(PADDING)
 			:beginUi(UiWeightLayout)
 				:width(1)
 				:vgap(8)
 				:orientation(ORIENTATION_VERTICAL)
-				:add(createUiTitle("Bosses"))
+				:beginUi()
+					:heightpx(ENTRY_HEIGHT)
+					:decorate{
+						DecoImmutable.Frame,
+						DecoText("Bosses", FONT_TITLE, TEXT_SETTINGS_TITLE),
+					}
+				:endUi()
 				:beginUi(UiScrollArea)
-					:decorate{ DecoFrame() }
+					:decorate{ DecoImmutable.Frame }
 					:beginUi(bossMissions)
 						:padding(PADDING)
 						:vgap(7)
@@ -122,33 +149,68 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 
-	local function addContentListContainer(contentListContainer)
-		contentListContainers:add(contentListContainer)
-		contentListContainer.contentList
-			:setVar("isGroupTooltip", true)
-			:settooltip("Drag-and-drop units to edit the boss list", nil, true)
+	local function addObjectList(objectList)
+		local resetButton
+		local contentList = UiContentList{
+			data = objectList,
+			dragObject = dragObject,
+			createEntry = getCreateUnitDragSourceFunc(CONTENT_ENTRY_DEF, dragObject),
+		}
+
+		if objectList:isCustom() then
+			resetButton = deleteButton_contentList()
+		else
+			resetButton = resetButton_contentList()
+		end
+
+		contentList:populate()
+
+		contentListContainers
+			:beginUi(UiWeightLayout)
+				:makeCullable()
+				:heightpx(40)
+				:orientation(ORIENTATION_HORIZONTAL)
+				:setVar("contentList", contentList)
+				:add(resetButton)
+				:beginUi(contentList)
+					:setVar("isGroupTooltip", true)
+					:settooltip("Drag-and-drop units to edit the boss list"
+						.."\n\nMouse-wheel to scroll the list", nil, true)
+				:endUi()
+			:endUi()
 	end
 
 	for _, objectList in pairs(modApi.bossList._children) do
-		addContentListContainer(dynamicContentListContainer(objectList, dragObject))
+		addObjectList(objectList)
 	end
 
 	local bossMissions_filtered = filter_table(modApi.missions._children, function(k, v)
 		return v.BossPawn ~= nil
 	end)
 
-	for _, bossMission in pairs(bossMissions_filtered) do
-		local entry = UiDragSource(dragObject)
+	for bossMissionId, bossMission in pairs(bossMissions_filtered) do
+		if bossMission.BossPawn then
+			local entry = UiDragSource(dragObject)
+			local unit = modApi.units:get(bossMission.BossPawn)
 
-		entry
-			:widthpx(unit_iconDef.width * unit_iconDef.scale)
-			:heightpx(unit_iconDef.height * unit_iconDef.scale)
-			:setVar("data", bossMission)
-			:settooltip("Drag-and-drop to add to a boss list", nil, true)
-			:addTo(bossMissions)
+			entry.data = unit
+			entry.saveId = bossMissionId
+			entry.createObject = getCreateUnitDragSourceCopyFunc(CONTENT_ENTRY_DEF)
 
-		local unit = modApi.units:get(bossMission.BossPawn)
-		decorate_button_unit(entry, unit)
+			entry
+				:widthpx(UNIT_ICON_DEF.width * UNIT_ICON_DEF.scale)
+				:heightpx(UNIT_ICON_DEF.height * UNIT_ICON_DEF.scale)
+				:settooltip("Drag-and-drop to add to a boss list", nil, true)
+				:decorate{
+					DecoImmutable.Button,
+					DecoImmutable.Anchor,
+					DecoImmutable.ObjectSurface2xOutlineCenterClip,
+					DecoImmutable.TransHeader,
+					DecoImmutable.ObjectNameLabelBounceCenterHClip,
+				}
+				:makeCullable()
+				:addTo(bossMissions)
+		end
 	end
 
 	function createNewList:onEnter()
@@ -156,7 +218,7 @@ local function buildFrameContent(parentUi)
 		if name:len() > 0 and modApi.bossList:get(name) == nil then
 			local objectList = modApi.bossList:add(name)
 			objectList:lock()
-			addContentListContainer(dynamicContentListContainer(objectList, dragObject))
+			addObjectList(objectList)
 		end
 
 		self.root:setfocus(content)
@@ -211,7 +273,7 @@ function bossListEditor.mainButton()
 		function frame:onGameWindowResized(screen, oldSize)
 			local minW = 800
 			local minH = 600
-			local maxW = 1000
+			local maxW = 1400
 			local maxH = 800
 			local width = math.min(maxW, math.max(minW, ScreenSizeX() - 200))
 			local height = math.min(maxH, math.max(minH, ScreenSizeY() - 100))
