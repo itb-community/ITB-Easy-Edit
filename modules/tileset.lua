@@ -228,5 +228,9 @@ function Tileset:getEnvironmentChance(tileType, difficulty)
 	return type(chance) == 'number' and chance or 0
 end
 
+function Tileset:getImagePath()
+	return string.format(self._iconDef.pathformat, self._id)
+end
+
 
 modApi.tileset = IndexedList(Tileset)

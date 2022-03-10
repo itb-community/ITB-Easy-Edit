@@ -15,5 +15,6 @@ UnitImage.isMech = Unit.isMech
 UnitImage.isEnemy = Unit.isEnemy
 UnitImage.isBot = Unit.isBot
 UnitImage.isMission = Unit.isMission
+UnitImage.getImagePath = Unit.getImagePath
 
 modApi.unitImage = IndexedList(UnitImage)

@@ -29,4 +29,59 @@ function Mission:getDragType()
 	return "MISSION"
 end
 
+function Mission:getImagePath()
+	if self.BossPawn then
+		local unit = modApi.units:get(self.BossPawn)
+		if unit then
+			return unit:getImagePath()
+		end
+	end
+
+	return string.format(self._iconDef.pathformat, self._id)
+end
+
+function Mission:getTooltipImagePath()
+	if self.BossPawn then
+		local unit = modApi.units:get(self.BossPawn)
+		if unit then
+			return unit:getTooltipImagePath()
+		end
+	end
+
+	return string.format(self._tooltipDef.pathformat, self._id)
+end
+
+function Mission:getImageRows(anim)
+	if self.BossPawn then
+		local unit = modApi.units:get(self.BossPawn)
+		if unit then
+			return unit:getImageRows()
+		end
+	end
+
+	return 1
+end
+
+function Mission:getImageColumns(anim)
+	if self.BossPawn then
+		local unit = modApi.units:get(self.BossPawn)
+		if unit then
+			return unit:getImageColumns()
+		end
+	end
+
+	return 1
+end
+
+function Mission:getImageOffset()
+	if self.BossPawn then
+		local unit = modApi.units:get(self.BossPawn)
+		if unit then
+			return unit:getImageOffset()
+		end
+	end
+
+	return 0
+end
+
 modApi.missions = IndexedList(Mission)

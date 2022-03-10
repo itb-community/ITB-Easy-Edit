@@ -117,8 +117,13 @@ function EnemyList:getCategories()
 	return self.enemies
 end
 
-function EnemyList:getObject(unitId)
-	return modApi.units:get(unitId)
+function EnemyList:getObject(unitId, suffix)
+	suffix = suffix or "1"
+	return modApi.units:get(unitId..suffix)
+end
+
+function EnemyList:getContentType()
+	return modApi.units
 end
 
 

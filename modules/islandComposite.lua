@@ -27,6 +27,16 @@ function IslandComposite:getDragType()
 	return "ISLAND_COMPOSITE"
 end
 
+function IslandComposite:getImagePath()
+	local island = modApi.island:get(self.island)
+
+	if island == nil then
+		return "img/nullResource.png"
+	end
+
+	return island:getImagePath()
+end
+
 local IslandComposites = IndexedList(IslandComposite)
 
 function IslandComposites:update()

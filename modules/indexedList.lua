@@ -115,6 +115,10 @@ function IndexedList:getIconDef()
 	return self._class:getIconDef()
 end
 
+function IndexedList:getTooltipDef()
+	return self._class:getTooltipDef()
+end
+
 function IndexedList:getEntryType()
 	return self._class:getEntryType()
 end
@@ -231,8 +235,28 @@ function IndexedEntry:isCustom()
 	return not self._mod and not self._vanilla
 end
 
+function IndexedEntry:getImagePath()
+	Assert.Error("undefined method: getImagePath")
+end
+
 function IndexedEntry:getDragType()
-	Assert.Error("Drag type not defined")
+	Assert.Error("undefined method: getDragType")
+end
+
+function IndexedEntry:getContentType()
+	Assert.Error("undefined method: getContentType")
+end
+
+function IndexedEntry:getImageRows()
+	return 1
+end
+
+function IndexedEntry:getImageColumns()
+	return 1
+end
+
+function IndexedEntry:getImageOffset()
+	return 0
 end
 
 function IndexedEntry:getTooltipDef()
@@ -247,6 +271,26 @@ end
 function IndexedEntry:getEntryType()
 	-- overridable method
 	return self._entryType
+end
+
+function IndexedEntry:getIndexedList()
+	return modApi[self._entryType]
+end
+
+function IndexedEntry:getObjectId(entry)
+	return entry
+end
+
+function IndexedEntry:isContentList()
+	return false
+end
+
+function IndexedEntry:getImagePath()
+	return ""
+end
+
+function IndexedEntry:getTooltipImagePath()
+	return self:getImagePath()
 end
 
 function IndexedEntry:lock()

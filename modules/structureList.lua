@@ -76,5 +76,13 @@ function StructureList:getObject(structureId)
 	return modApi.structures:get(structureId)
 end
 
+function StructureList:isContentList()
+	return true
+end
+
+function StructureList:getContentType()
+	return modApi.structures
+end
+
 
 modApi.structureList = IndexedList(StructureList)

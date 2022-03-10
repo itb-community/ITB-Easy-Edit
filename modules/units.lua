@@ -32,28 +32,46 @@ end
 
 function Unit:getAnim()
 	local image = self.Image
-	local hasAnim = true
-		and type(image) == 'string'
-		and type(ANIMS[image]) == 'table'
 
-	if hasAnim == false then
+	if image == nil then
 		return nil
 	end
 
-	return ANIMS[image]
+	return ANIMS[image] or nil
 end
 
-function Unit:getImagePath()
-	local anim = Unit.getAnim(self)
-	local hasImage = true
-		and type(anim) == 'table'
-		and type(anim.Image) == 'string'
+function Unit:getImagePath(anim)
+	local anim = anim or Unit.getAnim(self)
 
-	if hasImage == false then
-		return ""
+	if anim == nil then
+		return "img/nullResource.png"
 	end
 
-	return anim.Image
+	return anim.Image and ("img/"..anim.Image) or "img/nullResource.png"
+end
+
+function Unit:getImageRows(anim)
+	local anim = anim or Unit.getAnim(self)
+
+	if anim == nil then
+		return 1
+	end
+
+	return anim.Height or 1
+end
+
+function Unit:getImageColumns(anim)
+	local anim = anim or Unit.getAnim(self)
+
+	if anim == nil then
+		return 1
+	end
+
+	return anim.Frames and #anim.Frames or anim.NumFrames or 1
+end
+
+function Unit:getImageOffset()
+	return self.ImageOffset or 0
 end
 
 function Unit:getName()
@@ -61,23 +79,23 @@ function Unit:getName()
 end
 
 function Unit:isValid()
-	return Unit.getImagePath(self):sub(1,6) == "units/"
+	return Unit.getImagePath(self):sub(1,10) == "img/units/"
 end
 
 function Unit:isMech()
-	return Unit.getImagePath(self):sub(1,13) == "units/player/"
+	return Unit.getImagePath(self):sub(1,17) == "img/units/player/"
 end
 
 function Unit:isEnemy()
-	return Unit.getImagePath(self):sub(1,13) == "units/aliens/"
+	return Unit.getImagePath(self):sub(1,17) == "img/units/aliens/"
 end
 
 function Unit:isBot()
-	return Unit.getImagePath(self):sub(1,15) == "units/snowbots/"
+	return Unit.getImagePath(self):sub(1,19) == "img/units/snowbots/"
 end
 
 function Unit:isMission()
-	return Unit.getImagePath(self):sub(1,14) == "units/mission/"
+	return Unit.getImagePath(self):sub(1,18) == "img/units/mission/"
 end
 
 function Unit:isBaseEnemy()

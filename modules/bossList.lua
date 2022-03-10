@@ -32,5 +32,13 @@ function BossList:getObject(missionId)
 	return modApi.missions:get(missionId)
 end
 
+function BossList:isContentList()
+	return true
+end
+
+function BossList:getContentType()
+	return modApi.missions
+end
+
 
 modApi.bossList = IndexedList(BossList)

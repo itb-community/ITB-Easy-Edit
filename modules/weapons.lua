@@ -21,4 +21,12 @@ function Weapon:isEnemyWeapon()
 	return self.Class == "Enemy"
 end
 
+function Weapon:getImagePath()
+	if self.Icon == nil then
+		return "img/weapons/skill_default.png"
+	end
+
+	return "img/"..self.Icon
+end
+
 modApi.weapons = IndexedList(Weapon)

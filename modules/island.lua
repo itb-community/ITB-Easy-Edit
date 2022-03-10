@@ -99,5 +99,9 @@ function Island:appendAssets(islandPath)
 	end
 end
 
+function Island:getImagePath()
+	return string.format(self._iconDef.pathformat, self._id)
+end
+
 
 modApi.island = IndexedList(Island)

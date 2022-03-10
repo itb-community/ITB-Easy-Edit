@@ -35,5 +35,13 @@ function MissionList:getObject(missionId)
 	return modApi.missions:get(missionId)
 end
 
+function MissionList:isContentList()
+	return true
+end
+
+function MissionList:getContentType()
+	return modApi.missions
+end
+
 
 modApi.missionList = IndexedList(MissionList)
