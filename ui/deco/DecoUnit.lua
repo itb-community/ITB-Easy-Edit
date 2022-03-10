@@ -5,6 +5,7 @@ ANIMS.nullUnit = ANIMS.Animation:new{
 	Image = "units/nullUnit.png"
 }
 
+local NULLTABLE = {}
 local PALETTE_INDEX_BASE = 1
 local clipRectUnit = sdl.rect(0,0,0,0)
 local clipRectWidget = sdl.rect(0,0,0,0)
@@ -32,7 +33,7 @@ end
 local DecoUnit = Class.inherit(UiDeco)
 function DecoUnit:new(unit, opt)
 	UiDeco.new(self)
-	self:setObject(unit, opt or {})
+	self:setObject(unit, opt or NULLTABLE)
 end
 
 function DecoUnit:updateDefs(opt)
