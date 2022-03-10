@@ -28,7 +28,6 @@ function DecoIcon:setObject(obj, opt)
 
 	if obj == nil then
 		self.path = nil
-		return
 	elseif type(obj) == 'string' then
 		self.path = obj
 	elseif obj:instanceOf(IndexedEntry) then
