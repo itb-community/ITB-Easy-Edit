@@ -1,5 +1,9 @@
 
-local DecoEditorObject = Class.inherit(DecoButton)
+-- header
+local path = GetParentPath(...)
+local DecoButtonExt = require(path.."DecoButtonExt")
+
+local DecoEditorObject = Class.inherit(DecoButtonExt)
 
 function DecoEditorObject:draw(screen, widget)
 	if easyEdit.selectedEditorButton == widget then
@@ -8,12 +12,12 @@ function DecoEditorObject:draw(screen, widget)
 		self.color = self.hlcolor
 		self.bordercolor = self.borderhlcolor
 
-		DecoButton.draw(self, screen, widget)
+		DecoButtonExt.draw(self, screen, widget)
 
 		self.color = color
 		self.bordercolor = bordercolor
 	else
-		DecoButton.draw(self, screen, widget)
+		DecoButtonExt.draw(self, screen, widget)
 	end
 end
 
