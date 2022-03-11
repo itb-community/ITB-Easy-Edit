@@ -3,6 +3,10 @@
 local path = GetParentPath(...)
 local parentPath = GetParentPath(path)
 local DecoOutline = require(parentPath.."deco/DecoOutline")
+local DecoTextPlaque = require(parentPath.."deco/DecoTextPlaque")
+
+-- defs
+local FONT = sdlext.font("fonts/NunitoSans_Bold.ttf", 18)
 
 
 local UiDebug = Class.inherit(Ui)
@@ -12,16 +16,25 @@ function UiDebug:new(watchedElement, color)
 	self._debugName = "UiDebug"
 	self.translucent = true
 	self.watchedElement = watchedElement
-	self.decoText = DecoAlignedText(nil, deco.fonts.tooltipTitleLarge, deco.textset(color))
+	self.decoText = DecoTextPlaque{
+		font = FONT,
+		textset = deco.textset(color, nil, nil, true),
+		alignH = "left",
+		alignV = "top_outside",
+		padding = 8,
+	}
 
 	self:decorate{
 		DecoOutline(color, 4),
-		DecoAlign(0, -30),
 		self.decoText,
 	}
 end
 
 function UiDebug:relayout()
+	if not easyEdit.debugUi then
+		return
+	end
+
 	local root = self.root
 	local watchedElement = root[self.watchedElement]
 
