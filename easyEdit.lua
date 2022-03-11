@@ -13,7 +13,13 @@ local path = GetParentPath(...)
 local function finalizeInit(self)
 	LOGDF("Easy Edit %s initializing", self.version)
 	Assert.Traceback = true
-	self.debug = false
+
+	require(path.."ui/editor_easyEdit")
+
+	if not self.enabled then
+		LOGDF("Easy Edit %s did not initialize because it is disabled", self.version)
+		return
+	end
 
 	require(path.."debug")
 	require(path.."global")
@@ -41,7 +47,7 @@ local function finalizeInit(self)
 	require(path.."modules/currentTileset")
 	require(path.."alter")
 	require(path.."ui/widget/Ui")
-	-- require(path.."ui/widget/UiDebug")
+	require(path.."ui/widget/UiDebug")
 	require(path.."ui/widget/UiCustomTooltip")
 	require(path.."ui/widget/UiGroupTooltip")
 	require(path.."ui/textevent")
