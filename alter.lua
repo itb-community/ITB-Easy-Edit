@@ -429,6 +429,7 @@ local function registerIslandComposites()
 		local id = islands[i]
 		local islandComposite = modApi.islandComposite:add(id)
 		islandComposite.island = islands[i]
+		islandComposite.corporation = corporations[i]
 		islandComposite.ceo = ceos[i]
 		islandComposite.tileset = tilesets[i]
 		islandComposite.missionList = missionLists[i]
