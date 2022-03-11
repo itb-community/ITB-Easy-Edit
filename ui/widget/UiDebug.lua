@@ -26,6 +26,7 @@ function UiDebug:new(watchedElement, color)
 
 	self:decorate{
 		DecoOutline(color, 4),
+		DecoAlign(-4,-4),
 		self.decoText,
 	}
 end
