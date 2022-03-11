@@ -8,7 +8,7 @@ local path = GetParentPath(...)
 local vanillaCorporations = { "Corp_Grass", "Corp_Desert", "Corp_Snow", "Corp_Factory" }
 local difficulties = { DIFF_EASY, DIFF_NORMAL, DIFF_HARD }
 
-local islands = { "archive", "rst", "pinnacle", "detritus", "final" }
+local islands = { "archive", "rst", "pinnacle", "detritus" }
 local tileTypes = { TERRAIN_FOREST, TERRAIN_SAND, TERRAIN_ICE, TERRAIN_ACID }
 local islandShifts = { Point(14,5), Point(16,15), Point(17,12), Point(18,15), Point(0,0) }
 
