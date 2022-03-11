@@ -1,4 +1,6 @@
 
+modApi:appendAsset("img/units/nullUnit.png", "resources/mods/game/img/placeholders/mech.png")
+
 local keys = {}
 for key, _ in pairs(Pawn) do
 	local addKey = true
@@ -44,10 +46,10 @@ function Unit:getImagePath(anim)
 	local anim = anim or Unit.getAnim(self)
 
 	if anim == nil then
-		return "img/nullResource.png"
+		return "img/units/nullUnit.png"
 	end
 
-	return anim.Image and ("img/"..anim.Image) or "img/nullResource.png"
+	return anim.Image and ("img/"..anim.Image) or "img/units/nullUnit.png"
 end
 
 function Unit:getImageRows(anim)

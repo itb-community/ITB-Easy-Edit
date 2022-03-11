@@ -1,6 +1,4 @@
 
-modApi:appendAsset("img/units/nullUnit.png", "resources/mods/game/img/placeholders/mech.png")
-
 ANIMS.nullUnit = ANIMS.Animation:new{
 	Image = "units/nullUnit.png"
 }
