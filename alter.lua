@@ -34,6 +34,8 @@ local mechList = {
 }
 
 local UNIT_EXCLUSION = {
+	"Pawn",
+	"PawnTable",
 }
 
 local WEAPON_EXCLUSION = {
