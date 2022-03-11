@@ -165,6 +165,7 @@ local function getCreateDragSourceCopyFunc(iconDef, tooltip)
 
 		entry.data = dragObject.data
 		entry.saveId = dragObject.saveId
+		entry.categoryId = dragObject.categoryId
 
 		return entry
 	end
