@@ -137,7 +137,7 @@ local function getCreateDragSourceFunc(iconDef, dragObject, tooltip)
 		entry.data = object
 		entry.saveId = objectId
 
-		if object.getCategory then
+		if object and object.getCategory then
 			entry.categoryId = object:getCategory()
 		end
 

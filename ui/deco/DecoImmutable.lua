@@ -20,6 +20,13 @@ local FONT_TITLE = defs.FONT_TITLE
 local TEXT_SETTINGS_TITLE = defs.TEXT_SETTINGS_TITLE
 local FONT_LABEL = defs.FONT_LABEL
 local TEXT_SETTINGS_LABEL = defs.TEXT_SETTINGS_LABEL
+local NULLOBJECT = {
+	getImagePath = function() return "img/nullResource.png" end,
+	getTooltipImagePath = function() return "img/nullResource.png" end,
+	getImageOffset = function() return 0 end,
+	getImageColumns = function() return 1 end,
+	getImageRows = function() return 1 end,
+}
 
 
 local DecoImmutable = {}
@@ -60,8 +67,7 @@ function Object:updateSurfaces(widget)
 	end
 
 	if object == nil then
-		clear_table(decoDef)
-		return
+		object = NULLOBJECT
 	end
 
 	if object ~= decoDef.object then
@@ -170,8 +176,8 @@ end
 
 
 local ObjectTooltip = Class.inherit(Object)
-function ObjectTooltip:updateSurfaces(widget, object)
-	object = object or widget.data
+function ObjectTooltip:updateSurfaces(widget)
+	object = widget.data
 
 	local decoDef = widget[self.id]
 	if decoDef == nil then
@@ -180,8 +186,7 @@ function ObjectTooltip:updateSurfaces(widget, object)
 	end
 
 	if object == nil then
-		clear_table(decoDef)
-		return
+		object = NULLOBJECT
 	end
 
 	if object ~= decoDef.object then
@@ -216,8 +221,8 @@ end
 
 local ObjectString = Class.inherit(Object)
 ObjectString.field = "getName"
-function ObjectString:updateSurfaces(widget, object)
-	object = object or widget.data
+function ObjectString:updateSurfaces(widget)
+	object = widget.data
 
 	local decoDef = widget[self.id]
 	if decoDef == nil then
@@ -391,9 +396,6 @@ function ContentList:draw(screen, widget)
 		local objects = data:getContentType()
 		local getObject = data.getObject
 		local getSurface = sdlext.getSurface
-		local getImagePath = objects._class.getImagePath
-		local getImageRows = objects._class.getImageRows
-		local getImageOffset = objects._class.getImageOffset
 		local transform = decoDef.transform or self.transform
 		local transformHl = decoDef.transformHl or self.transformHl
 		local surfaceDef = surfaceDef
@@ -405,14 +407,14 @@ function ContentList:draw(screen, widget)
 
 		for _, category in pairs(categories) do
 			for _, objectId in ipairs(category) do
-				local object = getObject(data, objectId)
-				surfaceDef.path = getImagePath(object)
+				local object = getObject(data, objectId) or NULLOBJECT
+				surfaceDef.path = object:getImagePath()
 				surfaceDef.transformations = transform
 				table.insert(surfaces, getSurface(surfaceDef))
 				surfaceDef.transformations = transformHl
 				table.insert(surfaceshl, getSurface(surfaceDef))
-				table.insert(imageOffsets, getImageOffset(object))
-				table.insert(animHeights, getImageRows(object))
+				table.insert(imageOffsets, object:getImageOffset())
+				table.insert(animHeights, object:getImageRows())
 			end
 		end
 	end
