@@ -163,9 +163,11 @@ function IndexedList:update()
 
 	for islandSlot, cache_data in ipairs(cache_world) do
 		local cache_islandComposite = modApi.islandComposite:get(cache_data)
-		local livedataId = modApi[entryType]:get(cache_islandComposite[entryType])
+		if cache_islandComposite then
+			local livedataId = modApi[entryType]:get(cache_islandComposite[entryType])
 
-		modApi.world[setFunction](modApi.world, islandSlot, livedataId)
+			modApi.world[setFunction](modApi.world, islandSlot, livedataId)
+		end
 	end
 end
 

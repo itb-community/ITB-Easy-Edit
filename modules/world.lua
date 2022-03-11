@@ -13,26 +13,28 @@ function modApi.world:update()
 	for islandSlot, cache_data in ipairs(cache_world) do
 		local cache_islandComposite = modApi.islandComposite:get(cache_data)
 
-		local island = modApi.island:get(cache_islandComposite.island)
-		local corp = modApi.corporation:get(cache_islandComposite.corporation)
-		local ceo = modApi.ceo:get(cache_islandComposite.ceo)
-		local tileset = modApi.tileset:get(cache_islandComposite.tileset)
-		local enemyList = modApi.enemyList:get(cache_islandComposite.enemyList)
-		local bossList = modApi.bossList:get(cache_islandComposite.bossList)
-		local missionList = modApi.missionList:get(cache_islandComposite.missionList)
-		local structureList = modApi.structureList:get(cache_islandComposite.structureList)
+		if cache_islandComposite then
+			local island = modApi.island:get(cache_islandComposite.island)
+			local corp = modApi.corporation:get(cache_islandComposite.corporation)
+			local ceo = modApi.ceo:get(cache_islandComposite.ceo)
+			local tileset = modApi.tileset:get(cache_islandComposite.tileset)
+			local enemyList = modApi.enemyList:get(cache_islandComposite.enemyList)
+			local bossList = modApi.bossList:get(cache_islandComposite.bossList)
+			local missionList = modApi.missionList:get(cache_islandComposite.missionList)
+			local structureList = modApi.structureList:get(cache_islandComposite.structureList)
 
-		if modApi.resource then
-			self:setIsland(islandSlot, island)
+			if modApi.resource then
+				self:setIsland(islandSlot, island)
+			end
+
+			self:setCorporation(islandSlot, corp)
+			self:setCeo(islandSlot, ceo)
+			self:setTileset(islandSlot, tileset)
+			self:setEnemyList(islandSlot, enemyList)
+			self:setBossList(islandSlot, bossList)
+			self:setMissionList(islandSlot, missionList)
+			self:setStructureList(islandSlot, structureList)
 		end
-
-		self:setCorporation(islandSlot, corp)
-		self:setCeo(islandSlot, ceo)
-		self:setTileset(islandSlot, tileset)
-		self:setEnemyList(islandSlot, enemyList)
-		self:setBossList(islandSlot, bossList)
-		self:setMissionList(islandSlot, missionList)
-		self:setStructureList(islandSlot, structureList)
 	end
 end
 
