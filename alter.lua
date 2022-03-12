@@ -503,6 +503,19 @@ local function markRegisteredAsMod()
 	markAsMod(modApi.islandComposite)
 end
 
+local function lockContentLists()
+	local function lockContentList(indexedList)
+		for _, indexedEntry in pairs(indexedList._children) do
+			indexedEntry:lock()
+		end
+	end
+
+	lockContentList(modApi.structureList)
+	lockContentList(modApi.enemyList)
+	lockContentList(modApi.bossList)
+	lockContentList(modApi.missionList)
+end
+
 local function onModsInitialized()
 	markRegisteredAsVanilla()
 	registerUnits()
@@ -510,6 +523,7 @@ local function onModsInitialized()
 	registerMissions()
 	registerStructures()
 	markRegisteredAsMod()
+	lockContentLists()
 	easyEdit.savedata:mkdirs()
 	easyEdit.savedata:load()
 end
