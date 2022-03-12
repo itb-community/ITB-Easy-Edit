@@ -6,6 +6,8 @@ local CATEGORIES = {
 	[REWARD_TECH] = "TechAssets",
 }
 
+local keys = { "Name", "Image", "Reward" }
+
 local Structure = Class.inherit(IndexedEntry)
 Structure._debugName = "Structure"
 Structure._entryType = "structures"
@@ -29,6 +31,14 @@ Structure._rewardIcons = {
 	[REWARD_POWER] = "img/ui/power.png",
 	[REWARD_TECH] = "img/ui/core.png",
 }
+
+function Structure:copy(base)
+	if type(base) ~= 'table' then return end
+
+	for _, key in ipairs(keys) do
+		self[key] = base[key]
+	end
+end
 
 function Structure:getName()
 	return self.Name or self._id

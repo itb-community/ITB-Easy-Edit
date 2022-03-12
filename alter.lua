@@ -206,7 +206,7 @@ local function registerStructure(structure_id)
 	local structure = modApi.structures:get(structure_id)
 
 	structure = structure or modApi.structures:add(structure_id)
-	structure.Name = GetText(structure_id.."_Name") or base.Name
+	structure.Name = GetText(structure_id.."_Name")
 	structure:copy(base)
 	structure:lock()
 end
@@ -225,6 +225,21 @@ local function registerStructures()
 		addStructures(base.PowAssets)
 		addStructures(base.TechAssets)
 		addStructures(base.RepAssets)
+	end
+
+	for structure_id, structure in pairs(_G) do
+		local isStructure = true
+			and type(structure) == 'table'
+			and type(structure.Image) == 'string'
+			and type(structure.Reward) == 'number'
+			and structure.Reward >= 0
+			and structure.Reward <= 2
+			and structure_id:find("^Mission") == nil
+			and structure.nonStructure ~= true
+
+		if isStructure then
+			registerStructure(structure_id)
+		end
 	end
 end
 
