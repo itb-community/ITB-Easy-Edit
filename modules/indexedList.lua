@@ -288,6 +288,11 @@ function IndexedEntry:getTooltipImagePath()
 end
 
 function IndexedEntry:lock()
+	if self._locked then
+		return
+	end
+
+	self._locked = true
 	setmetatable(self, IndexedEntryMetatableLocked)
 
 	for key, entry in pairs(self._default) do
