@@ -10,6 +10,10 @@ local function loadConfig()
 				obj.easyEditConfig = config
 			end
 
+			if config.enabled == nil then
+				config.enabled = true
+			end
+
 			easyEdit.enabled = config.enabled or false
 			easyEdit.debugLogging = config.debugLogging or false
 			easyEdit.debugUi = config.debugUi or false
@@ -22,9 +26,9 @@ local function saveConfig()
 		modApi:getCurrentProfilePath().."modcontent.lua",
 		function(readObj)
 			local config = {}
-			config.enabled = easyEdit.enabled or false
-			config.debugLogging = easyEdit.debugLogging or false
-			config.debugUi = easyEdit.debugUi or false
+			config.enabled = easyEdit.enabled
+			config.debugLogging = easyEdit.debugLogging
+			config.debugUi = easyEdit.debugUi
 
 			readObj.easyEditConfig = config
 		end
@@ -99,9 +103,9 @@ local function buildFrameContent(parentUi)
 		return true
 	end
 
-	checkboxes.enabled.checked = easyEdit.enabled or false
-	checkboxes.debugLogging.checked = easyEdit.debugLogging or false
-	checkboxes.debugUi.checked = easyEdit.debugUi or false
+	checkboxes.enabled.checked = easyEdit.enabled
+	checkboxes.debugLogging.checked = easyEdit.debugLogging
+	checkboxes.debugUi.checked = easyEdit.debugUi
 end
 
 local function buildFrameButtons(buttonLayout)
