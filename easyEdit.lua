@@ -59,24 +59,22 @@ local function finalizeInit(self)
 end
 
 local function onModsMetadataDone()
-	local exit = false
-		or easyEdit.initialized
-		or easyEdit.version > VERSION
+	local isHighestVersion = true
+		and easyEdit.initialized ~= true
+		and easyEdit.version == VERSION
 
-	if exit then
-		return
+	if isHighestVersion then
+		easyEdit:finalizeInit()
+		easyEdit.initialized = true
 	end
-
-	easyEdit:finalizeInit()
-	easyEdit.initialized = true
 end
 
 
-local isNewestVersion = false
+local isNewerVersion = false
 	or easyEdit == nil
-	or modApi:isVersion(VERSION, easyEdit.version) == false
+	or VERSION > easyEdit.version
 
-if isNewestVersion then
+if isNewerVersion then
 	easyEdit = easyEdit or {}
 	easyEdit.version = VERSION
 	easyEdit.path = path
