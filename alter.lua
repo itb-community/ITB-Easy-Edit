@@ -526,17 +526,23 @@ local function markRegisteredAsMod()
 	markAsMod(modApi.islandComposite)
 end
 
-local function lockContentLists()
-	local function lockContentList(indexedList)
+local function lockEverything()
+	local function lockChildren(indexedList)
 		for _, indexedEntry in pairs(indexedList._children) do
 			indexedEntry:lock()
 		end
 	end
 
-	lockContentList(modApi.structureList)
-	lockContentList(modApi.enemyList)
-	lockContentList(modApi.bossList)
-	lockContentList(modApi.missionList)
+	lockChildren(modApi.ceo)
+	lockChildren(modApi.corporation)
+	lockChildren(modApi.units)
+	lockChildren(modApi.tileset)
+	lockChildren(modApi.island)
+	lockChildren(modApi.islandComposite)
+	lockChildren(modApi.structureList)
+	lockChildren(modApi.enemyList)
+	lockChildren(modApi.bossList)
+	lockChildren(modApi.missionList)
 end
 
 local function onModsInitialized()
@@ -546,7 +552,7 @@ local function onModsInitialized()
 	registerMissions()
 	registerStructures()
 	markRegisteredAsMod()
-	lockContentLists()
+	lockEverything()
 	easyEdit.savedata:mkdirs()
 	easyEdit.savedata:load()
 end
