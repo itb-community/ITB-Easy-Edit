@@ -50,7 +50,9 @@ function BossLists:update()
 
 	for _, bossMissionId in ipairs(bossList.Bosses) do
 		local bossMission = modApi.missions:get(bossMissionId)
-		unitList[#unitList+1] = bossMission.BossPawn
+		if bossMission then
+			unitList[#unitList+1] = bossMission.BossPawn
+		end
 	end
 	Mission_Final.BossList = unitList
 
@@ -59,7 +61,9 @@ function BossLists:update()
 
 	for _, bossMissionId in ipairs(bossList.Bosses) do
 		local bossMission = modApi.missions:get(bossMissionId)
-		unitList[#unitList+1] = bossMission.BossPawn
+		if bossMission then
+			unitList[#unitList+1] = bossMission.BossPawn
+		end
 	end
 	Mission_Final_Cave.BossList = unitList
 end
