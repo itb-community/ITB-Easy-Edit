@@ -184,6 +184,22 @@ function UiPopupButton:addList(entryList, createEntry, onEntryClicked)
 	return self
 end
 
+function UiPopupButton:addArray(entryArray, createEntry, onEntryClicked)
+	createEntry = createEntry or createPopupEntryDefault
+	onEntryClicked = onEntryClicked or onEntryClickedDefault
+
+	for id, data in ipairs(entryArray) do
+		local popupEntry = createEntry(_, data)
+
+		popupEntry.data = data
+		popupEntry.onclicked = popupEntry.onclicked or onEntryClicked
+		popupEntry.popupOwner = self
+		popupEntry:addTo(self.popupWindow.flowlayout)
+	end
+
+	return self
+end
+
 function UiPopupButton:enumeratePopupEntries(func, ...)
 	for _, child in ipairs(self.popupWindow.flowlayout.children) do
 		local args = {...}
