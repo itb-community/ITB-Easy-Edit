@@ -482,6 +482,53 @@ local function registerIcons()
 	end
 end
 
+local function registerFinalEnemyList()
+	local enemyList = modApi.enemyList:add("finale")
+
+	enemyList.name = "Finale"
+	enemyList.categories = { "Enemies" }
+	enemyList.enemies = { Enemies = {} }
+
+	enemyList:addEnemy("Firefly", "Enemies")
+	enemyList:addEnemy("Hornet", "Enemies")
+	enemyList:addEnemy("Scarab", "Enemies")
+	enemyList:addEnemy("Scorpion", "Enemies")
+	enemyList:addEnemy("Crab", "Enemies")
+	enemyList:addEnemy("Beetle", "Enemies")
+	enemyList:addEnemy("Digger", "Enemies")
+	enemyList:addEnemy("Blobber", "Enemies")
+	enemyList:addEnemy("Jelly_Lava", "Enemies") -- jelly x3
+	enemyList:addEnemy("Jelly_Lava", "Enemies")
+	enemyList:addEnemy("Jelly_Lava", "Enemies")
+
+	local oldGetSpawnList = GameObject.GetSpawnList
+	function GameObject:GetSpawnList(island, ...)
+		local result = oldGetSpawnList(self, island, ...)
+
+		if island == 5 then -- final island!
+			local enemyList = modApi.enemyList:get("finale")
+			result = copy_table(enemyList.enemies.Enemies)
+		end
+
+		return result
+	end
+end
+
+local function registerFinalBossList()
+	local bossList_phase1 = modApi.bossList:add("finale1")
+	local bossList_phase2 = modApi.bossList:add("finale2")
+	bossList_phase1.name = "Finale I"
+	bossList_phase2.name = "Finale II"
+
+	bossList_phase1:addBoss("Mission_ScorpionBoss")
+	bossList_phase1:addBoss("Mission_FireflyBoss")
+	bossList_phase1:addBoss("Mission_HornetBoss")
+
+	bossList_phase2:addBoss("Mission_BeetleBoss")
+	bossList_phase2:addBoss("Mission_FireflyBoss")
+	bossList_phase2:addBoss("Mission_HornetBoss")
+end
+
 local function markRegisteredAsVanilla()
 	local function markAsVanilla(indexedList)
 		for _, indexedEntry in pairs(indexedList._children) do
@@ -571,5 +618,7 @@ registerMissionLists()
 registerStructureLists()
 registerIslandComposites()
 registerIcons()
+registerFinalEnemyList()
+registerFinalBossList()
 
 modApi.events.onModsInitialized:subscribe(onModsInitialized)

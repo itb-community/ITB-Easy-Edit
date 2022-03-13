@@ -40,5 +40,29 @@ function BossList:getContentType()
 	return modApi.missions
 end
 
+local BossLists = IndexedList(BossList)
 
-modApi.bossList = IndexedList(BossList)
+function BossLists:update()
+	IndexedList.update(self)
+
+	local bossList = modApi.bossList:get("finale1")
+	local unitList = {}
+
+	for _, bossMissionId in ipairs(bossList.Bosses) do
+		local bossMission = modApi.missions:get(bossMissionId)
+		unitList[#unitList+1] = bossMission.BossPawn
+	end
+	Mission_Final.BossList = unitList
+
+	local bossList = modApi.bossList:get("finale2")
+	local unitList = {}
+
+	for _, bossMissionId in ipairs(bossList.Bosses) do
+		local bossMission = modApi.missions:get(bossMissionId)
+		unitList[#unitList+1] = bossMission.BossPawn
+	end
+	Mission_Final_Cave.BossList = unitList
+end
+
+
+modApi.bossList = BossLists
