@@ -39,6 +39,8 @@ local COLOR_RED = helpers.COLOR_RED
 local ISLAND_ICON_DEF = modApi.island:getIconDef()
 local CEO_ICON_DEF = modApi.ceo:getIconDef()
 local TILESET_ICON_DEF = modApi.tileset:getIconDef()
+local ENEMY_LIST_EXCLUSION = { "finale" }
+local BOSS_LIST_EXCLUSION = { "finale1", "finale2" }
 
 -- ui
 local currentContent
@@ -190,6 +192,35 @@ local function buildFrameContent(parentUi)
 	local icon_island_width = ISLAND_ICON_DEF.width * ISLAND_ICON_DEF.scale
 	local icon_island_height = ISLAND_ICON_DEF.height * ISLAND_ICON_DEF.scale
 	local createNewIsland = UiTextBox()
+
+	local enemyLists_sorted = to_array(filter_table(modApi.enemyList._children, function(k, v)
+		return not list_contains(ENEMY_LIST_EXCLUSION, k)
+	end))
+
+	stablesort(enemyLists_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
+	end)
+
+	local bossLists_sorted = to_array(filter_table(modApi.bossList._children, function(k, v)
+		return not list_contains(BOSS_LIST_EXCLUSION, k)
+	end))
+
+	stablesort(bossLists_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
+	end)
+
+	local missionLists_sorted = to_array(modApi.missionList._children)
+
+	stablesort(missionLists_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
+	end)
+
+	local structureLists_sorted = to_array(modApi.structureList._children)
+
+	stablesort(structureLists_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
+	end)
+
 
 	uiEditBox = {
 		id = createUiEditBox(),
@@ -393,8 +424,8 @@ local function buildFrameContent(parentUi)
 								:setVar("onRecieve", onRecieve.enemyList)
 								:setVar("onSend", onSend.enemyList)
 								:settooltip("Change the list of enemies available on the island", nil, true)
-								:addList(
-									modApi.enemyList._children,
+								:addArray(
+									enemyLists_sorted,
 									createStaticContentList2x,
 									onPopupEntryClicked
 								)
@@ -408,8 +439,8 @@ local function buildFrameContent(parentUi)
 								:setVar("onRecieve", onRecieve.bossList)
 								:setVar("onSend", onSend.bossList)
 								:settooltip("Change the list of bosses available on the island", nil, true)
-								:addList(
-									modApi.bossList._children,
+								:addArray(
+									bossLists_sorted,
 									createStaticContentList2x,
 									onPopupEntryClicked
 								)
@@ -423,8 +454,8 @@ local function buildFrameContent(parentUi)
 								:setVar("onRecieve", onRecieve.missionList)
 								:setVar("onSend", onSend.missionList)
 								:settooltip("Change the list of missions available on the island", nil, true)
-								:addList(
-									modApi.missionList._children,
+								:addArray(
+									missionLists_sorted,
 									createStaticContentList2x,
 									onPopupEntryClicked
 								)
@@ -438,8 +469,8 @@ local function buildFrameContent(parentUi)
 								:setVar("onRecieve", onRecieve.structureList)
 								:setVar("onSend", onSend.structureList)
 								:settooltip("Change the list of structures available on the island", nil, true)
-								:addList(
-									modApi.structureList._children,
+								:addArray(
+									structureLists_sorted,
 									createStaticContentList2x,
 									onPopupEntryClicked
 								)
