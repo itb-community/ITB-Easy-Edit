@@ -25,7 +25,7 @@ function BossList:addBoss(boss)
 end
 
 function BossList:getCategories()
-	return self
+	return { Bosses = self.Bosses }
 end
 
 function BossList:getObject(missionId)

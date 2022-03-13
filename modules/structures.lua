@@ -1,9 +1,9 @@
 
 -- defs
 local CATEGORIES = {
-	[REWARD_REP] = "RepAssets",
-	[REWARD_POWER] = "PowAssets",
-	[REWARD_TECH] = "TechAssets",
+	[REWARD_REP] = "Rep",
+	[REWARD_POWER] = "Power",
+	[REWARD_TECH] = "Core",
 }
 
 local keys = { "Name", "Image", "Reward" }

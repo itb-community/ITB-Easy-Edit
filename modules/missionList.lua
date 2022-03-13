@@ -28,7 +28,10 @@ function MissionList:addMission(mission, isHighThreat)
 end
 
 function MissionList:getCategories()
-	return self
+	return {
+		["High Threat"] = self.Missions_High,
+		["Low Threat"] = self.Missions_Low,
+	}
 end
 
 function MissionList:getObject(missionId)

@@ -69,7 +69,11 @@ function StructureList:addRepAssets(...)
 end
 
 function StructureList:getCategories()
-	return self
+	return {
+		Rep = self.RepAssets,
+		Power = self.PowAssets,
+		Core = self.TechAssets,
+	}
 end
 
 function StructureList:getObject(structureId)
