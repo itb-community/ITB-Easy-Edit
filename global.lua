@@ -116,3 +116,7 @@ function to_sorted_array(tbl, predicate)
 	table.sort(list, predicate)
 	return list
 end
+
+function upper_first(str)
+	return str:gsub("^.", string.upper)
+end
