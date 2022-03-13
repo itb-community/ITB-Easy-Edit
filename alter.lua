@@ -37,6 +37,11 @@ local mechList = {
 local UNIT_EXCLUSION = {
 	"Pawn",
 	"PawnTable",
+
+	"SlugBoss",
+	"SlugEgg1",
+	"Slug1",
+	"Slug2",
 }
 
 local WEAPON_EXCLUSION = {
@@ -56,6 +61,7 @@ local MISSION_EXCLUSION = {
 	"Mission_Boss",
 
 	"Mission_Sandstorm",
+	"Mission_SlugBoss",
 }
 
 local STRUCTURE_EXCLUSION = {
