@@ -182,15 +182,26 @@ local function buildFrameContent(parentUi)
 			:endUi()
 	end
 
-	for _, objectList in pairs(modApi.missionList._children) do
+	local missionLists_sorted = to_array(modApi.missionList._children)
+
+	stablesort(missionLists_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
+	end)
+
+	for _, objectList in ipairs(missionLists_sorted) do
 		addObjectList(objectList)
 	end
 
-	local missions_filtered = filter_table(modApi.missions._children, function(k, v)
+	local missions_sorted = to_array(filter_table(modApi.missions._children, function(k, v)
 		return v.BossPawn == nil
+	end))
+
+	stablesort(missions_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
 	end)
 
-	for missionId, mission in pairs(missions_filtered) do
+	for _, mission in ipairs(missions_sorted) do
+		local missionId = mission._id
 		local entry = UiDragSource(dragObject)
 
 		entry.data = mission

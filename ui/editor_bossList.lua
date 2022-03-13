@@ -180,16 +180,31 @@ local function buildFrameContent(parentUi)
 			:endUi()
 	end
 
-	for _, objectList in pairs(modApi.bossList._children) do
+	local bossMissionLists_sorted = to_array(modApi.bossList._children)
+
+	stablesort(bossMissionLists_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
+	end)
+
+	for _, objectList in ipairs(bossMissionLists_sorted) do
 		addObjectList(objectList)
 	end
 
-	local bossMissions_filtered = filter_table(modApi.missions._children, function(k, v)
+	local bossMissions_sorted = to_array(filter_table(modApi.missions._children, function(k, v)
 		return v.BossPawn ~= nil
+	end))
+
+	stablesort(bossMissions_sorted, function(a, b)
+		local boss_a = a.BossPawn and modApi.units:get(a.BossPawn) or nil
+		local boss_b = b.BossPawn and modApi.units:get(b.BossPawn) or nil
+		local name_a = boss_a and boss_a:getName():lower() or ""
+		local name_b = boss_b and boss_b:getName():lower() or ""
+		return alphanum(name_a, name_b)
 	end)
 
-	for bossMissionId, bossMission in pairs(bossMissions_filtered) do
+	for _, bossMission in ipairs(bossMissions_sorted) do
 		if bossMission.BossPawn then
+			local bossMissionId = bossMission._id
 			local entry = UiDragSource(dragObject)
 			local unit = modApi.units:get(bossMission.BossPawn)
 

@@ -181,11 +181,24 @@ local function buildFrameContent(parentUi)
 			:endUi()
 	end
 
-	for _, objectList in pairs(modApi.structureList._children) do
+	local structureLists_sorted = to_array(modApi.structureList._children)
+
+	stablesort(structureLists_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
+	end)
+
+	for _, objectList in pairs(structureLists_sorted) do
 		addObjectList(objectList)
 	end
 
-	for structureId, structure in pairs(modApi.structures._children) do
+	local structures_sorted = to_array(modApi.structures._children)
+
+	stablesort(structures_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
+	end)
+
+	for _, structure in ipairs(structures_sorted) do
+		local structureId = structure._id
 		local entry = UiDragSource(dragObject)
 
 		entry.data = structure

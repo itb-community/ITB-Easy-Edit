@@ -182,15 +182,26 @@ local function buildFrameContent(parentUi)
 			:endUi()
 	end
 
-	for _, objectList in pairs(modApi.enemyList._children) do
+	local enemyLists_sorted = to_array(modApi.enemyList._children)
+
+	stablesort(enemyLists_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
+	end)
+
+	for _, objectList in ipairs(enemyLists_sorted) do
 		addObjectList(objectList)
 	end
 
-	local enemies_filtered = filter_table(modApi.units._children, function(k, v)
+	local enemies_sorted = to_array(filter_table(modApi.units._children, function(k, v)
 		return v:isBaseEnemy()
+	end))
+
+	stablesort(enemies_sorted, function(a, b)
+		return alphanum(a:getName():lower(), b:getName():lower())
 	end)
 
-	for enemyId, enemy in pairs(enemies_filtered) do
+	for _, enemy in ipairs(enemies_sorted) do
+		local enemyId = enemy._id
 		local entry = UiDragSource(dragObject)
 
 		entry.data = enemy
