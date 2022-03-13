@@ -133,6 +133,8 @@ function Object:draw(screen, widget)
 	local surf_x
 	local surf_y
 
+	imageOffset = math.min(imageOffset, imageRows - 1)
+
 	if self.bounce and surf_w > widget_w then
 		surf_x = widget_x - math.floor((surf_w - widget_w) * (math.sin(os.clock())+1) / 2) + widget.decorationx
 	elseif align_h == "center" then
