@@ -9,6 +9,7 @@ local vanillaCorporations = { "Corp_Grass", "Corp_Desert", "Corp_Snow", "Corp_Fa
 local difficulties = { DIFF_EASY, DIFF_NORMAL, DIFF_HARD }
 
 local islands = { "archive", "rst", "pinnacle", "detritus" }
+local islandNames = { "Archive", "R.S.T.", "Pinnacle", "Detritus" }
 local tileTypes = { TERRAIN_FOREST, TERRAIN_SAND, TERRAIN_ICE, TERRAIN_ACID }
 local islandShifts = { Point(14,5), Point(16,15), Point(17,12), Point(18,15), Point(0,0) }
 
@@ -249,6 +250,7 @@ local function registerIslands()
 		local n = i-1
 
 		island:copyAssets({_id = tostring(n)})
+		island.name = islandNames[i]
 		island.shift = islandShifts[i]
 		island.magic = Island_Magic[i]
 		island.regionData = {}
@@ -275,8 +277,8 @@ local function registerCorporations()
 		local base = _G[corp_id]
 
 		corp:copy(base)
-		corp.Name = GetText(corp_id .."_Name") or ""
-		corp.Description = GetText(corp_id .."_Description") or ""
+		corp.Name = GetText(corp_id.."_Name")
+		corp.Description = GetText(corp_id.."_Description")
 		corp:lock()
 	end
 end
@@ -289,7 +291,7 @@ local function registerCEOs()
 
 		ceo:copyAssets({_id = "ceo_"..corporations[i]})
 		ceo:copy(base)
-		ceo.CEO_Name = GetText(corp_id .."_CEO_Name") or ""
+		ceo.CEO_Name = GetText(corp_id.."_CEO_Name")
 		ceo:lock()
 	end
 end
@@ -325,10 +327,11 @@ local function registerTilesets()
 
 		if corp_id then
 			local tileset = modApi.tileset:add(id)
+			tileset.name = upper_first(id)
 			-- fill in missing conveyor assets
 			tileset:copyAssets({_id = "acid"}, false)
 
-			tileset.climate = GetText(corp_id .."_Environment") or ""
+			tileset.climate = GetText(corp_id.."_Environment")
 			tileset.rainChance = getRainChance(id)
 			tileset.environmentChance = {}
 
@@ -342,6 +345,7 @@ local function registerTilesets()
 			end
 		else
 			local tileset = modApi.tileset:add(id)
+			tileset.name = upper_first(id)
 			-- set missing locations
 			tileset:copyAssets(tileset)
 			-- fill in missing assets
@@ -390,6 +394,7 @@ end
 local function registerEnemyLists()
 	local id = "vanilla"
 	local enemyList = modApi.enemyList:add(id)
+	enemyList.name = "Vanilla"
 	enemyList.enemies = copy_table(EnemyLists)
 	enemyList:lock()
 
@@ -419,6 +424,7 @@ local function registerBossLists()
 		local base = _G[corp_id]
 
 		bossList:copy(base)
+		bossList.name = base.Bark_Name
 		bossList:lock()
 	end
 end
@@ -430,14 +436,15 @@ local function registerMissionLists()
 		local base = _G[corp_id]
 
 		missionList:copy(base)
+		missionList.name = base.Bark_Name
 		missionList:lock()
 	end
 end
 
 local function registerStructureLists()
-	local id = "vanilla"
-	local structureList = modApi.structureList:add(id)
+	local structureList = modApi.structureList:add("vanilla")
 	structureList:copy(Corp_Default)
+	structureList.name = "Vanilla"
 	structureList:lock()
 end
 
@@ -445,6 +452,7 @@ local function registerIslandComposites()
 	for i = 1, 4 do
 		local id = islands[i]
 		local islandComposite = modApi.islandComposite:add(id)
+		islandComposite.name = islandNames[i]
 		islandComposite.island = islands[i]
 		islandComposite.corporation = corporations[i]
 		islandComposite.ceo = ceos[i]

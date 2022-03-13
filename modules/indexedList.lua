@@ -214,7 +214,7 @@ function IndexedEntry:getId()
 end
 
 function IndexedEntry:getName()
-	return self._id
+	return self.name or self._id
 end
 
 function IndexedEntry:isVanilla()

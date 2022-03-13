@@ -76,15 +76,13 @@ local function onPopupEntryClicked(self)
 end
 
 local function onSend_island(sender, reciever)
-	local island = modApi.island:get(sender.id)
-	reciever.data.island = sender.id
+	reciever.data.island = sender.data._id
 	reciever.decorations[3]:updateSurfacesForce(reciever)
 end
 
 local function mkSend_popup(objName)
 	return function(sender, reciever)
-		local obj = modApi[objName]:get(sender.id)
-		reciever.data[objName] = sender.id
+		reciever.data[objName] = sender.data._id
 	end
 end
 
@@ -113,9 +111,9 @@ local function mkRecieve_list(objName)
 end
 
 local function onRecieve_id(reciever, sender)
-	local text = sender.data._id
+	local text = sender.data:getName()
 	if text ~= nil then
-		text = "Island id: "..text
+		text = "Island: "..text
 	end
 	reciever.text_title_bounce_centerv_clip = text
 end

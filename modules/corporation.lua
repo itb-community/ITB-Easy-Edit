@@ -107,6 +107,10 @@ function Ceo:setOffice(path_office_large, path_office_small)
 	modApi:appendAsset(string.format("img/ui/corps/%s_small.png", self._id), modPath .. path_office_small)
 end
 
+function Ceo:getName()
+	return self.CEO_Name or self._id
+end
+
 function Ceo:getImagePath()
 	return string.format(self._iconDef.pathformat, self._id)
 end
