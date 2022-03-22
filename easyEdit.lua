@@ -23,6 +23,7 @@ local function finalizeInit(self)
 
 	require(path.."debug")
 	require(path.."global")
+	require(path.."ml_fixes")
 	require(path.."datastructures/binarySearch")
 	require(path.."datastructures/sort")
 	require(path.."modules/saveData")

@@ -11,7 +11,6 @@ local pruneExtension = explorer.pruneExtension
 local remdir = explorer.remdir
 local isdir = explorer.isdir
 local isfile = explorer.isfile
-local findroot = explorer.findroot
 
 -- defs
 local LOGD = easyEdit.LOG
@@ -135,7 +134,6 @@ function savedata:saveAsDir(id, data)
 end
 
 function savedata:mkdirs()
-	findroot()
 	os.mkdir(fullSaveLoc)
 
 	for _, dir in pairs(DIRS) do
