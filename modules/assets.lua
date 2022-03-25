@@ -1,38 +1,51 @@
 
-local function appendAssets(gameRoot, modPath)
+local function appendAssets(gameRoot, modPath, prefix)
 	local modRoot = (modApi:getCurrentMod().resourcePath..modPath):gsub("^.*[^\\/]$","%1/")
 	local files = mod_loader:enumerateFilesIn(modRoot)
+	prefix = prefix or ""
 	for _, file in ipairs(files) do
-		modApi:appendAsset(gameRoot..file, modRoot..file)
+		modApi:appendAsset(gameRoot..prefix..file, modRoot..file)
 	end
 end
 
-function modApi:appendPlayerUnitAssets(path)
-	appendAssets("img/units/player/", path)
+function modApi:appendPlayerUnitAssets(path, prefix)
+	appendAssets("img/units/player/", path, prefix)
 end
 
-function modApi:appendEnemyUnitAssets(path)
-	appendAssets("img/units/aliens/", path)
+function modApi:appendEnemyUnitAssets(path, prefix)
+	appendAssets("img/units/aliens/", path, prefix)
 end
 
-function modApi:appendMissionUnitAssets(path)
-	appendAssets("img/units/mission/", path)
+function modApi:appendMissionUnitAssets(path, prefix)
+	appendAssets("img/units/mission/", path, prefix)
 end
 
-function modApi:appendBotUnitAssets(path)
-	appendAssets("img/units/snowbots/", path)
+function modApi:appendBotUnitAssets(path, prefix)
+	appendAssets("img/units/snowbots/", path, prefix)
 end
 
-function modApi:appendIconAssets(path)
-	appendAssets("img/icon/", path)
+function modApi:appendIconAssets(path, prefix)
+	appendAssets("img/icon/", path, prefix)
 end
 
-function modApi:appendCombatAssets(path)
-	appendAssets("img/combat/", path)
+function modApi:appendCombatAssets(path, prefix)
+	appendAssets("img/combat/", path, prefix)
 end
 
-function modApi:appendEffectAssets(path)
-	appendAssets("img/effects/", path)
+function modApi:appendCombatIconAssets(path, prefix)
+	appendAssets("img/combat/icons/", path, prefix)
+end
+
+function modApi:appendEffectAssets(path, prefix)
+	appendAssets("img/effects/", path, prefix)
+end
+
+function modApi:appendWeaponAssets(path, prefix)
+	appendAssets("img/weapons/", path, prefix)
+end
+
+function modApi:appendPassiveWeaponAssets(path, prefix)
+	appendAssets("img/weapons/passives/", path, prefix)
 end
 
 modApi.appendMechAssets = modApi.appendPlayerUnitAssets
