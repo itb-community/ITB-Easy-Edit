@@ -26,10 +26,6 @@ function modApi:appendBotUnitAssets(path, prefix)
 	appendAssets("img/units/snowbots/", path, prefix)
 end
 
-function modApi:appendIconAssets(path, prefix)
-	appendAssets("img/icon/", path, prefix)
-end
-
 function modApi:appendCombatAssets(path, prefix)
 	appendAssets("img/combat/", path, prefix)
 end
