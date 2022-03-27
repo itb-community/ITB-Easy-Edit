@@ -11,6 +11,10 @@ UnitImage._iconDef = {
 	outlinecolorhl = deco.colors.buttonborderhl,
 }
 
+function UnitImage:getName()
+	return self.Name or self._id
+end
+
 UnitImage.isMech = Unit.isMech
 UnitImage.isEnemy = Unit.isEnemy
 UnitImage.isBot = Unit.isBot
