@@ -4,7 +4,9 @@ local function appendAssets(gameRoot, modPath, prefix)
 	local files = mod_loader:enumerateFilesIn(modRoot)
 	prefix = prefix or ""
 	for _, file in ipairs(files) do
-		modApi:appendAsset(gameRoot..prefix..file, modRoot..file)
+		if file:find(".png$") then
+			modApi:appendAsset(gameRoot..prefix..file, modRoot..file)
+		end
 	end
 end
 
