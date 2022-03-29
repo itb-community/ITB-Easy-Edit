@@ -19,12 +19,12 @@ function modApi:createMechAnimations(animDefs)
 		local anim = ANIMS.MechUnit:new(animDef)
 		anim.Image = filePath
 
-		if anim.center_x then
-			anim.PosX = -anim.center_x
+		if anim.CenterX then
+			anim.PosX = -anim.CenterX
 		end
 
-		if anim.center_y then
-			anim.PosY = -anim.center_y + TILE_HALF_HEIGHT 
+		if anim.CenterY then
+			anim.PosY = -anim.CenterY + TILE_HALF_HEIGHT 
 		end
 
 		ANIMS[file] = anim
@@ -55,12 +55,12 @@ function modApi:createAnimations(animDefs)
 
 		local anim = baseAnim:new(animDef)
 
-		if anim.center_x then
-			anim.PosX = -anim.center_x
+		if anim.CenterX then
+			anim.PosX = -anim.CenterX
 		end
 
-		if anim.center_y then
-			anim.PosY = -anim.center_y + TILE_HALF_HEIGHT 
+		if anim.CenterY then
+			anim.PosY = -anim.CenterY + TILE_HALF_HEIGHT 
 		end
 
 		ANIMS[file] = anim
