@@ -51,6 +51,8 @@ function UiDebug:relayout()
 		debugName = "Malformed debugName"
 	end
 
+	debugName = debugName.." - "..tostring(watchedElement)
+
 	self.decoText:setsurface(debugName)
 
 	self.screenx = watchedElement.screenx
@@ -74,7 +76,9 @@ end)
 for name, class in pairs(_G) do
 	if type(class) == 'table' then
 		if Class.isSubclassOf(class, Ui) then
-			class.__index._debugName = name
+			if class.__index._debugName == nil then
+				class.__index._debugName = name
+			end
 		end
 	end
 end
