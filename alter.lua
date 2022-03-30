@@ -557,10 +557,12 @@ local function markRegisteredAsVanilla()
 	markAsVanilla(modApi.islandComposite)
 end
 
-local function markRegisteredAsMod()
+local function markRegisteredAsMod(modId)
 	local function markAsMod(indexedList)
 		for _, indexedEntry in pairs(indexedList._children) do
-			indexedEntry._mod = true
+			if not indexedEntry:isVanilla() and indexedEntry.mod == nil then
+				indexedEntry.mod = modId
+			end
 		end
 	end
 
@@ -598,13 +600,15 @@ local function lockEverything()
 	lockChildren(modApi.missionList)
 end
 
-local function onModsInitialized()
-	markRegisteredAsVanilla()
+local function onModInitialized(modId)
 	registerUnits()
 	registerWeapons()
 	registerMissions()
 	registerStructures()
-	markRegisteredAsMod()
+	markRegisteredAsMod(modId)
+end
+
+local function onModsInitialized()
 	lockEverything()
 	easyEdit.savedata:mkdirs()
 	easyEdit.savedata:load()
@@ -626,5 +630,7 @@ registerIslandComposites()
 registerIcons()
 registerFinalEnemyList()
 registerFinalBossList()
+markRegisteredAsVanilla()
 
+modApi.events.onModInitialized:subscribe(onModInitialized)
 modApi.events.onModsInitialized:subscribe(onModsInitialized)

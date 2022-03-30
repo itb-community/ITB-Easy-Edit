@@ -189,11 +189,15 @@ function IndexedEntry:isVanilla()
 end
 
 function IndexedEntry:isMod()
-	return self._mod == true
+	return self.mod ~= nil
+end
+
+function IndexedEntry:getOwningMod()
+	return self.mod
 end
 
 function IndexedEntry:isCustom()
-	return not self._mod and not self._vanilla
+	return not self.mod and not self._vanilla
 end
 
 function IndexedEntry:getImagePath()
