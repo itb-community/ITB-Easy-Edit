@@ -1121,6 +1121,17 @@ function Delete:draw(screen, widget)
 	DecoSurfaceAligned.draw(self, screen, widget)
 end
 
+local WarningLarge = DecoSurfaceAligned(nil, "center", "center")
+function WarningLarge:draw(screen, widget)
+	if widget.hovered then
+		self.surface = surfaces.surfaceWarningHl
+	else
+		self.surface = surfaces.surfaceWarning
+	end
+
+	DecoSurfaceAligned.draw(self, screen, widget)
+end
+
 local ContentList1x = ContentList()
 ContentList1x.transform = transforms.transform_1x_outline
 ContentList1x.transformHl = transforms.transform_1x_outline_hl
@@ -1226,6 +1237,7 @@ return {
 	GroupButton = GroupButton,
 	GroupButtonDropTarget = GroupButtonDropTarget,
 	Delete = Delete,
+	WarningLarge = WarningLarge,
 	StructureReward = SurfaceReward(),
 	TransHeader = TransHeader(),
 	Button = DecoButton(),
