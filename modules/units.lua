@@ -142,26 +142,26 @@ function Units:addSoundBase(unit)
 end
 
 function Units:update()
-	local entryType = self:getEntryType()
-	local cache_savedata = easyEdit.savedata.cache[entryType] or NULLTABLE
+	local cache_units = easyEdit.savedata.cache.units or NULLTABLE
 
-	for cache_id, cache_data in pairs(cache_savedata) do
-		local livedata = modApi[entryType]:get(cache_id)
+	for unit_id, unit_data in pairs(cache_units) do
+		local livedata = modApi.units:get(unit_id)
+		local unit = _G[unit_id]
 
-		if _G[cache_id] == nil then
-			_G[cache_id] = self._baseMech:new(cache_data)
+		if unit == nil then
+			unit = self._baseMech:new(unit_data)
+			_G[unit_id] = unit
 		end
 
 		if livedata == nil then
-			livedata = modApi[entryType]:add(cache_id, self._baseMech)
+			livedata = modApi.units:add(unit_id, self._baseMech)
 			livedata:lock()
 		end
 
 		if livedata then
 			clear_table(livedata)
-			clone_table(livedata, cache_data)
-
-			modApi.world:setUnit(cache_id, livedata)
+			clone_table(livedata, unit_data)
+			livedata.copy(unit, livedata)
 		end
 	end
 end

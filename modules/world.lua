@@ -43,21 +43,6 @@ function modApi.world:reset()
 	self:update()
 end
 
-function modApi.world:setUnit(unit_id, unit)
-	if not unit then return end
-
-	local base = _G[unit_id]
-
-	unit.copy(base, unit)
-end
-
-function modApi.world:setWeapon(weapon_id, weapon)
-	if not weapon then return end
-
-	local base = _G[weapon_id]
-
-	weapon.copy(base, weapon)
-end
 
 function modApi.world:setIsland(islandSlot, island)
 	if not island then return end
