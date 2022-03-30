@@ -176,6 +176,7 @@ local function onExit()
 	}
 
 	easyEdit.savedata:saveAsFile("world", easyEdit.savedata.cache.world)
+	easyEdit.savedata:updateLiveData()
 end
 
 function worldEditor.mainButton()
