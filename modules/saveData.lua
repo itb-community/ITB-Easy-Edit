@@ -29,6 +29,16 @@ local saveRoot = GetSavedataLocation()
 local saveLoc = modApi:getCurrentProfilePath().."easyEdit/"
 local fullSaveLoc = saveRoot..saveLoc
 
+local function isFromUninstalledMod(result)
+	if result.mod ~= nil then
+		if mod_loader.mods[result.mod].installed ~= true then
+			return true
+		end
+	end
+
+	return false
+end
+
 
 local function loadFromFile(path)
 	LOGD("EasyEdit - loadFromFile ../"..path)
@@ -41,6 +51,10 @@ local function loadFromFile(path)
 				result = obj
 			end
 		)
+	end
+
+	if isFromUninstalledMod(result) then
+		return nil
 	end
 
 	return result
