@@ -38,6 +38,11 @@ function modApi.world:update()
 	end
 end
 
+function modApi.world:reset()
+	easyEdit.savedata.cache.world = nil
+	self:update()
+end
+
 function modApi.world:setUnit(unit_id, unit)
 	if not unit then return end
 
