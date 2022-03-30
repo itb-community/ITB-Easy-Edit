@@ -169,6 +169,13 @@ end
 easyEdit.savedata = savedata
 
 modApi.events.onProfileChanged:subscribe(function(_, newProfile)
+	for category_id, category in pairs(easyEdit.savedata.cache) do
+		local module = modApi[category_id]
+		module:reset()
+	end
+
 	saveLoc = modApi:getCurrentProfilePath().."easyEdit/"
 	fullSaveLoc = saveRoot..saveLoc
+	easyEdit.savedata:mkdirs()
+	easyEdit.savedata:load()
 end)
