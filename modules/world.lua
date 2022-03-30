@@ -6,7 +6,48 @@ local LOGDF = easyEdit.LOGF
 
 local vanillaCorporations = { "Corp_Grass", "Corp_Desert", "Corp_Snow", "Corp_Factory" }
 
-modApi.world = {}
+modApi.world = {
+	{
+		bossList = "archive",
+		ceo = "dewey",
+		corporation = "archive",
+		enemyList = "vanilla",
+		island = "archive",
+		missionList = "archive",
+		structureList = "vanilla",
+		tileset = "grass",
+	},
+	{
+		bossList = "rst",
+		ceo = "jessica",
+		corporation = "rst",
+		enemyList = "vanilla",
+		island = "rst",
+		missionList = "rst",
+		structureList = "vanilla",
+		tileset = "sand",
+	},
+	{
+		bossList = "pinnacle",
+		ceo = "zenith",
+		corporation = "pinnacle",
+		enemyList = "vanilla",
+		island = "pinnacle",
+		missionList = "pinnacle",
+		structureList = "vanilla",
+		tileset = "snow",
+	},
+	{
+		bossList = "detritus",
+		ceo = "vikram",
+		corporation = "detritus",
+		enemyList = "vanilla",
+		island = "detritus",
+		missionList = "detritus",
+		structureList = "vanilla",
+		tileset = "acid",
+	},
+}
 
 function modApi.world:update()
 	local cache_world = easyEdit.savedata.cache.world or DEFAULT_ISLAND_SLOTS
@@ -49,6 +90,7 @@ function modApi.world:setIsland(islandSlot, islandId)
 		LOGDF("EasyEdit - Ignore malformed island %q for island slot %s", islandId, islandSlot)
 		return
 	else
+		self[islandSlot].island = islandId
 		LOGDF("EasyEdit - set island %q for island slot %s", islandId, islandSlot)
 	end
 
@@ -84,6 +126,7 @@ function modApi.world:setCorporation(islandSlot, corpId)
 		LOGDF("EasyEdit - Ignore malformed corporation %q for island slot %s", corpId, islandSlot)
 		return
 	else
+		self[islandSlot].corporation = corpId
 		LOGDF("EasyEdit - set corporation %q for island slot %s", corpId, islandSlot)
 	end
 
@@ -108,6 +151,7 @@ function modApi.world:setCeo(islandSlot, ceoId)
 		LOGDF("EasyEdit - Ignore malformed ceo %q for island slot %s", ceoId, islandSlot)
 		return
 	else
+		self[islandSlot].ceo = ceoId
 		LOGDF("EasyEdit - set ceo %q for island slot %s", ceoId, islandSlot)
 	end
 
@@ -131,6 +175,7 @@ function modApi.world:setTileset(islandSlot, tilesetId)
 		LOGDF("EasyEdit - Ignoring malformed tileset %q for island slot %s", tilesetId, islandSlot)
 		return
 	else
+		self[islandSlot].tileset = tilesetId
 		LOGDF("EasyEdit - set tileset %q for island slot %s", tilesetId, islandSlot)
 	end
 
@@ -154,6 +199,7 @@ function modApi.world:setEnemyList(islandSlot, enemyListId)
 		LOGDF("EasyEdit - Ignoring malformed enemy list %q for island slot %s", enemyListId, islandSlot)
 		return
 	else
+		self[islandSlot].enemyList = enemyListId
 		LOGDF("EasyEdit - set enemy list %q for island slot %s", enemyListId, islandSlot)
 	end
 
@@ -176,6 +222,7 @@ function modApi.world:setBossList(islandSlot, bossListId)
 		LOGDF("EasyEdit - Ignore malformed boss list %q for island slot %s", bossListId, islandSlot)
 		return
 	else
+		self[islandSlot].bossList = bossListId
 		LOGDF("EasyEdit - set boss list %q for island slot %s", bossListId, islandSlot)
 	end
 
@@ -198,6 +245,7 @@ function modApi.world:setMissionList(islandSlot, missionListId)
 		LOGDF("EasyEdit - Ignore malformed mission list %q for island slot %s", missionListId, islandSlot)
 		return
 	else
+		self[islandSlot].missionList = missionListId
 		LOGDF("EasyEdit - set mission list %q for island slot %s", missionListId, islandSlot)
 	end
 
@@ -220,6 +268,7 @@ function modApi.world:setStructureList(islandSlot, structureListId)
 		LOGDF("EasyEdit - Ignore malformed structure list %q for island slot %s", structureListId, islandSlot)
 		return
 	else
+		self[islandSlot].structureList = structureListId
 		LOGDF("EasyEdit - set structure list %q for island slot %s", structureListId, islandSlot)
 	end
 
