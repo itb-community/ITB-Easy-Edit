@@ -23,35 +23,6 @@ local __pairs = function(self)
 	end, self, nil
 end
 
-local __indexMagic = function(self, key)
-	return self._default[key]
-end
-
-local __pairsMagic = function(self)
-	defaultRemaining = true
-	return function(self, key)
-		local value
-
-		if defaultRemaining then
-			repeat
-				key, value = next(self._default, key)
-			until key == nil or tostring(key):sub(1,1) ~= "_"
-		end
-
-		if key == nil then
-			defaultRemaining = false
-		end
-
-		if not defaultRemaining then
-			repeat
-				key, value = next(self, key)
-			until key == nil or tostring(key):sub(1,1) ~= "_"
-		end
-
-		return key, value
-	end, self, nil
-end
-
 
 IndexedEntryMetatableUnlocked = {
 	__index = __index,
@@ -67,10 +38,6 @@ IndexedEntryMetatableLocked = {
 	__index = __index,
 	__call = __call,
 	-- __pairs = __pairs,
-}
-
-LockedTableEntryMetatable = {
-	__index = __indexMagic
 }
 
 
