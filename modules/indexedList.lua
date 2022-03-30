@@ -138,6 +138,14 @@ function IndexedList:update()
 	end
 end
 
+function IndexedList:reset()
+	for _, indexedEntry in pairs(self._children) do
+		if not indexedEntry:delete() then
+			indexedEntry:reset()
+		end
+	end
+end
+
 
 function IndexedEntry:new(id, base)
 	Assert.Equals('string', type(id), "Argument #1")
