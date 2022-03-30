@@ -23,6 +23,7 @@
 -- changed widthpx
 -- changed heightpx
 -- added sizepx
+-- extended setfocus
 -- added beginUi
 -- added endUi
 -- added setVar
@@ -79,6 +80,15 @@ function Ui:sizepx(w, h)
 	self.wPercent = nil
 	self.hPercent = nil
 	return self
+end
+
+local old_Ui_setfocus = Ui.setfocus
+function Ui:setfocus()
+	if self.root == nil then
+		return false
+	end
+
+	return old_Ui_setfocus(self)
 end
 
 -- Adds a ui instance of class 'class' (or Ui if nil)
