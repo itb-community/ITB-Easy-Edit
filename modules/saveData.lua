@@ -11,6 +11,7 @@ local pruneExtension = explorer.pruneExtension
 local remdir = explorer.remdir
 local isdir = explorer.isdir
 local isfile = explorer.isfile
+local modConfig
 
 -- defs
 local LOGD = easyEdit.LOG
@@ -29,9 +30,21 @@ local saveRoot = GetSavedataLocation()
 local saveLoc = modApi:getCurrentProfilePath().."easyEdit/"
 local fullSaveLoc = saveRoot..saveLoc
 
+local function getModConfig()
+	if modConfig == nil then
+		modConfig = mod_loader:getModConfig()
+	end
+
+	return modConfig
+end
+
 local function isFromUninstalledMod(result)
-	if result.mod ~= nil then
-		if mod_loader.mods[result.mod].installed ~= true then
+	local modId = result.mod
+	if modId then
+		local modConfig = getModConfig()
+		local mod = modConfig[modId]
+
+		if mod == nil or not mod.enabled then
 			return true
 		end
 	end
@@ -174,6 +187,7 @@ modApi.events.onProfileChanged:subscribe(function(_, newProfile)
 		module:reset()
 	end
 
+	modConfig = mod_loader:getModConfig()
 	saveLoc = modApi:getCurrentProfilePath().."easyEdit/"
 	fullSaveLoc = saveRoot..saveLoc
 	easyEdit.savedata:mkdirs()
