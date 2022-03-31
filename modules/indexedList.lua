@@ -133,7 +133,9 @@ function IndexedList:update()
 		if cache_islandComposite then
 			local livedataId = cache_islandComposite[entryType]
 
-			modApi.world[setFunction](modApi.world, islandSlot, livedataId)
+			if livedataId then
+				modApi.world[setFunction](modApi.world, islandSlot, livedataId)
+			end
 		end
 	end
 end
