@@ -52,6 +52,7 @@ function IndexedList:new(class)
 
 	self._class = class
 	self._children = {}
+	self.__pairs = __pairs
 end
 
 function IndexedList:add(id, base)
@@ -65,7 +66,6 @@ function IndexedList:add(id, base)
 
 	local entry = self._class(id, base)
 	self._children[id] = entry
-	self.__pairs = __pairs
 
 	return entry
 end
