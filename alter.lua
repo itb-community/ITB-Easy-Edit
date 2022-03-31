@@ -397,6 +397,81 @@ local function registerTilesets()
 	end)
 end
 
+function pickEnemies(categories, enemies, islandNumber, timesPicked)
+	timesPicked = timesPicked or {}
+	local result = {}
+	local choices = {}
+	local excluded = {}
+
+	local exclusiveReversed = {}
+	for i, v in ipairs(ExclusiveElements) do
+		exclusiveReversed[v] = i
+	end
+
+	local function isUnlocked(unit)
+		local lock = IslandLocks[unit] or 4
+		return islandNumber == nil or islandNumber >= lock or Game:IsIslandUnlocked(lock-1)
+	end
+
+	local function addExclusions(unit)
+		if ExclusiveElements[unit] then
+			excluded[ExclusiveElements[unit]] = true
+		end
+		if exclusiveReversed[unit] then
+			excluded[exclusiveReversed[unit]] = true
+		end
+	end
+
+	local function getEnemyChoices(category)
+		if type(category) ~= 'string' then
+			return {}
+		end
+
+		if choices[category] and #choices[category] > 0 then
+			return choices[category]
+		end
+
+		local leastPicked = INT_MAX
+
+		choices[category] = {}
+		enemies[category] = enemies[category] or {}
+		for _, enemy in ipairs(enemies[category]) do
+			if isUnlocked(enemy) and not excluded[enemy] then
+				table.insert(choices[category], enemy)
+			end
+		end
+
+		shuffle_list(choices[category])
+		table.sort(choices[category], function(a,b)
+			return (timesPicked[a] or 0) > (timesPicked[b] or 0)
+		end)
+
+		return choices[category]
+	end
+
+	for _, category in ipairs(categories) do
+		local enemyChoices = getEnemyChoices(category)
+		local choice = "Scorpion"
+
+		for i = #enemyChoices, 1, -1 do
+			if not excluded[enemyChoices[i]] then
+				choice = enemyChoices[i]
+				table.remove(enemyChoices, i)
+
+				break
+			end
+		end
+
+		timesPicked[choice] = (timesPicked[choice] or 0) + 1
+		addExclusions(choice)
+		table.insert(result, choice)
+	end
+
+	Assert.Equals(6, #result, "Result")
+
+	return result
+end
+
 local function registerEnemyLists()
 	local id = "vanilla"
 	local enemyList = modApi.enemyList:add(id)
@@ -406,7 +481,8 @@ local function registerEnemyLists()
 
 	for i, corp_id in ipairs(vanillaCorporations) do
 		local corp = _G[corp_id]
-		corp.EnemyList = id
+		corp.Enemies = copy_table(EnemyLists)
+		corp.EnemyCategories = copy_table(enemyList.categories)
 	end
 
 	local oldStartNewGame = startNewGame
@@ -416,9 +492,10 @@ local function registerEnemyLists()
 		local timesPicked = {}
 		for i, corp_id in ipairs(vanillaCorporations) do
 			local corp = _G[corp_id]
-			local enemyList = modApi.enemyList:get(corp.EnemyList)
+			local enemies = corp.Enemies
+			local categories = corp.EnemyCategories
 
-			GAME.Enemies[i] = enemyList:pickEnemies(i, timesPicked)
+			GAME.Enemies[i] = pickEnemies(categories, enemies, i, timesPicked)
 		end
 	end
 end

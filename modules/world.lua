@@ -206,7 +206,8 @@ function modApi.world:setEnemyList(islandSlot, enemyListId)
 	local baseCorpId = vanillaCorporations[islandSlot]
 	local base = _G[baseCorpId]
 
-	base.EnemyList = enemyList._id
+	base.Enemies = copy_table(enemyList.enemies)
+	base.EnemyCategories = copy_table(enemyList.categories)
 end
 
 function modApi.world:setBossList(islandSlot, bossListId)
