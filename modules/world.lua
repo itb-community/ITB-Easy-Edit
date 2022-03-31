@@ -172,7 +172,7 @@ function modApi.world:setTileset(islandSlot, tilesetId)
 		LOGDF("EasyEdit - Ignore missing tileset %q for island slot %s", tilesetId, islandSlot)
 		return
 	elseif tileset:isInvalid() then
-		LOGDF("EasyEdit - Ignoring malformed tileset %q for island slot %s", tilesetId, islandSlot)
+		LOGDF("EasyEdit - Ignore malformed tileset %q for island slot %s", tilesetId, islandSlot)
 		return
 	else
 		self[islandSlot].tileset = tilesetId
@@ -196,7 +196,7 @@ function modApi.world:setEnemyList(islandSlot, enemyListId)
 		LOGDF("EasyEdit - Ignore missing enemy list %q for island slot %s", enemyListId, islandSlot)
 		return
 	elseif enemyList:isInvalid() then
-		LOGDF("EasyEdit - Ignoring malformed enemy list %q for island slot %s", enemyListId, islandSlot)
+		LOGDF("EasyEdit - Ignore malformed enemy list %q for island slot %s", enemyListId, islandSlot)
 		return
 	else
 		self[islandSlot].enemyList = enemyListId
