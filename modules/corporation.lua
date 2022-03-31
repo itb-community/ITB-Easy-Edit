@@ -6,6 +6,13 @@ end
 
 local Corporation = Class.inherit(IndexedEntry)
 Corporation._entryType = "corporation"
+Corporation._iconDef = {
+	width = 61,
+	height = 61,
+	scale = 2,
+	clip = true,
+	outlinesize = 0,
+}
 
 function Corporation:new(id, base)
 	IndexedEntry.new(self, id, base)
@@ -22,6 +29,20 @@ function Corporation:copy(base)
 	self.Color = base.Color
 	self.Music = shallow_copy(base.Music or {})
 	self.Map = shallow_copy(base.Map or {})
+end
+
+function Corporation:getName()
+	return self.Name or self._id
+end
+
+function Corporation:getImagePath()
+	local pilot = _G[self.Pilot]
+
+	if pilot == nil then
+		return ""
+	end
+
+	return "img/portraits/"..pilot.Portrait..".png"
 end
 
 

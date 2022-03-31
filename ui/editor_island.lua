@@ -18,6 +18,7 @@ local addStaticContentList2x = helpers.addStaticContentList2x
 local createStaticContentList2x = helpers.createStaticContentList2x
 local createPopupEntryFunc_icon1x = helpers.createPopupEntryFunc_icon1x
 local createPopupEntryFunc_icon2x = helpers.createPopupEntryFunc_icon2x
+local createPopupEntryFunc_text = helpers.createPopupEntryFunc_text
 local createUiEditBox = helpers.createUiEditBox
 local setIconDef = helpers.setIconDef
 local resetButton_entry = helpers.resetButton_entry
@@ -37,8 +38,11 @@ local FONT_TITLE = helpers.FONT_TITLE
 local TEXT_SETTINGS_TITLE = helpers.TEXT_SETTINGS_TITLE
 local COLOR_RED = helpers.COLOR_RED
 local ISLAND_ICON_DEF = modApi.island:getIconDef()
+local ISLAND_ICON_DEF_SMALL = copy_table(ISLAND_ICON_DEF)
+ISLAND_ICON_DEF_SMALL.width = 61
 local CEO_ICON_DEF = modApi.ceo:getIconDef()
 local TILESET_ICON_DEF = modApi.tileset:getIconDef()
+local CORPORATION_ICON_DEF = modApi.corporation:getIconDef()
 local ENEMY_LIST_EXCLUSION = { "finale" }
 local BOSS_LIST_EXCLUSION = { "finale1", "finale2" }
 
@@ -122,6 +126,7 @@ end
 
 local onSend = {
 	island = onSend_island,
+	corporation = mkSend_popup("corporation"),
 	ceo = mkSend_popup("ceo"),
 	tileset = mkSend_popup("tileset"),
 	enemyList = mkSend_list("enemyList"),
@@ -133,6 +138,7 @@ local onSend = {
 local onRecieve = {
 	id = onRecieve_id,
 	island = mkRecieve_popup("island"),
+	corporation = mkRecieve_popup("corporation"),
 	ceo = mkRecieve_popup("ceo"),
 	tileset = mkRecieve_popup("tileset"),
 	enemyList = mkRecieve_list("enemyList"),
@@ -230,6 +236,7 @@ local function buildFrameContent(parentUi)
 
 	uiEditBox = {
 		id = createUiEditBox(),
+		corporation = createUiEditBox(UiPopup, "Corporations"),
 		island = createUiEditBox(UiPopup, "Islands"),
 		ceo = createUiEditBox(UiPopup, "Ceos"),
 		tileset = createUiEditBox(UiPopup, "Tilesets"),
@@ -322,7 +329,7 @@ local function buildFrameContent(parentUi)
 						:beginUi(UiWeightLayout)
 							:heightpx(200)
 							:beginUi(UiBoxLayout)
-								:width(.30)
+								:width(.24)
 								:vgap(7)
 								:setVar("padt", 8)
 								:beginUi()
@@ -332,7 +339,7 @@ local function buildFrameContent(parentUi)
 								:endUi()
 								:beginUi(uiEditBox.island)
 									:anchorH("center")
-									:format(setIconDef, ISLAND_ICON_DEF)
+									:format(setIconDef, ISLAND_ICON_DEF_SMALL)
 									:setVar("onRecieve", onRecieve.island)
 									:setVar("onSend", onSend.island)
 									:decorate{
@@ -355,7 +362,40 @@ local function buildFrameContent(parentUi)
 								:decorate{ DecoSolid(deco.colors.buttonborder) }
 							:endUi()
 							:beginUi(UiBoxLayout)
-								:width(.30)
+								:width(.24)
+								:vgap(7)
+								:setVar("padt", 8)
+								:beginUi()
+									:heightpx(LABEL_HEIGHT)
+									:setVar("text_label_center", "CORPORATION")
+									:decorate{ DecoImmutable.TextLabelCenter }
+								:endUi()
+								:beginUi(uiEditBox.corporation)
+									:anchorH("center")
+									:format(setIconDef, CORPORATION_ICON_DEF)
+									:setVar("onRecieve", onRecieve.corporation)
+									:setVar("onSend", onSend.corporation)
+									:decorate{
+										DecoImmutable.Button,
+										DecoImmutable.Anchor,
+										DecoImmutable.ObjectSurface2xCenterClip,
+										DecoImmutable.TransHeader,
+										DecoImmutable.ObjectNameLabelBounceCenterHClip,
+									}
+									:settooltip("Change island corporation", nil, true)
+									:addList(
+										modApi.corporation._children,
+										createPopupEntryFunc_icon2x(CORPORATION_ICON_DEF),
+										onPopupEntryClicked
+									)
+								:endUi()
+							:endUi()
+							:beginUi()
+								:widthpx(2)
+								:decorate{ DecoSolid(deco.colors.buttonborder) }
+							:endUi()
+							:beginUi(UiBoxLayout)
+								:width(.24)
 								:vgap(7)
 								:setVar("padt", 8)
 								:beginUi()
@@ -388,7 +428,7 @@ local function buildFrameContent(parentUi)
 								:decorate{ DecoSolid(deco.colors.buttonborder) }
 							:endUi()
 							:beginUi(UiBoxLayout)
-								:width(.30)
+								:width(.24)
 								:vgap(7)
 								:setVar("padt", 8)
 								:beginUi()

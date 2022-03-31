@@ -85,6 +85,26 @@ local function onPopupEntryClicked(self)
 	return true
 end
 
+function helpers.createPopupEntryFunc_text(iconDef)
+	return function(id, data)
+		local popupEntry = Ui()
+			:format(setIconDef, iconDef)
+
+		popupEntry.id = id
+		popupEntry.data = data
+		popupEntry.onclicked = onPopupEntryClicked
+		popupEntry.padl = 8
+		popupEntry.padr = 8
+		popupEntry
+			:decorate{
+				DecoImmutable.Button,
+				DecoImmutable.ObjectNameTitleBounceCenterVClip,
+			}
+
+		return popupEntry
+	end
+end
+
 function helpers.createPopupEntryFunc_icon2x(iconDef)
 	return function(id, data)
 		local popupEntry = Ui()
