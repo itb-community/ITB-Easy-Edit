@@ -1,5 +1,16 @@
 
 local NULLTABLE = {}
+local ISLAND_COMPOSTE_COMPONENTS = {
+	"island",
+	"corporation",
+	"ceo",
+	"tileset",
+	"enemyList",
+	"bossList",
+	"missionList",
+	"structureList",
+}
+
 local IslandComposite = Class.inherit(IndexedEntry)
 IslandComposite._entryType = "islandComposite"
 IslandComposite._iconDef = {
@@ -35,6 +46,18 @@ function IslandComposite:getImagePath()
 	end
 
 	return island:getImagePath()
+end
+
+function IslandComposite:isInvalid()
+	for _, name in ipairs(ISLAND_COMPOSTE_COMPONENTS) do
+
+		local component = modApi[name]:get(self[name])
+		if component == nil or component:isInvalid() then
+			return true
+		end
+	end
+
+	return false
 end
 
 local IslandComposites = IndexedList(IslandComposite)

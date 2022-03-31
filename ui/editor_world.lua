@@ -120,15 +120,8 @@ local function buildFrameContent(parentUi)
 			local issue = false
 			local editedIslandComposite = self.parent.data
 
-			if editedIslandComposite == nil then
+			if editedIslandComposite == nil or editedIslandComposite:isInvalid() then
 				issue = true
-			else
-				for _, name in ipairs(ISLAND_COMPOSTE_COMPONENTS) do
-					local component = modApi[name]:get(editedIslandComposite[name])
-					if component == nil or component:isInvalid() then
-						issue = true
-					end
-				end
 			end
 
 			if not issue then
