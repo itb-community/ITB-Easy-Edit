@@ -148,8 +148,14 @@ local function reset(reciever)
 	local objectList = reciever.data
 
 	if objectList:isCustom() then
-		if reciever == easyEdit.displayedEditorButton then
+		local isCurrentContentRemoved = false
+			or reciever == easyEdit.selectedEditorButton
+			or reciever == easyEdit.displayedEditorButton
+
+		if isCurrentContentRemoved then
+			easyEdit.selectedEditorButton = nil
 			easyEdit.displayedEditorButton = nil
+			currentContent:hide()
 		end
 		if objectList:delete() then
 			reciever:detach()
