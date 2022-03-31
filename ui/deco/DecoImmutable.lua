@@ -453,7 +453,7 @@ function ContentList:draw(screen, widget)
 
 	for i, surface in ipairs(surfaces) do
 		local animHeight = animHeights[i]
-		local imageOffset = imageOffsets[i]
+		local imageOffset = math.min(imageOffsets[i], animHeight - 1)
 		local w = surface:w()
 		local h = surface:h() / animHeight
 		local x = widget_x + i * step - step
