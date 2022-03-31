@@ -49,7 +49,7 @@ function helpers.contentListDragObject.onDragSourceGrabbed(dragObject, dragSourc
 	dragObject.dragX = -10
 	dragObject.dragY = -20
 
-	if dragSource.detachable then
+	if dragSource.detachable and sdlext.isCtrlDown() == false then
 		remSaveEntry(dragSource)
 		dragObject.heldObject = dragSource
 		dragObject.heldObject.forcehl = true

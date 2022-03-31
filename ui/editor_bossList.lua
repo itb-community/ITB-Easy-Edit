@@ -46,6 +46,7 @@ CONTENT_ENTRY_DEF.clip = false
 local contentListContainers
 local bossListEditor = {}
 local dragObject = contentListDragObject(modApi.missions:getDragType())
+	:setVar("createObject", getCreateUnitDragSourceCopyFunc(CONTENT_ENTRY_DEF))
 	:decorate{ DecoImmutable.ObjectSurface2xOutline }
 
 local function resetAll()

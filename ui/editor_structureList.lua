@@ -47,6 +47,7 @@ CONTENT_ENTRY_DEF.clip = false
 local contentListContainers
 local structureListEditor = {}
 local dragObject = contentListDragObject(modApi.structures:getDragType())
+	:setVar("createObject", getCreateStructureDragSourceCopyFunc(CONTENT_ENTRY_DEF))
 	:decorate{ DecoImmutable.ObjectSurface2xOutline }
 
 local function resetAll()
