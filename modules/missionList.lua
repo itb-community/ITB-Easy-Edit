@@ -46,5 +46,17 @@ function MissionList:getContentType()
 	return modApi.missions
 end
 
+function MissionList:isInvalid()
+	for categoryId, category in pairs(self:getCategories()) do
+		for _, missionId in ipairs(category) do
+			if _G[missionId] == nil then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
 
 modApi.missionList = IndexedList(MissionList)

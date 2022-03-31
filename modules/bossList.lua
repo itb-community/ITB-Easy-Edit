@@ -40,6 +40,18 @@ function BossList:getContentType()
 	return modApi.missions
 end
 
+function BossList:isInvalid()
+	for categoryId, category in pairs(self:getCategories()) do
+		for _, bossMissionId in ipairs(category) do
+			if _G[bossMissionId] == nil then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
 local BossLists = IndexedList(BossList)
 
 function BossLists:update()

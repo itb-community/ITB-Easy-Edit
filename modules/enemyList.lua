@@ -126,5 +126,17 @@ function EnemyList:getContentType()
 	return modApi.units
 end
 
+function EnemyList:isInvalid()
+	for categoryId, category in pairs(self:getCategories()) do
+		for _, enemyId in ipairs(category) do
+			if _G[enemyId.."1"] == nil then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
 
 modApi.enemyList = IndexedList(EnemyList)

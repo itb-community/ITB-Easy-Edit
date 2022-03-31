@@ -88,5 +88,17 @@ function StructureList:getContentType()
 	return modApi.structures
 end
 
+function StructureList:isInvalid()
+	for categoryId, category in pairs(self:getCategories()) do
+		for _, structureId in ipairs(category) do
+			if _G[structureId] == nil then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
 
 modApi.structureList = IndexedList(StructureList)
