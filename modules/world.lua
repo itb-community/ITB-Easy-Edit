@@ -50,23 +50,27 @@ modApi.world = {
 }
 
 function modApi.world:update()
-	local cache_world = easyEdit.savedata.cache.world or DEFAULT_ISLAND_SLOTS
+	local world = easyEdit.savedata.cache.world or DEFAULT_ISLAND_SLOTS
 
-	for islandSlot, cache_data in ipairs(cache_world) do
-		local cache_islandComposite = modApi.islandComposite:get(cache_data)
+	for islandSlot, islandCompositeId in ipairs(world) do
+		local islandComposite = modApi.islandComposite:get(islandCompositeId)
 
-		if cache_islandComposite then
+		if islandComposite == nil then
+			LOGDF("EasyEdit - Block missing island composite %q for island slot %s", islandCompositeId, islandSlot)
+		elseif islandComposite:isInvalid() then
+			LOGDF("EasyEdit - Block malformed island composite %q for island slot %s", islandCompositeId, islandSlot)
+		else
 			if modApi.resource then
-				self:setIsland(islandSlot, cache_islandComposite.island)
+				self:setIsland(islandSlot, islandComposite.island)
 			end
 
-			self:setCorporation(islandSlot, cache_islandComposite.corporation)
-			self:setCeo(islandSlot, cache_islandComposite.ceo)
-			self:setTileset(islandSlot, cache_islandComposite.tileset)
-			self:setEnemyList(islandSlot, cache_islandComposite.enemyList)
-			self:setBossList(islandSlot, cache_islandComposite.bossList)
-			self:setMissionList(islandSlot, cache_islandComposite.missionList)
-			self:setStructureList(islandSlot, cache_islandComposite.structureList)
+			self:setCorporation(islandSlot, islandComposite.corporation)
+			self:setCeo(islandSlot, islandComposite.ceo)
+			self:setTileset(islandSlot, islandComposite.tileset)
+			self:setEnemyList(islandSlot, islandComposite.enemyList)
+			self:setBossList(islandSlot, islandComposite.bossList)
+			self:setMissionList(islandSlot, islandComposite.missionList)
+			self:setStructureList(islandSlot, islandComposite.structureList)
 		end
 	end
 end
