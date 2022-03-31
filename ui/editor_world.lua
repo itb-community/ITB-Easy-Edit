@@ -93,18 +93,22 @@ local function buildFrameContent(parentUi)
 				local tooltip = {}
 				for _, name in ipairs(ISLAND_COMPOSTE_COMPONENTS) do
 
-					local component = modApi[name]:get(editedIslandComposite[name])
-					if component == nil then
+					local componentId = editedIslandComposite[name]
+					local component = modApi[name]:get(componentId)
+					if componentId == nil then
 						missing = true
-						tooltip[#tooltip+1] = "Missing "..name..": "..editedIslandComposite[name].."\n"
+						tooltip[#tooltip+1] = "Missing "..name.."\n"
+					elseif component == nil then
+						missing = true
+						tooltip[#tooltip+1] = "Missing "..name..": "..componentId.."\n"
 					elseif component:isInvalid() then
 						malformed = true
-						tooltip[#tooltip+1] = "Malformed "..name..": "..editedIslandComposite[name].."\n"
+						tooltip[#tooltip+1] = "Malformed "..name..": "..componentId.."\n"
 					end
 				end
 
 				if missing or malformed then
-					self.tooltip_title = "Changes halted"
+					self.tooltip_title = "Update blocked"
 					self.tooltip = table.concat(tooltip):sub(1,-2)
 				else
 					local editedIsland = modApi.island:get(editedIslandComposite.island)
