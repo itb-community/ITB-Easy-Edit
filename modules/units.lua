@@ -1,16 +1,39 @@
 
 modApi:appendAsset("img/units/nullUnit.png", "resources/mods/game/img/placeholders/mech.png")
 
-local keys = {}
-for key, _ in pairs(Pawn) do
-	local addKey = true
-		and key ~= "new"
-		and key:find("^_") == nil
-		and key:find("^Get") == nil
+local function getTableKeys(tbl)
+	local keys = {}
+	local index = tbl
 
-	if addKey then
-		keys[#keys+1] = key
+	while type(index) == 'table' do
+		for i, v in pairs(index) do
+			if tostring(i):sub(1,1) ~= "_" then
+				if keys[i] == nil then
+					keys[i] = true
+				end
+			end
+		end
+
+		local prev_index = index
+		index = index.__index
+
+		if index == prev_index then
+			index = nil
+		end
 	end
+
+	return keys
+end
+
+local function getTableContent(tbl)
+	local keys = getTableKeys(tbl)
+	local content = {}
+
+	for key, _ in pairs(keys) do
+		content[key] = tbl[key]
+	end
+
+	return content
 end
 
 local Unit = Class.inherit(IndexedEntry)
@@ -111,8 +134,16 @@ end
 function Unit:copy(base)
 	if type(base) ~= 'table' then return end
 
-	for _, key in ipairs(keys) do
-		self[key] = copy_table(base[key])
+	local keys = getTableKeys(base)
+	for key, _ in pairs(keys) do
+		local value = copy_table(base[key])
+		local copyValue = true
+			and type(value) ~= 'function'
+			and self[key] ~= value
+
+		if copyValue then
+			self[key] = value
+		end
 	end
 end
 
