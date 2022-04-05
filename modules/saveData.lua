@@ -1,6 +1,7 @@
 
 -- header
 local path = GetParentPath(...)
+local serializer = require(path.."serializer")
 local explorer = require(path.."explorer")
 local direxists = explorer.direxists
 local fileexists = explorer.fileexists
@@ -39,7 +40,7 @@ local function getModConfig()
 end
 
 local function isFromUninstalledMod(result)
-	local modId = result.mod
+	local modId = result and result.mod or nil
 	if modId then
 		local modConfig = getModConfig()
 		local mod = modConfig[modId]
@@ -58,12 +59,7 @@ local function loadFromFile(path)
 	local result
 
 	if path:sub(-4, -1) == ".lua" then
-		sdlext.config(
-			path,
-			function(obj)
-				result = obj
-			end
-		)
+		result = serializer.deserialize(saveRoot..path)
 	end
 
 	if isFromUninstalledMod(result) then
@@ -99,8 +95,8 @@ end
 local function saveToFile(cache, path)
 	LOGD("EasyEdit - saveToFile ../"..path)
 
-	sdlext.config(
-		path..".lua",
+	serializer.configureFile(
+		path,
 		function(obj)
 			clear_table(obj)
 			clone_table(obj, cache)
@@ -112,7 +108,7 @@ local function saveToDir(cache, path)
 	LOGD("EasyEdit - saveToDir ../"..path)
 
 	for key, value in pairs(cache) do
-		saveToFile(value, path..key)
+		saveToFile(value, path..key..".lua")
 	end
 end
 
@@ -125,7 +121,7 @@ end
 function savedata:saveAsFile(id, data)
 	data = copy_table(data)
 	self.cache[id] = data
-	saveToFile(data, saveLoc..id)
+	saveToFile(data, saveLoc..id..".lua")
 end
 
 function savedata:saveAsDir(id, data)
