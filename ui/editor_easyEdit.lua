@@ -1,7 +1,12 @@
 
 local function loadConfig()
+	local currentProfilePath = modApi:getCurrentProfilePath()
+	if currentProfilePath == nil then
+		return
+	end
+
 	sdlext.config(
-		modApi:getCurrentProfilePath().."modcontent.lua",
+		currentProfilePath.."modcontent.lua",
 		function(obj)
 			local config = obj.easyEditConfig
 
