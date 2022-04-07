@@ -12,7 +12,16 @@ local pruneExtension = explorer.pruneExtension
 local remdir = explorer.remdir
 local isdir = explorer.isdir
 local isfile = explorer.isfile
-local modConfig
+
+local modules = {
+	modApi.units,
+	modApi.enemyList,
+	modApi.missionList,
+	modApi.bossList,
+	modApi.structureList,
+	modApi.islandComposite,
+	modApi.world,
+}
 
 -- defs
 local LOGD = easyEdit.LOG
@@ -28,8 +37,9 @@ local DIRS = {
 
 local savedata = {}
 local saveRoot = GetSavedataLocation()
-local saveLoc = modApi:getCurrentProfilePath().."easyEdit/"
-local fullSaveLoc = saveRoot..saveLoc
+local saveLoc
+local fullSaveLoc
+local modConfig
 
 local function getModConfig()
 	if modConfig == nil then
@@ -114,17 +124,30 @@ end
 
 -- Force load savedata from disc.
 function savedata:load()
+	if self.currentProfile == nil then
+		Assert.Error("No current profile")
+	end
+
+	LOGF("EasyEdit - Load savedata for profile [%s]", self.currentProfile)
 	self.cache = loadFromDir(saveLoc, 2) or {}
 	self:updateLiveData()
 end
 
 function savedata:saveAsFile(id, data)
+	if self.currentProfile == nil then
+		Assert.Error("No current profile")
+	end
+
 	data = copy_table(data)
 	self.cache[id] = data
 	saveToFile(data, saveLoc..id..".lua")
 end
 
 function savedata:saveAsDir(id, data)
+	if self.currentProfile == nil then
+		Assert.Error("No current profile")
+	end
+
 	data = copy_table(data)
 	self.cache[id] = data
 
@@ -157,6 +180,10 @@ function savedata:saveAsDir(id, data)
 end
 
 function savedata:mkdirs()
+	if self.currentProfile == nil then
+		Assert.Error("No current profile")
+	end
+
 	os.mkdir(fullSaveLoc)
 
 	for _, dir in pairs(DIRS) do
@@ -166,26 +193,49 @@ end
 
 -- Apply cached savedata to lists and update game objects.
 function savedata:updateLiveData()
-	for category_id, category in pairs(self.cache) do
-		local module = modApi[category_id]
-		if module then
-			module:update()
-		end
+	LOG("EasyEdit - Update livedata")
+	for _, module in ipairs(modules) do
+		module:update()
 	end
 end
 
-
-easyEdit.savedata = savedata
-
-modApi.events.onProfileChanged:subscribe(function(_, newProfile)
-	for category_id, category in pairs(easyEdit.savedata.cache) do
-		local module = modApi[category_id]
-		module:reset()
+local function changeEasyEditProfile(_, newProfile)
+	local oldProfile = easyEdit.savedata.currentProfile
+	if oldProfile ~= nil then
+		LOGF("EasyEdit - Unset profile [%s]", oldProfile)
+		LOGF("EasyEdit - Unload savedata for profile [%s]", oldProfile)
+		LOG("EasyEdit - Update livedata")
+		for _, module in ipairs(modules) do
+			module:reset()
+		end
 	end
 
+	if newProfile == "" then
+		newProfile = nil
+	end
+
+	easyEdit.savedata.currentProfile = newProfile
+	if newProfile == nil then
+		return
+	end
+
+	LOGF("EasyEdit - Set profile [%s]", newProfile)
 	modConfig = mod_loader:getModConfig()
-	saveLoc = modApi:getCurrentProfilePath().."easyEdit/"
+	saveLoc = "easyEdit_"..newProfile.."/"
 	fullSaveLoc = saveRoot..saveLoc
 	easyEdit.savedata:mkdirs()
 	easyEdit.savedata:load()
-end)
+end
+
+function savedata:init()
+	if savedata.initialized then
+		return
+	end
+
+	savedata.initialized = true
+	changeEasyEditProfile(nil, Settings.last_profile)
+end
+
+easyEdit.savedata = savedata
+
+modApi.events.onProfileChanged:subscribe(changeEasyEditProfile)

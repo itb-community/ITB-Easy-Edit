@@ -687,8 +687,7 @@ end
 
 local function onModsInitialized()
 	lockEverything()
-	easyEdit.savedata:mkdirs()
-	easyEdit.savedata:load()
+	easyEdit.savedata:init()
 end
 
 registerUnits()
