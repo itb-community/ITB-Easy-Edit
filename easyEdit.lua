@@ -7,7 +7,7 @@ if skipInit then
 	return easyEdit
 end
 
-local VERSION = "1.3.0"
+local VERSION = "1.3.1"
 local path = GetParentPath(...)
 
 local function finalizeInit(self)
