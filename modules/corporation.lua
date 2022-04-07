@@ -128,6 +128,12 @@ function Ceo:setOffice(path_office_large, path_office_small)
 	modApi:appendAsset(string.format("img/ui/corps/%s_small.png", self._id), modPath .. path_office_small)
 end
 
+function Ceo:setFinalMission(mission)
+	Assert.Equals('string', type(mission), "Argument #1")
+
+	self.finalMission = mission
+end
+
 function Ceo:getName()
 	return self.CEO_Name or self._id
 end

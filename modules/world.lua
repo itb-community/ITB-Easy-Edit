@@ -1,5 +1,6 @@
 
 -- defs
+local DEFAULT_FINAL_MISSION = Mission_Final
 local DEFAULT_ISLAND_SLOTS = { "archive", "rst", "pinnacle", "detritus" }
 local LOGDF = easyEdit.LOGF
 
@@ -166,6 +167,21 @@ function modApi.world:setCeo(islandSlot, ceoId)
 
 	ceo.copy(base, ceo)
 	modApi.modLoaderDictionary[baseCorpId .."_CEO_Name"] = ceo.CEO_Name
+
+	if islandSlot == 2 then
+		local finalMissionId = ceo.finalMission
+		local finalMission
+
+		if finalMissionId then
+			finalMission = _G[finalMissionId]
+		end
+
+		if finalMission then
+			Mission_Final = finalMission
+		else
+			Mission_Final = DEFAULT_FINAL_MISSION
+		end
+	end
 end
 
 function modApi.world:setTileset(islandSlot, tilesetId)
