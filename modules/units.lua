@@ -173,7 +173,7 @@ function Units:addSoundBase(unit)
 end
 
 function Units:update()
-	local cache_units = easyEdit.savedata.cache.units or NULLTABLE
+	local cache_units = easyEdit.savedata.cache.units or {}
 
 	for unit_id, unit_data in pairs(cache_units) do
 		local livedata = modApi.units:get(unit_id)
