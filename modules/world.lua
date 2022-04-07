@@ -56,10 +56,12 @@ function modApi.world:update()
 		local islandComposite = modApi.islandComposite:get(islandCompositeId)
 
 		if islandComposite == nil then
-			LOGDF("EasyEdit - Block missing island composite %q for island slot %s", islandCompositeId, islandSlot)
+			LOGDF("EasyEdit - IslandSlot[%s] - Block missing island composite %q", islandSlot, islandCompositeId)
 		elseif islandComposite:isInvalid() then
-			LOGDF("EasyEdit - Block malformed island composite %q for island slot %s", islandCompositeId, islandSlot)
+			LOGDF("EasyEdit - IslandSlot[%s] - Block malformed island composite %q", islandSlot, islandCompositeId)
 		else
+			LOGDF("EasyEdit - IslandSlot[%s] - Set island composite %q", islandSlot, islandCompositeId)
+
 			if modApi.resource then
 				self:setIsland(islandSlot, islandComposite.island)
 			end
@@ -88,14 +90,14 @@ function modApi.world:setIsland(islandSlot, islandId)
 
 	local island = modApi.island:get(islandId)
 	if island == nil then
-		LOGDF("EasyEdit - Block missing island %q for island slot %s", islandId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block missing island %q", islandSlot, islandId)
 		return
 	elseif island:isInvalid() then
-		LOGDF("EasyEdit - Block malformed island %q for island slot %s", islandId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block malformed island %q", islandSlot, islandId)
 		return
 	else
+		LOGDF("EasyEdit - IslandSlot[%s] - Set island %q", islandSlot, islandId)
 		self[islandSlot].island = islandId
-		LOGDF("EasyEdit - set island %q for island slot %s", islandId, islandSlot)
 	end
 
 	local n = islandSlot - 1
@@ -124,14 +126,14 @@ function modApi.world:setCorporation(islandSlot, corpId)
 
 	local corp = modApi.corporation:get(corpId)
 	if corp == nil then
-		LOGDF("EasyEdit - Block missing corporation %q for island slot %s", corpId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block missing corporation %q", islandSlot, corpId)
 		return
 	elseif corp:isInvalid() then
-		LOGDF("EasyEdit - Block malformed corporation %q for island slot %s", corpId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block malformed corporation %q", islandSlot, corpId)
 		return
 	else
+		LOGDF("EasyEdit - IslandSlot[%s] - Set corporation %q", islandSlot, corpId)
 		self[islandSlot].corporation = corpId
-		LOGDF("EasyEdit - set corporation %q for island slot %s", corpId, islandSlot)
 	end
 
 	local baseCorpId = vanillaCorporations[islandSlot]
@@ -149,14 +151,14 @@ function modApi.world:setCeo(islandSlot, ceoId)
 
 	local ceo = modApi.ceo:get(ceoId)
 	if ceo == nil then
-		LOGDF("EasyEdit - Block missing ceo %q for island slot %s", ceoId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block missing ceo %q", islandSlot, ceoId)
 		return
 	elseif ceo:isInvalid() then
-		LOGDF("EasyEdit - Block malformed ceo %q for island slot %s", ceoId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block malformed ceo %q", islandSlot, ceoId)
 		return
 	else
+		LOGDF("EasyEdit - IslandSlot[%s] - Set ceo %q", islandSlot, ceoId)
 		self[islandSlot].ceo = ceoId
-		LOGDF("EasyEdit - set ceo %q for island slot %s", ceoId, islandSlot)
 	end
 
 	local baseCorpId = vanillaCorporations[islandSlot]
@@ -173,14 +175,14 @@ function modApi.world:setTileset(islandSlot, tilesetId)
 
 	local tileset = modApi.tileset:get(tilesetId)
 	if tileset == nil then
-		LOGDF("EasyEdit - Block missing tileset %q for island slot %s", tilesetId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block missing tileset %q", islandSlot, tilesetId)
 		return
 	elseif tileset:isInvalid() then
-		LOGDF("EasyEdit - Block malformed tileset %q for island slot %s", tilesetId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block malformed tileset %q", islandSlot, tilesetId)
 		return
 	else
+		LOGDF("EasyEdit - IslandSlot[%s] - Set tileset %q", islandSlot, tilesetId)
 		self[islandSlot].tileset = tilesetId
-		LOGDF("EasyEdit - set tileset %q for island slot %s", tilesetId, islandSlot)
 	end
 
 	local baseCorpId = vanillaCorporations[islandSlot]
@@ -197,14 +199,14 @@ function modApi.world:setEnemyList(islandSlot, enemyListId)
 
 	local enemyList = modApi.enemyList:get(enemyListId)
 	if enemyList == nil then
-		LOGDF("EasyEdit - Block missing enemy list %q for island slot %s", enemyListId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block missing enemy list %q", islandSlot, enemyListId)
 		return
 	elseif enemyList:isInvalid() then
-		LOGDF("EasyEdit - Block malformed enemy list %q for island slot %s", enemyListId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block malformed enemy list %q", islandSlot, enemyListId)
 		return
 	else
+		LOGDF("EasyEdit - IslandSlot[%s] - Set enemy list %q", islandSlot, enemyListId)
 		self[islandSlot].enemyList = enemyListId
-		LOGDF("EasyEdit - set enemy list %q for island slot %s", enemyListId, islandSlot)
 	end
 
 	local baseCorpId = vanillaCorporations[islandSlot]
@@ -221,14 +223,14 @@ function modApi.world:setBossList(islandSlot, bossListId)
 
 	local bossList = modApi.bossList:get(bossListId)
 	if not bossList then
-		LOGDF("EasyEdit - Block missing boss list %q for island slot %s", bossListId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block missing boss list %q", islandSlot, bossListId)
 		return
 	elseif bossList:isInvalid() then
-		LOGDF("EasyEdit - Block malformed boss list %q for island slot %s", bossListId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block malformed boss list %q", islandSlot, bossListId)
 		return
 	else
+		LOGDF("EasyEdit - IslandSlot[%s] - Set boss list %q", islandSlot, bossListId)
 		self[islandSlot].bossList = bossListId
-		LOGDF("EasyEdit - set boss list %q for island slot %s", bossListId, islandSlot)
 	end
 
 	local baseCorpId = vanillaCorporations[islandSlot]
@@ -244,14 +246,14 @@ function modApi.world:setMissionList(islandSlot, missionListId)
 
 	local missionList = modApi.missionList:get(missionListId)
 	if not missionList then
-		LOGDF("EasyEdit - Block missing mission list %q for island slot %s", missionListId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block missing mission list %q", islandSlot, missionListId)
 		return
 	elseif missionList:isInvalid() then
-		LOGDF("EasyEdit - Block malformed mission list %q for island slot %s", missionListId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block malformed mission list %q", islandSlot, missionListId)
 		return
 	else
+		LOGDF("EasyEdit - IslandSlot[%s] - Set mission list %q", islandSlot, missionListId)
 		self[islandSlot].missionList = missionListId
-		LOGDF("EasyEdit - set mission list %q for island slot %s", missionListId, islandSlot)
 	end
 
 	local baseCorpId = vanillaCorporations[islandSlot]
@@ -267,14 +269,14 @@ function modApi.world:setStructureList(islandSlot, structureListId)
 
 	local structureList = modApi.structureList:get(structureListId)
 	if not structureList then
-		LOGDF("EasyEdit - Block missing structure list %q for island slot %s", structureListId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block missing structure list %q", islandSlot, structureListId)
 		return
 	elseif structureList:isInvalid() then
-		LOGDF("EasyEdit - Block malformed structure list %q for island slot %s", structureListId, islandSlot)
+		LOGDF("EasyEdit - IslandSlot[%s] - Block malformed structure list %q", islandSlot, structureListId)
 		return
 	else
+		LOGDF("EasyEdit - IslandSlot[%s] - Set structure list %q", islandSlot, structureListId)
 		self[islandSlot].structureList = structureListId
-		LOGDF("EasyEdit - set structure list %q for island slot %s", structureListId, islandSlot)
 	end
 
 	local baseCorpId = vanillaCorporations[islandSlot]
