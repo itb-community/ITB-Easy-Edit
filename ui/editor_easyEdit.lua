@@ -1,4 +1,7 @@
 
+local path = GetParentPath(...)
+local UiBoxLayout = require(path.."widget/UiBoxLayout")
+
 local function loadConfig()
 	local currentProfilePath = modApi:getCurrentProfilePath()
 	if currentProfilePath == nil then

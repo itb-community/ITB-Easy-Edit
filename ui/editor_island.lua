@@ -2,6 +2,7 @@
 -- header
 local path = GetParentPath(...)
 local helpers = require(path.."helpers")
+local UiBoxLayout = require(path.."widget/UiBoxLayout")
 local UiEditBox = require(path.."widget/UiEditBox")
 local UiEditorButton = require(path.."widget/UiEditorButton")
 local UiMultiClickButton = require(path.."widget/UiMultiClickButton")

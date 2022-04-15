@@ -234,13 +234,13 @@ modApi.events.onUiRootCreated:subscribe(function(screen, root)
 	root.tooltipUi.hPercent = nil
 end)
 
--- UiWrappedText adjusts its size with widthpx
--- and heightpx internally.
--- wPercent and hPercent must be nil for this
--- to work.
-local old_UiWrappedText_new = UiWrappedText.new
-function UiWrappedText:new(...)
-	old_UiWrappedText_new(self, ...)
+-- Some of the ui in the mod loader relies on
+-- wPercent and hPercent to be nil, so we have
+-- to revert the changes done to the base Ui
+-- class.
+local old_UiBoxLayout_new = UiBoxLayout.new
+function UiBoxLayout:new(...)
+	old_UiBoxLayout_new(self, ...)
 	self.wPercent = nil
 	self.hPercent = nil
 end

@@ -3,6 +3,7 @@
 local path = GetParentPath(...)
 local helpers = require(path.."helpers")
 local DecoImmutable = require(path.."deco/DecoImmutable")
+local UiBoxLayout = require(path.."widget/UiBoxLayout")
 local UiDragSource = require(path.."widget/UiDragSource")
 local UiContentList = require(path.."widget/UiContentList")
 local UiScrollAreaExt = require(path.."widget/UiScrollAreaExt")
