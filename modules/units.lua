@@ -131,6 +131,10 @@ function Unit:isBaseEnemy()
 	return isBaseEnemy
 end
 
+local excludeFields = {
+	ImageOffset = true,
+}
+
 function Unit:copy(base)
 	if type(base) ~= 'table' then return end
 
@@ -140,6 +144,7 @@ function Unit:copy(base)
 		local copyValue = true
 			and type(value) ~= 'function'
 			and self[key] ~= value
+			and excludeFields[key] ~= true
 
 		if copyValue then
 			self[key] = value
@@ -178,6 +183,10 @@ function Units:update()
 	for unit_id, unit_data in pairs(cache_units) do
 		local livedata = modApi.units:get(unit_id)
 		local unit = _G[unit_id]
+
+		if unit_data.ImageOffset then
+			unit_data.ImageOffset = nil
+		end
 
 		if unit == nil then
 			unit = self._baseMech:new(unit_data)
