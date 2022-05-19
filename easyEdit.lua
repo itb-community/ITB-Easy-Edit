@@ -15,6 +15,8 @@ local function finalizeInit(self)
 	Assert.Traceback = true
 
 	require(path.."ui/editor_easyEdit")
+	require(path.."modules/assets")
+	require(path.."modules/animations")
 
 	if not self.enabled then
 		LOGDF("Easy Edit %s did not initialize because it is disabled", self.version)
@@ -29,8 +31,6 @@ local function finalizeInit(self)
 	require(path.."modules/events")
 	require(path.."modules/gameState")
 	require(path.."modules/indexedList")
-	require(path.."modules/assets")
-	require(path.."modules/animations")
 	require(path.."modules/units")
 	require(path.."modules/unitImage")
 	require(path.."modules/weapons")
