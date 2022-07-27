@@ -142,7 +142,7 @@ function Unit:isBaseEnemy()
 end
 
 local excludeFields = {
-	ImageOffset = true,
+	-- ImageOffset = true,
 }
 
 function Unit:copy(base)
@@ -194,9 +194,9 @@ function Units:update()
 		local livedata = modApi.units:get(unit_id)
 		local unit = _G[unit_id]
 
-		if unit_data.ImageOffset then
-			unit_data.ImageOffset = nil
-		end
+		-- if unit_data.ImageOffset then
+			-- unit_data.ImageOffset = nil
+		-- end
 
 		if unit == nil then
 			unit = self._baseMech:new(unit_data)
