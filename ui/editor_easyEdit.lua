@@ -18,10 +18,6 @@ local function loadConfig()
 				obj.easyEditConfig = config
 			end
 
-			if config.enabled == nil then
-				config.enabled = true
-			end
-
 			easyEdit.enabled = config.enabled or false
 			easyEdit.debugLogging = config.debugLogging or false
 			easyEdit.debugUi = config.debugUi or false
