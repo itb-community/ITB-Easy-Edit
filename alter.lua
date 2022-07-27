@@ -476,12 +476,12 @@ local function registerEnemyLists()
 	local id = "vanilla"
 	local enemyList = modApi.enemyList:add(id)
 	enemyList.name = "Vanilla"
-	enemyList.enemies = copy_table(EnemyLists)
+	enemyList.enemies = getFinalEnemyLists()
 	enemyList:lock()
 
 	for i, corp_id in ipairs(vanillaCorporations) do
 		local corp = _G[corp_id]
-		corp.Enemies = copy_table(EnemyLists)
+		corp.Enemies = getFinalEnemyLists()
 		corp.EnemyCategories = copy_table(enemyList.categories)
 	end
 
