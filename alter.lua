@@ -21,6 +21,7 @@ local bossLists = corporations
 local tilesets = { "grass", "sand", "snow", "acid", "lava", "volcano", "vine", "hologram" }
 local climate = { "", "", "", "", "Scorching", "Fiery", "Lush", "Holograpic" }
 local rainChance = { 0, 0, 0, 0, 0, 0, 70, 30 }
+local crackChance = { 0, 0, 7, 0, 0, 0, 0, 0 }
 local environmentChance = { 0, 0, 0, 0, 0, 0, { [TERRAIN_FOREST] = 60 }, 0 }
 
 local mechList = {
@@ -360,6 +361,7 @@ local function registerTilesets()
 
 			tileset.climate = climate[i]
 			tileset.rainChance = rainChance[i]
+			tileset.crackChance = crackChance[i]
 			tileset.environmentChance = environmentChance[i]
 		end
 	end
@@ -375,6 +377,17 @@ local function registerTilesets()
 		end
 
 		return tileset:getRainChance()
+	end
+
+	function getCrackChance(sectorType)
+		local tileset = modApi.tileset:get(sectorType)
+		local noDataFound = not tileset or not tileset.getCrackChance
+
+		if noDataFound then
+			return 0
+		end
+
+		return tileset:getCrackChance()
 	end
 
 	function getEnvironmentChance(sectorType, tileType)

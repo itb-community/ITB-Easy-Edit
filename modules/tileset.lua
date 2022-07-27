@@ -45,6 +45,7 @@ function Tileset:copy(base)
 	self.climate = base.climate
 	self.rainChance = base.rainChance
 	self.environmentChance = copy_table(base.environmentChance)
+	self.crackChance = copy_table(base.crackChance)
 	self:setEmitters(
 		_G["Emitter_tiles_".. base._id],
 		_G["Emitter_Burst_tiles_".. base._id]
@@ -165,6 +166,12 @@ function Tileset:setRainChance(rainChance)
 	self.rainChance = rainChance
 end
 
+function Tileset:setCrackChance(crackChance)
+	Assert.Equals('number', type(crackChance), "Argument #1")
+
+	self.crackChance = crackChance
+end
+
 function Tileset:setEnvironmentChance(environmentChance)
 	Assert.Equals({'number', 'table'}, type(environmentChance), "Argument #1")
 
@@ -212,6 +219,10 @@ end
 
 function Tileset:getRainChance()
 	return self.rainChance
+end
+
+function Tileset:getCrackChance(tileType)
+	return self.crackChance
 end
 
 function Tileset:getEnvironmentChance(tileType, difficulty)
