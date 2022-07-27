@@ -65,7 +65,7 @@ end
 
 
 local function loadFromFile(path)
-	LOGD("EasyEdit - loadFromFile ../"..path)
+	LOGD("EasyEdit - Load from file ../"..path)
 	local result
 
 	if path:sub(-4, -1) == ".lua" then
@@ -80,7 +80,7 @@ local function loadFromFile(path)
 end
 
 local function loadFromDir(path, depth)
-	LOGD("EasyEdit - loadFromDir ../"..path)
+	LOGD("EasyEdit - Load from dir ../"..path)
 	local result = {}
 
 	if not depth or depth > 0 then
@@ -95,15 +95,17 @@ local function loadFromDir(path, depth)
 	end
 
 	if not next(result) then
-		LOGD("EasyEdit - discard result ../"..path)
+		LOGD("EasyEdit - Nothing to load from ../"..path)
 		return nil
 	end
+
+	LOGD("EasyEdit - Loading from ../"..path)
 
 	return result
 end
 
 local function saveToFile(cache, path)
-	LOGD("EasyEdit - saveToFile ../"..path)
+	LOGD("EasyEdit - Save to file ../"..path)
 
 	serializer.configureFile(
 		path,
@@ -115,7 +117,7 @@ local function saveToFile(cache, path)
 end
 
 local function saveToDir(cache, path)
-	LOGD("EasyEdit - saveToDir ../"..path)
+	LOGD("EasyEdit - Save to dir ../"..path)
 
 	for key, value in pairs(cache) do
 		saveToFile(value, path..key..".lua")
