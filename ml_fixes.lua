@@ -1,8 +1,4 @@
 
-if modApi.version > "2.6.4" then
-	return
-end
-
 local path = GetParentPath(...)
 local ok, err = assert(pcall(package.loadlib(path.."ml_fixes/ml_fixes.dll", "add_ml_fixes")))
 
