@@ -104,23 +104,33 @@ function Unit:getName()
 end
 
 function Unit:isValid()
-	return Unit.getImagePath(self):sub(1,10) == "img/units/"
+	return false
+		or Unit.getImagePath(self):sub(1,10) == "img/units/"
+		or Unit.getImagePath(self):sub(1,19) == "img/advanced/units/"
 end
 
 function Unit:isMech()
-	return Unit.getImagePath(self):sub(1,17) == "img/units/player/"
+	return false
+		or Unit.getImagePath(self):sub(1,17) == "img/units/player/"
+		or Unit.getImagePath(self):sub(1,26) == "img/advanced/units/player/"
 end
 
 function Unit:isEnemy()
-	return Unit.getImagePath(self):sub(1,17) == "img/units/aliens/"
+	return false
+		or Unit.getImagePath(self):sub(1,17) == "img/units/aliens/"
+		or Unit.getImagePath(self):sub(1,26) == "img/advanced/units/aliens/"
 end
 
 function Unit:isBot()
-	return Unit.getImagePath(self):sub(1,19) == "img/units/snowbots/"
+	return false
+		or Unit.getImagePath(self):sub(1,19) == "img/units/snowbots/"
+		or Unit.getImagePath(self):sub(1,28) == "img/advanced/units/snowbots/"
 end
 
 function Unit:isMission()
-	return Unit.getImagePath(self):sub(1,18) == "img/units/mission/"
+	return false
+		or Unit.getImagePath(self):sub(1,18) == "img/units/mission/"
+		or Unit.getImagePath(self):sub(1,27) == "img/advanced/units/mission/"
 end
 
 function Unit:isBaseEnemy()

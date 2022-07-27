@@ -91,7 +91,9 @@ function DecoUnit:setObject(unit, opt)
 	end
 
 	self.anim = anim
-	self.isMech = path:sub(1,17) == "img/units/player/"
+	self.isMech = false
+		or path:sub(1,17) == "img/units/player/"
+		or path:sub(1,26) == "img/advanced/units/player/"
 	self.path = path
 	self:setImageOffset(imageOffset)
 end
