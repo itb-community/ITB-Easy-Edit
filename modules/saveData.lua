@@ -14,7 +14,7 @@ local isdir = explorer.isdir
 local isfile = explorer.isfile
 
 local modules = {
-	modApi.units,
+	-- modApi.units,
 	modApi.enemyList,
 	modApi.missionList,
 	modApi.bossList,
@@ -27,7 +27,7 @@ local modules = {
 local LOGD = easyEdit.LOG
 local LOGDF = easyEdit.LOGF
 local DIRS = {
-	"units",
+	-- "units",
 	"enemyList",
 	"bossList",
 	"missionList",

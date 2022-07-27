@@ -29,7 +29,7 @@ local ISLAND_TOOLTIP = "Create new islands, or edit existing ones"
 local WORLD_TITLE = "World Editor"
 local WORLD_TOOLTIP = "Arrange the content of the 4 playable islands"
 
-sdlext.addModContent(MECH_TITLE, mechEditor.mainButton, MECH_TOOLTIP)
+-- sdlext.addModContent(MECH_TITLE, mechEditor.mainButton, MECH_TOOLTIP)
 -- sdlext.addModContent(ENEMY_TITLE, enemyEditor.mainButton, ENEMY_TOOLTIP)
 -- sdlext.addModContent(SQUAD_TITLE, squadEditor.mainButton, SQUAD_TOOLTIP)
 sdlext.addModContent(ENEMY_LIST_TITLE, enemyListEditor.mainButton, ENEMY_LIST_TOOLTIP)
