@@ -69,6 +69,19 @@ local STRUCTURE_EXCLUSION = {
 	
 }
 
+local function updateMissingNames()
+	Jelly_Armor1.Name = "Shell Psion"
+	Jelly_Health1.Name = "Soldier Psion"
+	Jelly_Regen1.Name = "Blood Psion"
+	Jelly_Explode1.Name = "Blast Psion"
+	Jelly_Lava1.Name = "Psion Tyrant"
+	Jelly_Spider1.Name = "Arachnid Psion"
+	Jelly_Fire1.Name = "Smoldering Psion"
+	Jelly_Boost1.Name = "Raging Psion"
+	ShamanBoss.Name = "Plasmodia Leader"
+	BlobberBoss.Name = "Blobber Leader"
+end
+
 local function registerWeapon(weapon_id)
 	if list_contains(WEAPON_EXCLUSION, weapon_id) then
 		return
@@ -704,6 +717,7 @@ local function onModsInitialized()
 	easyEdit.savedata:init()
 end
 
+updateMissingNames()
 registerUnits()
 registerWeapons()
 registerMissions()
