@@ -340,6 +340,7 @@ local function registerTilesets()
 
 			tileset.climate = GetText(corp_id.."_Environment")
 			tileset.rainChance = getRainChance(id)
+			tileset.crackChance = getCrackChance(id)
 			tileset.environmentChance = {}
 
 			for _, diff in ipairs(difficulties) do
