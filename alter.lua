@@ -63,6 +63,7 @@ local MISSION_EXCLUSION = {
 
 	"Mission_Sandstorm",
 	"Mission_SlugBoss",
+	"Mission_LeaperBoss",
 }
 
 local STRUCTURE_EXCLUSION = {
