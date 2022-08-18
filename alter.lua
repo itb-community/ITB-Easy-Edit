@@ -18,11 +18,11 @@ local ceos = { "dewey", "jessica", "zenith", "vikram" }
 local missionLists = corporations
 local bossLists = corporations
 
-local tilesets = { "grass", "sand", "snow", "acid", "lava", "volcano", "vine", "hologram" }
-local climate = { "", "", "", "", "Scorching", "Fiery", "Lush", "Holograpic" }
-local rainChance = { 0, 0, 0, 0, 0, 0, 70, 30 }
-local crackChance = { 0, 0, 7, 0, 0, 0, 0, 0 }
-local environmentChance = { 0, 0, 0, 0, 0, 0, { [TERRAIN_FOREST] = 60 }, 0 }
+local tilesets = { "grass", "sand", "snow", "acid", "lava", "volcano", "vine", "hologram", "debris" }
+local climate = { "", "", "", "", "Scorching", "Fiery", "Lush", "Holograpic", "debris" }
+local rainChance = { 0, 0, 0, 0, 0, 0, 70, 30, 10 }
+local crackChance = { 0, 0, 7, 0, 0, 0, 0, 0, 2 }
+local environmentChance = { 0, 0, 0, 0, 0, 0, { [TERRAIN_FOREST] = 60 }, 0, 0 }
 
 local mechList = {
 	"PunchMech", "TankMech", "ArtiMech",
@@ -333,6 +333,40 @@ local function registerTilesets()
 	modApi:copyAsset(
 		"img/combat/tiles_grass/building_sheet_vines.png",
 		"img/combat/tiles_vine/building_sheet.png")
+
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/building_1_tile.png",
+		"img/combat/tiles_debris/building_1_tile.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/building_2_tile.png",
+		"img/combat/tiles_debris/building_2_tile.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/building_3_tile.png",
+		"img/combat/tiles_debris/building_3_tile.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/building_collapse.png",
+		"img/combat/tiles_debris/building_collapse.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/building_sheet.png",
+		"img/combat/tiles_debris/building_sheet.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/ground_0.png",
+		"img/combat/tiles_debris/ground_0.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/ground_1.png",
+		"img/combat/tiles_debris/ground_1.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/ground_rail.png",
+		"img/combat/tiles_debris/ground_rail.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/mountain_0.png",
+		"img/combat/tiles_debris/mountain_0.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/mountain_0_broken.png",
+		"img/combat/tiles_debris/mountain_0_broken.png")
+	modApi:copyAsset(
+		"img/advanced/combat/tiles_debris/mountain_explode.png",
+		"img/combat/tiles_debris/mountain_explode.png")
 
 	-- temporarily override GetRealDifficulty
 	-- while extracting environmentChance for
