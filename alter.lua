@@ -465,22 +465,18 @@ function pickEnemies(categories, enemies, islandNumber, timesPicked)
 	local choices = {}
 	local excluded = {}
 
-	local exclusiveReversed = {}
-	for i, v in ipairs(ExclusiveElements) do
-		exclusiveReversed[v] = i
-	end
-
 	local function isUnlocked(unit)
 		local lock = IslandLocks[unit] or 4
 		return islandNumber == nil or islandNumber >= lock or Game:IsIslandUnlocked(lock-1)
 	end
 
 	local function addExclusions(unit)
-		if ExclusiveElements[unit] then
-			excluded[ExclusiveElements[unit]] = true
-		end
-		if exclusiveReversed[unit] then
-			excluded[exclusiveReversed[unit]] = true
+		for i, list in ipairs(exclusiveElements) do
+			if list_contains(list, unit) then
+				for i, excludedId in ipairs(list) do
+					excluded[excludedId] = true
+				end
+			end
 		end
 	end
 
