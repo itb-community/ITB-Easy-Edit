@@ -43,6 +43,7 @@ local UNIT_EXCLUSION = {
 	"SlugEgg1",
 	"Slug1",
 	"Slug2",
+	"Jelly_Necro1",
 }
 
 local WEAPON_EXCLUSION = {
