@@ -15,8 +15,6 @@ local function finalizeInit(self)
 	Assert.Traceback = true
 
 	require(path.."ui/editor_easyEdit")
-	require(path.."modules/assets")
-	require(path.."modules/animations")
 
 	if not self.enabled then
 		LOGDF("Easy Edit %s did not initialize because it is disabled", self.version)
