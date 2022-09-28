@@ -1,6 +1,8 @@
 
 -- header
 local path = GetParentPath(...)
+local path_datasturctures = GetParentPath(path).."datastructures/"
+local sort = require(path_datasturctures.."sort")
 local helpers = require(path.."helpers")
 local UiBoxLayout = require(path.."widget/UiBoxLayout")
 local UiEditBox = require(path.."widget/UiEditBox")
@@ -54,7 +56,7 @@ local currentContent
 local islandList
 local uiEditBox
 local islandEditor = {}
-local sortLessThan = get_sort_less_than("_id")
+local sortLessThan = sort.get_sort_less_than("_id")
 
 local function format_popupWindow(self)
 	self.popupWindow
