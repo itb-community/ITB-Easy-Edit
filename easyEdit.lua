@@ -7,7 +7,8 @@ if skipInit then
 	return easyEdit
 end
 
-local VERSION = "1.5.3"
+local VERSION = "1.5.4"
+local MOD_LOADER_TARGET = "2.7.2"
 local path = GetParentPath(...)
 
 local function finalizeInit(self)
@@ -19,6 +20,16 @@ local function finalizeInit(self)
 	if not self.enabled then
 		LOGDF("Easy Edit %s did not initialize because it is disabled", self.version)
 		return
+	end
+
+	if self.modLoaderTarget ~= modApi.version then
+		LOGF(""
+			.."WARNING: This version of Easy Edit is specifically made for mod loader"
+			.."version %s, and may not work with properly with the current mod loader"
+			.."version %s",
+			tostring(self.modLoaderTarget),
+			tostring(modApi.version)
+		)
 	end
 
 	require(path.."debug")
@@ -77,6 +88,7 @@ local isNewerVersion = false
 if isNewerVersion then
 	easyEdit = easyEdit or {}
 	easyEdit.version = VERSION
+	easyEdit.modLoaderTarget = MOD_LOADER_TARGET
 	easyEdit.path = path
 	easyEdit.finalizeInit = finalizeInit
 
