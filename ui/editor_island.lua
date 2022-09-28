@@ -10,9 +10,11 @@ local UiScrollAreaExt = require(path.."widget/UiScrollAreaExt")
 local UiScrollAreaH = UiScrollAreaExt.horizontal
 local UiScrollArea = UiScrollAreaExt.vertical
 local UiPopup = require(path.."widget/UiPopup")
+local UiTextBox = require(path.."widget/UiTextBox")
 local DecoObj = require(path.."deco/DecoObj")
 local DecoEditorButton = require(path.."deco/DecoEditorButton")
 local DecoImmutable = require(path.."deco/DecoImmutable")
+local DecoTextBox = require(path.."deco/DecoTextBox")
 
 
 local addStaticContentList2x = helpers.addStaticContentList2x
