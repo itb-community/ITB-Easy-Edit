@@ -7,7 +7,7 @@ if skipInit then
 	return easyEdit
 end
 
-local VERSION = "1.5.4"
+local VERSION = "1.5.5"
 local MOD_LOADER_TARGET = "2.7.2"
 local path = GetParentPath(...)
 
