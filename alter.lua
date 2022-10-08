@@ -662,20 +662,20 @@ local function registerEnemyLists()
 end
 
 local function registerBossLists()
-    for i, id in ipairs(corporations) do
-        local bossList = modApi.bossList:add(id)
-        local corp_id = vanillaCorporations[i]
-        local base = _G[corp_id]
-
-        bossList:copy(base)
-
-        for _, boss in ipairs(getNewBosses()) do
-            bossList:addBoss(boss)
-        end
-
-        bossList.name = base.Bark_Name
-        bossList:lock()
-    end
+	for i, id in ipairs(corporations) do
+		local bossList = modApi.bossList:add(id)
+		local corp_id = vanillaCorporations[i]
+		local base = _G[corp_id]
+		
+		bossList:copy(base)
+		
+		for _, boss in ipairs(getNewBosses()) do
+			bossList:addBoss(boss)
+		end
+		
+		bossList.name = base.Bark_Name
+		bossList:lock()
+	end
 end
 
 local function registerMissionLists()
