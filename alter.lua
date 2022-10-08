@@ -263,6 +263,12 @@ local function registerMission(mission_id)
 end
 
 local function registerMissions()
+	Mission_Windmill = Mission_Critical:new{
+		Name = "Wind Farms",
+		Image = "str_wind1",
+		FlavorBase = "Mission_Wind",
+		Objectives = PowerObjective("Mission_Wind_Objective", 2)
+	}
 	for i, _ in ipairs(corporations) do
 		local corp_id = vanillaCorporations[i]
 		local base = _G[corp_id]
