@@ -64,6 +64,7 @@ local MISSION_EXCLUSION = {
 	"Mission_Sandstorm",
 	"Mission_SlugBoss",
 	"Mission_LeaperBoss",
+	"Mission_DiggerBoss",
 }
 
 local STRUCTURE_EXCLUSION = {
@@ -87,6 +88,25 @@ local function updateMissingNames()
 	BurnbugBoss.Name = "Gastropod Leader"
 	Dung1.Name = "Tumblebug"
 	DungBoss.Name = "Tumblebug Leader"
+	
+	Mission_BeetleBoss.Name = "Beetle Leader"
+	Mission_BotBoss.Name = "Bot Leader"
+	Mission_FireflyBoss.Name = "Firefly Leader"
+	Mission_BlobBoss.Name = "Large Goo"
+	Mission_HornetBoss.Name = "Hornet Leader"
+	Mission_JellyBoss.Name = "Psion Abomination"
+	Mission_ScorpionBoss.Name = "Scorpion Leader"
+	Mission_SpiderBoss.Name = "Spider Leader"
+	Mission_BlobberBoss.Name = "Blobber Leader"
+	Mission_BouncerBoss.Name = "Bouncer Leader"
+	Mission_BurnbugBoss.Name = "Gastropod Leader"
+	Mission_CentipedeBoss.Name = "Centipede Leader"
+	Mission_CrabBoss.Name = "Crab Leader"
+	Mission_DungBoss.Name = "Tumblebug Leader"
+	Mission_MosquitoBoss.Name = "Mosquito Leader"
+	Mission_ScarabBoss.Name = "Scarab Leader"
+	Mission_ShamanBoss.Name = "Plasmodia Leader"
+	Mission_StarfishBoss.Name = "Starfish Leader"
 	
 	Mission_Acid.Name = "A.C.I.D."
 	Mission_AcidStorm.Name = "A.C.I.D. Storm"
@@ -642,15 +662,20 @@ local function registerEnemyLists()
 end
 
 local function registerBossLists()
-	for i, id in ipairs(corporations) do
-		local bossList = modApi.bossList:add(id)
-		local corp_id = vanillaCorporations[i]
-		local base = _G[corp_id]
+    for i, id in ipairs(corporations) do
+        local bossList = modApi.bossList:add(id)
+        local corp_id = vanillaCorporations[i]
+        local base = _G[corp_id]
 
-		bossList:copy(base)
-		bossList.name = base.Bark_Name
-		bossList:lock()
-	end
+        bossList:copy(base)
+
+        for _, boss in ipairs(getNewBosses()) do
+            bossList:addBoss(boss)
+        end
+
+        bossList.name = base.Bark_Name
+        bossList:lock()
+    end
 end
 
 local function registerMissionLists()
