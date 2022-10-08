@@ -85,11 +85,16 @@ local function updateMissingNames()
 end
 
 local function registerWeapon(weapon_id)
-	if list_contains(WEAPON_EXCLUSION, weapon_id) then
+	local base = _G[weapon_id]
+
+	if false
+		or list_contains(WEAPON_EXCLUSION, weapon_id)
+		or base == nil
+		or base.ExcludeFromEasyEdit == true
+	then
 		return
 	end
 
-	local base = _G[weapon_id]
 	local weapon = modApi.weapons:get(weapon_id)
 
 	weapon = weapon or modApi.weapons:add(weapon_id)
@@ -110,11 +115,16 @@ local units = modApi.units
 local unitImages = modApi.unitImage
 local isValidUnit = units._class.isValid
 local function registerUnit(unit_id)
-	if list_contains(UNIT_EXCLUSION, unit_id) then
+	local base = _G[unit_id]
+
+	if false
+		or list_contains(UNIT_EXCLUSION, unit_id)
+		or base == nil
+		or base.ExcludeFromEasyEdit == true
+	then
 		return
 	end
 
-	local base = _G[unit_id]
 	local unit = units:get(unit_id)
 
 	if base.Name == "Unnamed Pawn" or base.Name == "PawnTable" then
@@ -163,11 +173,16 @@ local function registerUnits()
 end
 
 local function registerMission(mission_id)
-	if list_contains(MISSION_EXCLUSION, mission_id) then
+	local base = _G[mission_id]
+
+	if false
+		or list_contains(MISSION_EXCLUSION, mission_id)
+		or base == nil
+		or base.ExcludeFromEasyEdit == true
+	then
 		return
 	end
 
-	local base = _G[mission_id]
 	local mission = modApi.missions:get(mission_id)
 
 	mission = mission or modApi.missions:add(mission_id)
@@ -221,11 +236,16 @@ local function registerMissions()
 end
 
 local function registerStructure(structure_id)
-	if list_contains(STRUCTURE_EXCLUSION, structure_id) then
+	local base = _G[structure_id]
+
+	if false
+		or list_contains(STRUCTURE_EXCLUSION, structure_id)
+		or base == nil
+		or base.ExcludeFromEasyEdit == true
+	then
 		return
 	end
 
-	local base = _G[structure_id]
 	local structure = modApi.structures:get(structure_id)
 
 	structure = structure or modApi.structures:add(structure_id)
