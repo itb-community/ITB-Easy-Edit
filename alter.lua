@@ -43,6 +43,7 @@ local UNIT_EXCLUSION = {
 	"SlugEgg1",
 	"Slug1",
 	"Slug2",
+	"Jelly_Necro1",
 }
 
 local WEAPON_EXCLUSION = {
@@ -450,7 +451,7 @@ local function registerTilesets()
 		return tileset:getEnvironmentChance(tileType, GetDifficulty())
 	end
 
-	modApi.events.onTilesetChanged:subscribe(function(newTileset, oldTileset)
+	easyEdit.events.onTilesetChanged:subscribe(function(newTileset, oldTileset)
 		local oldTileset = modApi.tileset:get(oldTileset)
 		local newTileset = modApi.tileset:get(newTileset)
 

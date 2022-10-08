@@ -60,15 +60,14 @@ function Tileset:copyAssets(base, overwrite)
 		overwrite = true
 	end
 
+	local resourceDat = modApi.resource:inner_paths()
 	local files = {}
 	local from = string.format("img/combat/tiles_%s/", base._id)
 	local to = string.format("img/combat/tiles_%s/", self._id)
 
-	for _, file in ipairs(modApi.resource._files) do
-		local filename = file._meta._filename
-
-		if modApi:stringStartsWith(filename, from) then
-			files[#files+1] = filename
+	for _, filepath in ipairs(resourceDat) do
+		if modApi:stringStartsWith(filepath, from) then
+			files[#files+1] = filepath
 		end
 	end
 
