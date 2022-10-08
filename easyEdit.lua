@@ -62,7 +62,6 @@ local function finalizeInit(self)
 	require(path.."ui/widget/UiDebug")
 	require(path.."ui/widget/UiCustomTooltip")
 	require(path.."ui/widget/UiGroupTooltip")
-	require(path.."ui/textevent")
 	require(path.."ui/menues")
 	require(path.."ui/editor_cleanProfile")
 
