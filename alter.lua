@@ -319,6 +319,7 @@ local function registerCorporations()
 		local base = _G[corp_id]
 
 		corp:copy(base)
+		base.UniqueBosses = {}
 		corp.Name = GetText(corp_id.."_Name")
 		corp.Description = GetText(corp_id.."_Description")
 		corp:lock()
@@ -551,6 +552,10 @@ function pickEnemies(categories, enemies, islandNumber, timesPicked)
 	return result
 end
 
+local function getNoNewBosses()
+	return {}
+end
+
 local function registerEnemyLists()
 	local id = "vanilla"
 	local enemyList = modApi.enemyList:add(id)
@@ -566,7 +571,13 @@ local function registerEnemyLists()
 
 	local oldStartNewGame = startNewGame
 	function startNewGame()
+		-- Give Easy Edit full control of which bosses are added
+		local getNewBossesVanilla = getNewBosses
+		getNewBosses = getNoNewBosses
+
 		oldStartNewGame()
+
+		getNewBosses = getNewBossesVanilla
 
 		local timesPicked = {}
 		for i, corp_id in ipairs(vanillaCorporations) do
