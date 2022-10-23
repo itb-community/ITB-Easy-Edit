@@ -8,20 +8,12 @@ local extension = {
 }
 
 function extension:metadata()
-	if easyEdit then
-		-- Prevent older versions from initializing
-		easyEdit = { version = self.version }
-	end
-end
-
-function extension:init(options)
 	local path = self.resourcePath
 
 	easyEdit = {}
 	easyEdit.version = self.version
 	easyEdit.path = self.resourcePath
 
-	require(path.."datastructures/sort")
 	require(path.."modules/events")
 	require(path.."modules/indexedList")
 	require(path.."modules/units")
@@ -41,6 +33,11 @@ function extension:init(options)
 	require(path.."modules/world")
 	require(path.."modules/saveData")
 	require(path.."alter")
+end
+
+function extension:init(options)
+	local path = self.resourcePath
+
 	require(path.."ui/widget/Ui")
 	require(path.."ui/widget/UiGroupTooltip")
 	require(path.."ui/menues")
