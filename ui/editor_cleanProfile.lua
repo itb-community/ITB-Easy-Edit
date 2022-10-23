@@ -1,6 +1,5 @@
 
 local EDITOR_TITLE = "Easy Edit Savedata"
-local SAVEDATA_LOCATION = GetSavedataLocation()
 local DIALOG_TEXT = ""
 	.."Old Easy Edit savedata detected in the following "
 	.."profiles:\n%s\n\n"
@@ -21,11 +20,12 @@ local easyEditDirectoriesText
 
 local function getProfileDirsSorted()
 	local profileDirs = {}
-	local dirs = os.listdirs(SAVEDATA_LOCATION)
+	local dirs = Directory.savedata():directories()
 
-	for _, dir in pairs(dirs) do
-		if dir:sub(1,8):lower() == "profile_" then
-			profileDirs[#profileDirs + 1] = dir
+	for _, dir in ipairs(dirs) do
+		local name = dir:name()
+		if name:sub(1,8):lower() == "profile_" then
+			profileDirs[#profileDirs + 1] = name
 		end
 	end
 
@@ -37,7 +37,7 @@ local function getProfileDirsSorted()
 end
 
 local function openSavedata()
-	local command = ('"explorer "'..SAVEDATA_LOCATION..'""'):gsub("/","\\")
+	local command = ('"explorer "'..Directory.savedata():path()..'""'):gsub("/","\\")
 	io.popen(command)
 end
 
@@ -63,9 +63,9 @@ modApi.events.onUiRootCreated:subscribe(function()
 	local easyEditDirs = {}
 
 	for _, profileDir in ipairs(profileDirs) do
-		local easyEditDir = SAVEDATA_LOCATION..profileDir.."/easyEdit/"
-		if modApi:directoryExists(easyEditDir) then
-			easyEditDirs[#easyEditDirs + 1] = easyEditDir
+		local easyEditDir = Directory(Directory.savedata():path().."/"..profileDir.."/easyEdit/")
+		if easyEditDir:exists() then
+			easyEditDirs[#easyEditDirs + 1] = easyEditDir:name()
 		end
 	end
 

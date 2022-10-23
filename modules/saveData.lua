@@ -1,17 +1,6 @@
 
 -- header
 local path = GetParentPath(...)
-local serializer = require(path.."serializer")
-local explorer = require(path.."explorer")
-local direxists = explorer.direxists
-local fileexists = explorer.fileexists
-local listdirs = explorer.listdirs
-local listfiles = explorer.listfiles
-local listobjects = explorer.listobjects
-local pruneExtension = explorer.pruneExtension
-local remdir = explorer.remdir
-local isdir = explorer.isdir
-local isfile = explorer.isfile
 
 local modules = {
 	-- modApi.units,
@@ -36,9 +25,7 @@ local DIRS = {
 }
 
 local savedata = {}
-local saveRoot = GetSavedataLocation()
-local saveLoc
-local fullSaveLoc
+local profilePath
 local modConfig
 
 local function getModConfig()
@@ -68,8 +55,9 @@ local function loadFromFile(path)
 	LOGD("EasyEdit - Load from file ../"..path)
 	local result
 
-	if path:sub(-4, -1) == ".lua" then
-		result = serializer.deserialize(saveRoot..path)
+	local file = Directory.savedata():file(path)
+	if file:extension() == "lua" and file:exists() then
+		result = persistence.load(file:path())
 	end
 
 	if isFromUninstalledMod(result) then
@@ -84,14 +72,16 @@ local function loadFromDir(path, depth)
 	local result = {}
 
 	if not depth or depth > 0 then
-		for _, dir in ipairs(listdirs(saveRoot..path)) do
-			result[dir] = loadFromDir(path..dir.."/", depth - 1)
+		for _, dir in ipairs(Directory.savedata():directory(path):directories()) do
+			local name = dir:name()
+			result[dir:name()] = loadFromDir(path..name.."/", depth - 1)
 		end
 	end
 
-	for _, file in ipairs(listfiles(saveRoot..path)) do
-		local id = pruneExtension(file)
-		result[id] = loadFromFile(path..file)
+	for _, file in ipairs(Directory.savedata():directory(path):files()) do
+		local name = file:name()
+		local id = file:name_without_extension()
+		result[id] = loadFromFile(path..name)
 	end
 
 	if not next(result) then
@@ -107,7 +97,7 @@ end
 local function saveToFile(cache, path)
 	LOGD("EasyEdit - Save to file ../"..path)
 
-	serializer.configureFile(
+	sdlext.config(
 		path,
 		function(obj)
 			clear_table(obj)
@@ -131,7 +121,7 @@ function savedata:load()
 	end
 
 	LOGF("EasyEdit - Load savedata for profile [%s]", self.currentProfile)
-	self.cache = loadFromDir(saveLoc, 2) or {}
+	self.cache = loadFromDir(profilePath, 2) or {}
 	self:updateLiveData()
 end
 
@@ -142,7 +132,7 @@ function savedata:saveAsFile(id, data)
 
 	data = copy_table(data)
 	self.cache[id] = data
-	saveToFile(data, saveLoc..id..".lua")
+	saveToFile(data, profilePath..id..".lua")
 end
 
 function savedata:saveAsDir(id, data)
@@ -153,28 +143,28 @@ function savedata:saveAsDir(id, data)
 	data = copy_table(data)
 	self.cache[id] = data
 
-	if pruneExtension(id) ~= id then
+	if File(id):extension() ~= nil then
 		LOGF("EasyEdit - %q is not a directory", id)
 		return
 	end
 
 	-- delete lua file with same name as dir
-	if isfile(fullSaveLoc..id..".lua") then
-		LOGD("EasyEdit - delete "..fullSaveLoc..id..".lua")
-		os.remove(fullSaveLoc..id..".lua")
+	local file = Directory.savedata():directory(profilePath):file(id..".lua")
+	if file:exists() then
+		LOGD("EasyEdit - delete "..file:path())
+		file:delete()
 	end
 
 	local dir = id.."/"
-	saveToDir(data, saveLoc..dir)
+	saveToDir(data, profilePath..dir)
 
 	-- delete lua files of removed objects
-	for _, file in ipairs(listfiles(fullSaveLoc..dir)) do
-		local id = pruneExtension(file)
+	local files = Directory.savedata():directory(profilePath):directory(dir):files()
+	for _, file in ipairs(files) do
+		local id = file:name_without_extension()
 		if data[id] == nil then
-			if isfile(fullSaveLoc..dir..file) then
-				LOGD("EasyEdit - delete "..fullSaveLoc..dir..file)
-				os.remove(fullSaveLoc..dir..file)
-			end
+			LOGD("EasyEdit - delete "..file:path())
+			file:delete()
 		end
 	end
 
@@ -186,10 +176,11 @@ function savedata:mkdirs()
 		Assert.Error("No current profile")
 	end
 
-	os.mkdir(fullSaveLoc)
+	local root = Directory.savedata():directory(profilePath)
+	root:make_directories()
 
 	for _, dir in pairs(DIRS) do
-		os.mkdir(fullSaveLoc..dir)
+		root:directory(dir):make_directories()
 	end
 end
 
@@ -223,8 +214,7 @@ local function changeEasyEditProfile(_, newProfile)
 
 	LOGF("EasyEdit - Set profile [%s]", newProfile)
 	modConfig = mod_loader:getModConfig()
-	saveLoc = "easyEdit_"..newProfile.."/"
-	fullSaveLoc = saveRoot..saveLoc
+	profilePath = "easyEdit_"..newProfile.."/"
 	easyEdit.savedata:mkdirs()
 	easyEdit.savedata:load()
 end
