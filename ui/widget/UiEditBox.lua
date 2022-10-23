@@ -1,6 +1,5 @@
 
 local path = GetParentPath(...)
-local UiTextBox = require(path.."UiTextBox")
 
 local UiEditBox = Class.inherit(Ui)
 function UiEditBox:new()
@@ -10,7 +9,7 @@ end
 
 function UiEditBox:updateText(text)
 	-- overridable method
-	if self.__index:isSubclassOf(UiTextBox) then
+	if self.__index:isSubclassOf(UiInputField) then
 		self.textfield = text
 	else
 		for _, deco in ipairs(self.decorations) do

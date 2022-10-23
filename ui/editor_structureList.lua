@@ -3,8 +3,6 @@
 local path = GetParentPath(...)
 local helpers = require(path.."helpers")
 local DecoImmutable = require(path.."deco/DecoImmutable")
-local DecoTextBox = require(path.."deco/DecoTextBox")
-local UiTextBox = require(path.."widget/UiTextBox")
 local UiBoxLayout = require(path.."widget/UiBoxLayout")
 local UiDragSource = require(path.."widget/UiDragSource")
 local UiScrollAreaExt = require(path.."widget/UiScrollAreaExt")
@@ -74,7 +72,7 @@ end
 local function buildFrameContent(parentUi)
 	contentListContainers = UiBoxLayout()
 	local structures = UiBoxLayout()
-	local createNewList = UiTextBox()
+	local createNewList = UiInputField()
 	local dropTargets = {}
 
 	local content = UiWeightLayout()
@@ -114,7 +112,7 @@ local function buildFrameContent(parentUi)
 								:setVar("textfield", TITLE_CREATE_NEW_LIST)
 								:settooltip("Create a new structure list", nil, true)
 								:decorate{
-									DecoTextBox{
+									DecoInputField{
 										font = FONT_TITLE,
 										textset = TEXT_SETTINGS_TITLE,
 										alignH = "center",

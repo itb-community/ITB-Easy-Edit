@@ -12,11 +12,9 @@ local UiScrollAreaExt = require(path.."widget/UiScrollAreaExt")
 local UiScrollAreaH = UiScrollAreaExt.horizontal
 local UiScrollArea = UiScrollAreaExt.vertical
 local UiPopup = require(path.."widget/UiPopup")
-local UiTextBox = require(path.."widget/UiTextBox")
 local DecoObj = require(path.."deco/DecoObj")
 local DecoEditorButton = require(path.."deco/DecoEditorButton")
 local DecoImmutable = require(path.."deco/DecoImmutable")
-local DecoTextBox = require(path.."deco/DecoTextBox")
 
 
 local addStaticContentList2x = helpers.addStaticContentList2x
@@ -208,7 +206,7 @@ local function buildFrameContent(parentUi)
 
 	local icon_island_width = ISLAND_ICON_DEF.width * ISLAND_ICON_DEF.scale
 	local icon_island_height = ISLAND_ICON_DEF.height * ISLAND_ICON_DEF.scale
-	local createNewIsland = UiTextBox()
+	local createNewIsland = UiInputField()
 
 	local enemyLists_sorted = to_array(filter_table(modApi.enemyList._children, function(k, v)
 		return not list_contains(ENEMY_LIST_EXCLUSION, k)
@@ -283,10 +281,10 @@ local function buildFrameContent(parentUi)
 					:beginUi(createNewIsland)
 						:format(function(self) self.groupOwner = self.parent end)
 						:setVar("textfield", TITLE_CREATE_NEW_ISLAND)
-						:setAlphabet(UiTextBox._ALPHABET_CHARS.."_")
+						:setAlphabet(UiInputField._ALPHABET_CHARS.."_")
 						:settooltip("Create a new island", nil, true)
 						:decorate{
-							DecoTextBox{
+							DecoInputField{
 								font = FONT_TITLE,
 								textset = TEXT_SETTINGS_TITLE,
 								alignH = "center",

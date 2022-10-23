@@ -1,18 +1,17 @@
 
 local path = GetParentPath(...)
-local UiTextBox = require(path.."UiTextBox")
 
-local UiNumberBox = Class.inherit(UiTextBox)
+local UiNumberBox = Class.inherit(UiInputField)
 
 function UiNumberBox:new(minValue, maxValue)
-	UiTextBox.new(self)
+	UiInputField.new(self)
 
 	self.minValue = minValue
 	self.maxValue = maxValue
 end
 
 function UiNumberBox:init()
-	UiTextBox.init(self)
+	UiInputField.init(self)
 	self.alphabet = self._ALPHABET_NUMBERS
 end
 
@@ -24,12 +23,12 @@ function UiNumberBox:setText(text)
 	elseif value > self.maxValue then
 		self:setText(tostring(self.maxValue))
 	else
-		UiTextBox.setText(self, text)
+		UiInputField.setText(self, text)
 	end
 end
 
 function UiNumberBox:addText(input)
-	UiTextBox.addText(self, input)
+	UiInputField.addText(self, input)
 
 	local value = tonumber(self.textfield)
 	if value < self.minValue then
