@@ -1,6 +1,5 @@
 
 local path = GetParentPath(...)
-local mechEditor = require(path.."editor_mech")
 local enemyEditor = require(path.."editor_enemy")
 local squadEditor = require(path.."editor_squad")
 local enemyListEditor = require(path.."editor_enemyList")

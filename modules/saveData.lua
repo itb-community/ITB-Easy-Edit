@@ -3,7 +3,6 @@
 local path = GetParentPath(...)
 
 local modules = {
-	-- modApi.units,
 	modApi.enemyList,
 	modApi.missionList,
 	modApi.bossList,
@@ -16,7 +15,6 @@ local modules = {
 local LOGD = easyEdit.LOG
 local LOGDF = easyEdit.LOGF
 local DIRS = {
-	-- "units",
 	"enemyList",
 	"bossList",
 	"missionList",
