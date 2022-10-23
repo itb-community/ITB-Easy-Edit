@@ -23,7 +23,6 @@ function extension:init(options)
 
 	LOGDF("Easy Edit %s initializing", self.version)
 
-	require(path.."datastructures/binarySearch")
 	require(path.."datastructures/sort")
 	require(path.."modules/events")
 	require(path.."modules/gameState")
