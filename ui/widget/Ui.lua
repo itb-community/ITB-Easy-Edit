@@ -181,16 +181,6 @@ function Ui:gameWindowResized(screen, oldSize)
 	end
 end
 
--- The UiTooltip object in the UiRoot object
--- changes its size without the use of widthpx
--- and heightpx, altering w and h directly.
--- wPercent and hPercent must be nil for this
--- to work.
-modApi.events.onUiRootCreated:subscribe(function(screen, root)
-	root.tooltipUi.wPercent = nil
-	root.tooltipUi.hPercent = nil
-end)
-
 -- Some of the ui in the mod loader relies on
 -- wPercent and hPercent to be nil, so we have
 -- to revert the changes done to the base Ui
