@@ -24,10 +24,6 @@
 -- changed heightpx
 -- added sizepx
 -- extended setfocus
--- added beginUi
--- added endUi
--- added setVar
--- added format
 -- added updateDragHoverState
 -- added updateGroupHoverState
 -- added onGameWindowResized
@@ -87,43 +83,6 @@ function Ui:setfocus()
 	end
 
 	return old_Ui_setfocus(self)
-end
-
--- Adds a ui instance of class 'class' (or Ui if nil)
--- to itself, and returns the new ui instance.
--- Intended to be used in function chaining when
--- setting up the Ui hierarchy.
-function Ui:beginUi(class, ...)
-	if class == nil then
-		class = Ui
-	end
-
-	if Class.instanceOf(class, class.__index) then
-		-- if 'class' is a ui instance
-		return class:addTo(self)
-	elseif Class.isSubclassOf(class, Ui) then
-		-- if 'class' is a ui class
-		return class(...):addTo(self)
-	end
-
-	Assert.True(false, "Invalid Argument #1")
-end
-
--- Ends the current Ui instance when function chaining;
--- returning its parent.
-function Ui:endUi()
-	return self.parent
-end
-
--- Sets a variable in the table to the given value
-function Ui:setVar(var, value)
-	self[var] = value
-	return self
-end
-
-function Ui:format(fn, ...)
-	fn(self, ...)
-	return self
 end
 
 function UiRoot:setDragHoveredChild(child)
