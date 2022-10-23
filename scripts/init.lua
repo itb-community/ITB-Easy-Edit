@@ -21,8 +21,6 @@ function extension:init(options)
 	easyEdit.version = self.version
 	easyEdit.path = self.resourcePath
 
-	LOGDF("Easy Edit %s initializing", self.version)
-
 	require(path.."datastructures/sort")
 	require(path.."modules/events")
 	require(path.."modules/gameState")
@@ -50,8 +48,6 @@ function extension:init(options)
 	require(path.."ui/widget/UiGroupTooltip")
 	require(path.."ui/menues")
 	require(path.."ui/editor_cleanProfile")
-
-	LOGDF("Easy Edit %s initialized", self.version)
 end
 
 function extension:load(options, version)
