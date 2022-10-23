@@ -12,8 +12,6 @@ local modules = {
 }
 
 -- defs
-local LOGD = easyEdit.LOG
-local LOGDF = easyEdit.LOGF
 local DIRS = {
 	"enemyList",
 	"bossList",

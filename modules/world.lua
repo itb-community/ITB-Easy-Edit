@@ -2,7 +2,6 @@
 -- defs
 local DEFAULT_FINAL_MISSION = Mission_Final
 local DEFAULT_ISLAND_SLOTS = { "archive", "rst", "pinnacle", "detritus" }
-local LOGDF = easyEdit.LOGF
 
 
 local vanillaCorporations = { "Corp_Grass", "Corp_Desert", "Corp_Snow", "Corp_Factory" }
