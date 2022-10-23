@@ -32,13 +32,11 @@
 -- added updateGroupHoverState
 -- added onGameWindowResized
 -- added gameWindowResized
--- added isTooltipUi
 -- extended updateTooltipState
 -- added setGroupOwner
 -- added getGroupOwner
 -- added isGroupHovered
 -- added isGroupDragHovered
--- added setCustomTooltip
 -- added addDeco
 -- added replaceDeco
 -- added insertDeco
@@ -249,15 +247,6 @@ modApi.events.onGameWindowResized:subscribe(function(screen, oldSize)
 	sdlext:getUiRoot():gameWindowResized(screen, oldSize)
 end)
 
--- Make it possible to identify tooltip ui
--- unambiguously.
-function Ui:isTooltipUi()
-	return false
-end
-function UiTooltip:isTooltipUi()
-	return true
-end
-
 -- Adjust Ui.updateTooltipState to take into account
 -- tooltips which explicitly set tooltip_static
 local old_Ui_updateTooltipState = Ui.updateTooltipState
@@ -286,12 +275,6 @@ end
 
 function Ui:isGroupDragHovered()
 	return self:getGroupOwner().groupDragHovered
-end
-
-function Ui:setCustomTooltip(ui)
-	Assert.True(Ui.instanceOf(ui, Ui), "Argument #1")
-	self.customTooltip = ui
-	return self
 end
 
 function Ui:addDeco(decoration)
@@ -331,43 +314,6 @@ function Ui:removeDeco(index)
 	end
 
 	return self
-end
-
--- Adjust UiRoot. Make it so anything added to
--- priorityUi only relays out once per update.
-local tooltipUis = {}
-local otherUis = {}
-function UiRoot:relayoutDragDropPriorityUi()
-	clear_table(tooltipUis)
-	clear_table(otherUis)
-
-	for _, child in ipairs(self.priorityUi.children) do
-		if child:isTooltipUi() then
-			tooltipUis[#tooltipUis+1] = child
-			child.visible = false
-		else
-			otherUis[#otherUis+1] = child
-			child.visible = true
-		end
-	end
-
-	self.priorityUi:relayout()
-
-	for _, child in ipairs(tooltipUis) do
-		child.visible = true
-	end
-end
-
-function UiRoot:relayoutTooltipUi()
-	for _, child in ipairs(otherUis) do
-		child.visible = false
-	end
-
-	self.priorityUi:relayout()
-
-	for _, child in ipairs(otherUis) do
-		child.visible = true
-	end
 end
 
 -- Ui.crop does much the same as UiWeightLayout.compact
