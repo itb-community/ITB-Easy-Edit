@@ -26,8 +26,6 @@
 -- extended setfocus
 -- added updateDragHoverState
 -- added updateGroupHoverState
--- added onGameWindowResized
--- added gameWindowResized
 -- extended updateTooltipState
 -- added setGroupOwner
 -- added getGroupOwner
@@ -169,18 +167,6 @@ function UiRoot:updateStates()
 	self:updateGroupHoverState()
 end
 
-function Ui:onGameWindowResized(screen, oldSize)
-	-- overridable method
-end
-
-function Ui:gameWindowResized(screen, oldSize)
-	self:onGameWindowResized(screen, oldSize)
-
-	for _, child in ipairs(self.children) do
-		child:gameWindowResized(screen, oldSize)
-	end
-end
-
 -- Some of the ui in the mod loader relies on
 -- wPercent and hPercent to be nil, so we have
 -- to revert the changes done to the base Ui
@@ -191,10 +177,6 @@ function UiBoxLayout:new(...)
 	self.wPercent = nil
 	self.hPercent = nil
 end
-
-modApi.events.onGameWindowResized:subscribe(function(screen, oldSize)
-	sdlext:getUiRoot():gameWindowResized(screen, oldSize)
-end)
 
 -- Adjust Ui.updateTooltipState to take into account
 -- tooltips which explicitly set tooltip_static
