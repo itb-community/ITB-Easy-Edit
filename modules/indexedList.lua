@@ -122,7 +122,7 @@ function IndexedList:update()
 
 		if livedata then
 			clear_table(livedata)
-			clone_table(livedata, cache_data)
+			merge_table(livedata, cache_data)
 		end
 	end
 

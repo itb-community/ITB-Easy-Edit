@@ -172,6 +172,10 @@ local function updateMissingNames()
 	Str_Tower.Name = "Corporate Tower"
 end
 
+local function upper_first(str)
+	return str:gsub("^.", string.upper)
+end
+
 local function registerWeapon(weapon_id)
 	local base = _G[weapon_id]
 

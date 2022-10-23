@@ -99,7 +99,7 @@ local function saveToFile(cache, path)
 		path,
 		function(obj)
 			clear_table(obj)
-			clone_table(obj, cache)
+			merge_table(obj, cache)
 		end
 	)
 end

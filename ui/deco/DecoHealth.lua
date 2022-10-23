@@ -1,5 +1,6 @@
 
 -- header
+local healthgreen = sdl.rgb(50, 255, 50)
 local rect = sdl.rect(0,0,0,0)
 
 -- defs
@@ -30,7 +31,7 @@ function DecoHealth:draw(screen, widget)
 	local heightBorder = HEIGHT
 	local colorBorder = deco.colors.buttonborder
 	local colorBg = deco.colors.framebg
-	local colorHealth = deco.colors.healthgreen
+	local colorHealth = healthgreen
 	local alignH = self.alignH
 	local alignV = self.alignV
 	local padl = widget.padl

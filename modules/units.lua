@@ -210,7 +210,7 @@ function Units:update()
 
 		if livedata then
 			clear_table(livedata)
-			clone_table(livedata, unit_data)
+			merge_table(livedata, unit_data)
 			livedata.copy(unit, livedata)
 		end
 	end

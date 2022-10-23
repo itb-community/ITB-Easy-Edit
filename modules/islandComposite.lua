@@ -75,7 +75,7 @@ function IslandComposites:update()
 
 		if livedata then
 			clear_table(livedata)
-			clone_table(livedata, cache_islandComposite)
+			merge_table(livedata, cache_islandComposite)
 		end
 	end
 
