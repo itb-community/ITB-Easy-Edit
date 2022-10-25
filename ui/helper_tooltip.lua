@@ -23,7 +23,7 @@ function UiTooltipObject:new()
 		}
 end
 
-function UiTooltipObject:onCustomTooltipShown(hoveredUi)
+function UiTooltipObject:onTooltipShown(hoveredUi)
 	self.data = hoveredUi.data
 end
 

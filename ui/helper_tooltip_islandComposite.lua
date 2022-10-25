@@ -119,7 +119,7 @@ function UiTooltipIslandComposite:new()
 		:endUi()
 end
 
-function UiTooltipIslandComposite:onCustomTooltipShown(hoveredUi)
+function UiTooltipIslandComposite:onTooltipShown(hoveredUi)
 	local islandComposite = hoveredUi.data
 
 	if islandComposite == nil then
