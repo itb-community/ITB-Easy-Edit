@@ -28,14 +28,14 @@ function UiPopupWindow:new(popupOwner, title)
 
 	self
 		:caption(title)
-		:compact()
+		:crop()
 		:decorate{
 			DecoImmutableFrameHeader,
 			DecoImmutableFrame
 		}
 		:beginUi(scroll)
 			:size(1,1)
-			:compact()
+			:crop()
 			:beginUi(flow)
 				:size(1,1)
 				:padding(40)
