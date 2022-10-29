@@ -485,7 +485,11 @@ function ContentList:draw(screen, widget)
 		screen:unclip()
 	end
 
-	widget:widthpx(#surfaces * step)
+	local finalSurfaceWidth = 0
+	if #surfaces > 0 then
+		finalSurfaceWidth = surfaces[#surfaces]:w()
+	end
+	widget:widthpx((#surfaces - 1) * step + finalSurfaceWidth)
 end
 
 local GroupButton = DecoButtonExt()
