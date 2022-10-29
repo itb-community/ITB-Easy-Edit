@@ -5,14 +5,18 @@ local extension = {
 	version = "1.6.0",
 	modApiVersion = "2.7.3",
 	gameVersion = "1.2.83",
+	isExtension = true,
 }
 
 function extension:metadata()
-	local path = self.resourcePath
+	easyEdit = {
+		version = self.version,
+		path = self.resourcePath
+	}
+end
 
-	easyEdit = {}
-	easyEdit.version = self.version
-	easyEdit.path = self.resourcePath
+function extension:init(options)
+	local path = self.resourcePath
 
 	require(path.."modules/events")
 	require(path.."modules/indexedList")
@@ -33,11 +37,6 @@ function extension:metadata()
 	require(path.."modules/world")
 	require(path.."modules/saveData")
 	require(path.."alter")
-end
-
-function extension:init(options)
-	local path = self.resourcePath
-
 	require(path.."ui/widget/Ui")
 	require(path.."ui/widget/UiGroupTooltip")
 	require(path.."ui/menues")
