@@ -20,7 +20,6 @@
 -- respectively.
 
 -- Ui
--- added updateDragHoverState
 -- added updateGroupHoverState
 -- extended updateTooltipState
 -- added setGroupOwner
@@ -31,66 +30,7 @@
 -- added makeCullable
 
 -- UiRoot
--- added setDragHoveredChild
 -- extended updateStates
-
-function UiRoot:setDragHoveredChild(child)
-	if self.draghoveredchild then
-		self.draghoveredchild.dragHovered = false
-	end
-
-	self.draghoveredchild = child
-
-	if child then
-		child.dragHovered = true
-	end
-end
-
-
--- New terms:
--- UiRoot.draghoveredchild
--- Ui.dragHovered
---
--- While dragging a ui element, UiRoot.hoveredchild
--- will be fixed to this element, and no other
--- elements can be hovered.
--- This update step enumerates every ui element,
--- so that any ui elements other than the one being
--- dragged can be identified as the
--- 'UiRoot.draghoveredchild'. This element will also
--- be flagged as 'dragHovered'
--- 'dragHovered' will be kept up to date regardless
--- if any element is dragged or not.
-function Ui:updateDragHoverState()
-	local root = self.root
-	if root == self then
-		root:setDragHoveredChild(nil)
-	end
-
-	local exit = false
-		or root == nil
-		or self.visible ~= true
-		or self.ignoreMouse == true
-		or self.containsMouse ~= true
-
-	if exit then
-		return false
-	end
-
-	if root.draggedchild ~= self then
-		if self.translucent ~= true then
-			root:setDragHoveredChild(self)
-		end
-
-		for _, child in ipairs(self.children) do
-			if child:updateDragHoverState() then
-				return true
-			end
-		end
-	end
-
-	return self.dragHovered
-end
 
 function Ui:updateGroupHoverState()
 	self.groupHovered = false
@@ -114,7 +54,6 @@ old_UiRoot_updateStates = UiRoot.updateStates
 function UiRoot:updateStates()
 	old_UiRoot_updateStates(self)
 
-	self:updateDragHoverState()
 	self:updateGroupHoverState()
 end
 
