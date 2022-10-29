@@ -89,7 +89,7 @@ local function updateMissingNames()
 	BurnbugBoss.Name = "Gastropod Leader"
 	Dung1.Name = "Tumblebug"
 	DungBoss.Name = "Tumblebug Leader"
-	
+
 	Mission_BeetleBoss.Name = "Beetle Leader"
 	Mission_BotBoss.Name = "Bot Leader"
 	Mission_FireflyBoss.Name = "Firefly Leader"
@@ -108,7 +108,7 @@ local function updateMissingNames()
 	Mission_ScarabBoss.Name = "Scarab Leader"
 	Mission_ShamanBoss.Name = "Plasmodia Leader"
 	Mission_StarfishBoss.Name = "Starfish Leader"
-	
+
 	Mission_Acid.Name = "A.C.I.D."
 	Mission_AcidStorm.Name = "A.C.I.D. Storm"
 	Mission_AcidTank.Name = "A.C.I.D. Tank"
@@ -159,7 +159,7 @@ local function updateMissingNames()
 	Mission_Trapped.Name = "Evacuated Buildings"
 	Mission_Volatile.Name = "Volatile Vek"
 	Mission_Wind.Name = "Windstorm"
-	
+
 	Str_Bar.Name = "Old Earth Bar"
 	Str_Battery.Name = "Emergency Batteries"
 	Str_Clinic.Name = "Clinic"
@@ -284,22 +284,20 @@ local function registerMission(mission_id)
 	local appendLoc = string.format("img/strategy/mission/%s.png", mission_id)
 	local filename = string.format("%simg/mission/%s.png", path, mission_id)
 
-	if modApi:fileExists(filename) then
-		modApi:appendAsset(appendLoc, filename)
-	else
+	if not modApi:fileExists(filename) then
 		filename = string.format("%simg/mission/Icon_Missing.png", path)
-		modApi:appendAsset(appendLoc, filename)
 	end
+
+	modApi:appendAsset(appendLoc, filename)
 
 	local appendLoc = string.format("img/strategy/mission/small/%s.png", mission_id)
 	local filename = string.format("%simg/mission/small/%s.png", path, mission_id)
 
-	if modApi:fileExists(filename) then
-		modApi:appendAsset(appendLoc, filename)
-	else
+	if not modApi:fileExists(filename) then
 		filename = string.format("%simg/mission/small/Icon_Missing.png", path)
-		modApi:appendAsset(appendLoc, filename)
 	end
+
+	modApi:appendAsset(appendLoc, filename)
 end
 
 local function registerMissions()
@@ -702,13 +700,13 @@ local function registerBossLists()
 		local bossList = modApi.bossList:add(id)
 		local corp_id = vanillaCorporations[i]
 		local base = _G[corp_id]
-		
+
 		bossList:copy(base)
-		
+
 		for _, boss in ipairs(getNewBosses()) do
 			bossList:addBoss(boss)
 		end
-		
+
 		bossList.name = base.Bark_Name
 		bossList:lock()
 	end
