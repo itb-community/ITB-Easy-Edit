@@ -8,7 +8,6 @@ local DecoImmutable = require(path.."deco/DecoImmutable")
 local DecoImmutableIsland = DecoImmutable.ObjectSurface2xCenterClip
 local DecoImmutableIslandOutline = DecoImmutable.IslandCompositeIsland
 local DecoImmutableIslandCompositeTitle = DecoImmutable.ObjectNameLabelBounceCenterHClip
-local UiBoxLayout = require(path.."widget/UiBoxLayout")
 local UiDragSource = require(path.."widget/UiDragSource")
 local UiDragObject_Island = require(path.."widget/UiDragObject_Island")
 local UiDropTarget = require(path.."widget/UiDropTarget")

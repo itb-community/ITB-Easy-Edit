@@ -21,7 +21,7 @@ local helpers = {}
 
 function helpers.createUiTitle(text)
 	return Ui()
-		:heightpx(ENTRY_HEIGHT)
+		:width(1):heightpx(ENTRY_HEIGHT)
 		:decorate{
 			DecoImmutable.Frame,
 			DecoText(text, FONT_TITLE, TEXT_SETTINGS_TITLE),

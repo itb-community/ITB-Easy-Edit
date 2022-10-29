@@ -5,7 +5,6 @@ local helpers = require(path.."helpers")
 local DecoIcon = require(path.."deco/DecoIcon")
 local DecoLabel = require(path.."deco/DecoLabel")
 local DecoImmutable = require(path.."deco/DecoImmutable")
-local UiBoxLayout = require(path.."widget/UiBoxLayout")
 
 local addStaticContentList1x = helpers.addStaticContentList
 local createStaticContentList1x = helpers.createStaticContentList

@@ -3,7 +3,6 @@
 local path = GetParentPath(...)
 local helpers = require(path.."helpers")
 local DecoImmutable = require(path.."deco/DecoImmutable")
-local UiBoxLayout = require(path.."widget/UiBoxLayout")
 local UiDragSource = require(path.."widget/UiDragSource")
 local UiScrollAreaExt = require(path.."widget/UiScrollAreaExt")
 local UiScrollArea = UiScrollAreaExt.vertical
@@ -75,38 +74,42 @@ local function buildFrameContent(parentUi)
 	local dropTargets = {}
 
 	local content = UiWeightLayout()
+		:size(1,1)
 		:hgap(0)
 		:beginUi(Ui)
+			:size(1,1)
 			:padding(PADDING)
 			:beginUi(UiWeightLayout)
-				:width(1)
+				:size(1,1)
 				:vgap(8)
 				:orientation(ORIENTATION_VERTICAL)
 				:beginUi()
-					:heightpx(ENTRY_HEIGHT)
+					:width(1):heightpx(ENTRY_HEIGHT)
 					:decorate{
 						DecoImmutable.Frame,
 						DecoText("Boss Lists", FONT_TITLE, TEXT_SETTINGS_TITLE),
 					}
 				:endUi()
 				:beginUi(UiScrollArea)
+					:size(1,1)
 					:decorate{ DecoImmutable.Frame }
 					:beginUi(UiBoxLayout)
-						:height(nil)
+						:width(1)
 						:vgap(OBJECT_LIST_GAP)
 						:padding(PADDING)
 						:setVar("padt", OBJECT_LIST_PADDING)
 						:setVar("padb", OBJECT_LIST_PADDING)
 						:anchorH("center")
 						:beginUi(contentListContainers)
-							:height(nil)
+							:width(1)
 							:vgap(OBJECT_LIST_GAP)
 						:endUi()
 						:beginUi()
-							:heightpx(OBJECT_LIST_HEIGHT)
+							:width(1):heightpx(OBJECT_LIST_HEIGHT)
 							:padding(-5) -- unpad button
 							:decorate{ DecoImmutable.GroupButton }
 							:beginUi(createNewList)
+								:size(1,1)
 								:format(function(self) self:setGroupOwner(self.parent) end)
 								:setVar("textfield", TITLE_CREATE_NEW_LIST)
 								:settooltip("Create a new boss list", nil, true)
@@ -129,21 +132,24 @@ local function buildFrameContent(parentUi)
 				+ UNIT_ICON_DEF.width * UNIT_ICON_DEF.scale
 				+ 4 * PADDING + SCROLLBAR_WIDTH
 			)
+			:height(1)
 			:padding(PADDING)
 			:beginUi(UiWeightLayout)
-				:width(1)
+				:size(1,1)
 				:vgap(8)
 				:orientation(ORIENTATION_VERTICAL)
 				:beginUi()
-					:heightpx(ENTRY_HEIGHT)
+					:width(1):heightpx(ENTRY_HEIGHT)
 					:decorate{
 						DecoImmutable.Frame,
 						DecoText("Bosses", FONT_TITLE, TEXT_SETTINGS_TITLE),
 					}
 				:endUi()
 				:beginUi(UiScrollArea)
+					:size(1,1)
 					:decorate{ DecoImmutable.Frame }
 					:beginUi(bossMissions)
+						:size(1,1)
 						:padding(PADDING)
 						:vgap(7)
 					:endUi()
@@ -169,12 +175,13 @@ local function buildFrameContent(parentUi)
 
 		contentListContainers
 			:beginUi(UiWeightLayout)
+				:width(1):heightpx(40)
 				:makeCullable()
-				:heightpx(40)
 				:orientation(ORIENTATION_HORIZONTAL)
 				:setVar("contentList", contentList)
 				:add(resetButton)
 				:beginUi(contentList)
+					:size(1,1)
 					:setVar("isGroupTooltip", true)
 					:settooltip("Drag-and-drop units to edit the boss list"
 						.."\n\nMouse-wheel to scroll the list", nil, true)

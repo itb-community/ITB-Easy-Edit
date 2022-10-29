@@ -46,7 +46,7 @@ local function buildFrameContent(scroll)
 	local font = deco.uifont.tooltipTextLarge.font
 	local textset = deco.uifont.tooltipTextLarge.set
 	scroll.wrap = UiWrappedText(text, font, textset)
-		:width(1)
+		:size(1,1)
 		:addTo(scroll)
 end
 

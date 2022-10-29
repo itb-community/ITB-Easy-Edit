@@ -20,10 +20,6 @@
 -- respectively.
 
 -- Ui
--- changed widthpx
--- changed heightpx
--- added sizepx
--- extended setfocus
 -- added updateDragHoverState
 -- added updateGroupHoverState
 -- extended updateTooltipState
@@ -41,47 +37,6 @@
 -- UiRoot
 -- added setDragHoveredChild
 -- extended updateStates
--- changed relayoutDragDropPriorityUi
--- changed relayoutTooltipUi
-
--- UiTooltip
--- added isTooltipui
-
-local old_ui_new = Ui.new
-function Ui:new(...)
-	old_ui_new(self, ...)
-	self.wPercent = 1
-	self.hPercent = 1
-end
-
-function Ui:widthpx(w)
-	self.w = w
-	self.wPercent = nil
-	return self
-end
-
-function Ui:heightpx(h)
-	self.h = h
-	self.hPercent = nil
-	return self
-end
-
-function Ui:sizepx(w, h)
-	self.w = w
-	self.h = h
-	self.wPercent = nil
-	self.hPercent = nil
-	return self
-end
-
-local old_Ui_setfocus = Ui.setfocus
-function Ui:setfocus()
-	if self.root == nil then
-		return false
-	end
-
-	return old_Ui_setfocus(self)
-end
 
 function UiRoot:setDragHoveredChild(child)
 	if self.draghoveredchild then
@@ -165,17 +120,6 @@ function UiRoot:updateStates()
 
 	self:updateDragHoverState()
 	self:updateGroupHoverState()
-end
-
--- Some of the ui in the mod loader relies on
--- wPercent and hPercent to be nil, so we have
--- to revert the changes done to the base Ui
--- class.
-local old_UiBoxLayout_new = UiBoxLayout.new
-function UiBoxLayout:new(...)
-	old_UiBoxLayout_new(self, ...)
-	self.wPercent = nil
-	self.hPercent = nil
 end
 
 -- Adjust Ui.updateTooltipState to take into account

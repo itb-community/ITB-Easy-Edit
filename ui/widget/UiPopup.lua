@@ -34,6 +34,7 @@ function UiPopupWindow:new(popupOwner, title)
 			DecoImmutableFrame
 		}
 		:beginUi(scroll)
+			:size(1,1)
 			:compact()
 			:beginUi(flow)
 				:padding(40)

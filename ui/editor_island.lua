@@ -4,7 +4,6 @@ local path = GetParentPath(...)
 local path_datasturctures = GetParentPath(path).."datastructures/"
 local sort = require(path_datasturctures.."sort")
 local helpers = require(path.."helpers")
-local UiBoxLayout = require(path.."widget/UiBoxLayout")
 local UiEditBox = require(path.."widget/UiEditBox")
 local UiEditorButton = require(path.."widget/UiEditorButton")
 local UiMultiClickButton = require(path.."widget/UiMultiClickButton")
