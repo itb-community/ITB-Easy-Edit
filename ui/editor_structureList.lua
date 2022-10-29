@@ -17,6 +17,7 @@ local deleteButton_contentList = helpers.deleteButton_contentList
 local getSurface = sdlext.getSurface
 local getTextSurface = sdl.text
 local surfaceReward = helpers.surfaceReward
+local makeCullable = helpers.makeCullable
 
 -- defs
 local DRAG_TYPE_STRUCTURE = modApi.structures:getDragType()
@@ -177,7 +178,7 @@ local function buildFrameContent(parentUi)
 		contentListContainers
 			:beginUi(UiWeightLayout)
 				:width(1):heightpx(40)
-				:makeCullable()
+				:format(makeCullable)
 				:orientation(ORIENTATION_HORIZONTAL)
 				:setVar("contentList", contentList)
 				:add(resetButton)
@@ -227,7 +228,7 @@ local function buildFrameContent(parentUi)
 				DecoImmutable.TransHeader,
 				DecoImmutable.ObjectNameLabelBounceCenterHClip,
 			}
-			:makeCullable()
+			:format(makeCullable)
 			:addTo(structures)
 	end
 

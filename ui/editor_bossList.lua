@@ -16,6 +16,7 @@ local resetButton_contentList = helpers.resetButton_contentList
 local deleteButton_contentList = helpers.deleteButton_contentList
 local getSurface = sdlext.getSurface
 local getTextSurface = sdl.text
+local makeCullable = helpers.makeCullable
 
 -- defs
 local DRAG_TYPE_MISSION = modApi.missions:getDragType()
@@ -176,7 +177,7 @@ local function buildFrameContent(parentUi)
 		contentListContainers
 			:beginUi(UiWeightLayout)
 				:width(1):heightpx(40)
-				:makeCullable()
+				:format(makeCullable)
 				:orientation(ORIENTATION_HORIZONTAL)
 				:setVar("contentList", contentList)
 				:add(resetButton)
@@ -232,7 +233,7 @@ local function buildFrameContent(parentUi)
 					DecoImmutable.TransHeader,
 					DecoImmutable.ObjectNameLabelBounceCenterHClip,
 				}
-				:makeCullable()
+				:format(makeCullable)
 				:addTo(bossMissions)
 		end
 	end

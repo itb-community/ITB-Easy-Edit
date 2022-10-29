@@ -25,6 +25,7 @@ local createUiEditBox = helpers.createUiEditBox
 local setIconDef = helpers.setIconDef
 local resetButton_entry = helpers.resetButton_entry
 local deleteButton_entry = helpers.deleteButton_entry
+local makeCullable = helpers.makeCullable
 
 -- defs
 local EDITOR_TITLE = "Island Editor"
@@ -569,7 +570,7 @@ local function buildFrameContent(parentUi)
 				:pospx(2, 2)
 				:anchor("left", "bottom")
 			:endUi()
-			:makeCullable()
+			:format(makeCullable)
 			:addTo(islandList)
 
 		return entry
