@@ -27,10 +27,6 @@
 -- added getGroupOwner
 -- added isGroupHovered
 -- added isGroupDragHovered
--- added addDeco
--- added replaceDeco
--- added insertDeco
--- added removeDeco
 -- added compact
 -- added makeCullable
 
@@ -150,45 +146,6 @@ end
 
 function Ui:isGroupDragHovered()
 	return self:getGroupOwner().groupDragHovered
-end
-
-function Ui:addDeco(decoration)
-	self:insertDeco(#self.decorations + 1)
-
-	return self
-end
-
-function Ui:replaceDeco(index, decoration)
-	self:removeDeco(index)
-	self:insertDeco(index, decoration)
-
-	return self
-end
-
-function Ui:insertDeco(index, decoration)
-	local decorations = self.decorations
-	if index < 1 or index > #decorations + 1 then
-		index = #decorations + 1
-	end
-
-	if decoration then
-		table.insert(decorations, decoration)
-		decoration:apply(self)
-	end
-
-	return self
-end
-
-function Ui:removeDeco(index)
-	local decorations = self.decorations
-	local decoration = decorations[index]
-
-	if decoration then
-		table.remove(decorations, index)
-		decoration:unapply(self)
-	end
-
-	return self
 end
 
 -- Ui.crop does much the same as UiWeightLayout.compact
