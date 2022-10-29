@@ -6,6 +6,7 @@ local extension = {
 	modApiVersion = "2.7.3",
 	gameVersion = "1.2.83",
 	isExtension = true,
+	enabled = false,
 }
 
 function extension:metadata()
