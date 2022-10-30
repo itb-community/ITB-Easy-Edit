@@ -81,7 +81,7 @@ local function buildFrameContent(parentUi)
 		local currentIslandComposite = easyEdit.world[islandSlot]
 		local currentIsland = easyEdit.island:get(currentIslandComposite.island)
 
-		local function updateTooltipState(self)
+		local function onTooltipShown(self, hoveredUi)
 			local missing = false
 			local malformed = false
 
@@ -116,8 +116,6 @@ local function buildFrameContent(parentUi)
 					self.tooltip = string.format("Restart required for island graphics to change from %s to %s", currentIsland:getName(), editedIsland:getName())
 				end
 			end
-
-			Ui.updateTooltipState(self)
 		end
 
 		local function draw_ifIssue(self, screen)
@@ -144,7 +142,7 @@ local function buildFrameContent(parentUi)
 				:sizepx(40, 40)
 				:pospx(20, 20)
 				:setVar("draw", draw_ifIssue)
-				:setVar("updateTooltipState", updateTooltipState)
+				:setVar("onTooltipShown", onTooltipShown)
 				:decorate{
 					DecoImmutable.SolidHalfBlack,
 					DecoImmutable.WarningLarge,
