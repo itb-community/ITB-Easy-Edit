@@ -4,12 +4,12 @@ local DecoUnit = require(path.."DecoUnit")
 local DecoIcon = require(path.."DecoIcon")
 
 return function(obj, ...)
-	if obj:instanceOf(modApi.units._class) then
+	if obj:instanceOf(easyEdit.units._class) then
 		return DecoUnit(obj, ...)
-	elseif obj:instanceOf(modApi.missions._class) then
+	elseif obj:instanceOf(easyEdit.missions._class) then
 		if obj.BossPawn then
 			local missionObj = obj
-			obj = modApi.units:get(missionObj.BossPawn)
+			obj = easyEdit.units:get(missionObj.BossPawn)
 			if obj == nil then
 				Assert.Error("Invalid BossPawn")
 			end

@@ -6,7 +6,7 @@ local DEFAULT_ISLAND_SLOTS = { "archive", "rst", "pinnacle", "detritus" }
 
 local vanillaCorporations = { "Corp_Grass", "Corp_Desert", "Corp_Snow", "Corp_Factory" }
 
-modApi.world = {
+easyEdit.world = {
 	{
 		bossList = "archive",
 		ceo = "dewey",
@@ -49,11 +49,11 @@ modApi.world = {
 	},
 }
 
-function modApi.world:update()
+function easyEdit.world:update()
 	local world = easyEdit.savedata.cache.world or DEFAULT_ISLAND_SLOTS
 
 	for islandSlot, islandCompositeId in ipairs(world) do
-		local islandComposite = modApi.islandComposite:get(islandCompositeId)
+		local islandComposite = easyEdit.islandComposite:get(islandCompositeId)
 
 		if islandComposite == nil then
 			LOGDF("EasyEdit - IslandSlot[%s] - Block missing island composite %q", islandSlot, islandCompositeId)
@@ -77,18 +77,18 @@ function modApi.world:update()
 	end
 end
 
-function modApi.world:reset()
+function easyEdit.world:reset()
 	easyEdit.savedata.cache.world = nil
 	self:update()
 end
 
-function modApi.world:setIsland(islandSlot, islandId)
+function easyEdit.world:setIsland(islandSlot, islandId)
 	Assert.Equals('number', type(islandSlot), "Argument #1")
 	Assert.Range(1, 4, islandSlot, "Argument #1")
 	Assert.Equals('string', type(islandId), "Argument #2")
 	Assert.ResourceDatIsOpen()
 
-	local island = modApi.island:get(islandId)
+	local island = easyEdit.island:get(islandId)
 	if island == nil then
 		LOGDF("EasyEdit - IslandSlot[%s] - Block missing island %q", islandSlot, islandId)
 		return
@@ -119,12 +119,12 @@ function modApi.world:setIsland(islandSlot, islandId)
 	island.copyAssets({_id = n}, island)
 end
 
-function modApi.world:setCorporation(islandSlot, corpId)
+function easyEdit.world:setCorporation(islandSlot, corpId)
 	Assert.Equals('number', type(islandSlot), "Argument #1")
 	Assert.Range(1, 4, islandSlot, "Argument #1")
 	Assert.Equals('string', type(corpId), "Argument #2")
 
-	local corp = modApi.corporation:get(corpId)
+	local corp = easyEdit.corporation:get(corpId)
 	if corp == nil then
 		LOGDF("EasyEdit - IslandSlot[%s] - Block missing corporation %q", islandSlot, corpId)
 		return
@@ -144,12 +144,12 @@ function modApi.world:setCorporation(islandSlot, corpId)
 	modApi.modLoaderDictionary[baseCorpId .."_Description"] = corp.Description
 end
 
-function modApi.world:setCeo(islandSlot, ceoId)
+function easyEdit.world:setCeo(islandSlot, ceoId)
 	Assert.Equals('number', type(islandSlot), "Argument #1")
 	Assert.Range(1, 4, islandSlot, "Argument #1")
 	Assert.Equals('string', type(ceoId), "Argument #2")
 
-	local ceo = modApi.ceo:get(ceoId)
+	local ceo = easyEdit.ceo:get(ceoId)
 	if ceo == nil then
 		LOGDF("EasyEdit - IslandSlot[%s] - Block missing ceo %q", islandSlot, ceoId)
 		return
@@ -183,12 +183,12 @@ function modApi.world:setCeo(islandSlot, ceoId)
 	end
 end
 
-function modApi.world:setTileset(islandSlot, tilesetId)
+function easyEdit.world:setTileset(islandSlot, tilesetId)
 	Assert.Equals('number', type(islandSlot), "Argument #1")
 	Assert.Range(1, 4, islandSlot, "Argument #1")
 	Assert.Equals('string', type(tilesetId), "Argument #2")
 
-	local tileset = modApi.tileset:get(tilesetId)
+	local tileset = easyEdit.tileset:get(tilesetId)
 	if tileset == nil then
 		LOGDF("EasyEdit - IslandSlot[%s] - Block missing tileset %q", islandSlot, tilesetId)
 		return
@@ -207,12 +207,12 @@ function modApi.world:setTileset(islandSlot, tilesetId)
 	modApi.modLoaderDictionary[baseCorpId .."_Environment"] = tileset.climate
 end
 
-function modApi.world:setEnemyList(islandSlot, enemyListId)
+function easyEdit.world:setEnemyList(islandSlot, enemyListId)
 	Assert.Equals('number', type(islandSlot), "Argument #1")
 	Assert.Range(1, 4, islandSlot, "Argument #1")
 	Assert.Equals('string', type(enemyListId), "Argument #2")
 
-	local enemyList = modApi.enemyList:get(enemyListId)
+	local enemyList = easyEdit.enemyList:get(enemyListId)
 	if enemyList == nil then
 		LOGDF("EasyEdit - IslandSlot[%s] - Block missing enemy list %q", islandSlot, enemyListId)
 		return
@@ -231,12 +231,12 @@ function modApi.world:setEnemyList(islandSlot, enemyListId)
 	base.EnemyCategories = copy_table(enemyList.categories)
 end
 
-function modApi.world:setBossList(islandSlot, bossListId)
+function easyEdit.world:setBossList(islandSlot, bossListId)
 	Assert.Equals('number', type(islandSlot), "Argument #1")
 	Assert.Range(1, 4, islandSlot, "Argument #1")
 	Assert.Equals('string', type(bossListId), "Argument #2")
 
-	local bossList = modApi.bossList:get(bossListId)
+	local bossList = easyEdit.bossList:get(bossListId)
 	if not bossList then
 		LOGDF("EasyEdit - IslandSlot[%s] - Block missing boss list %q", islandSlot, bossListId)
 		return
@@ -254,12 +254,12 @@ function modApi.world:setBossList(islandSlot, bossListId)
 	bossList.copy(base, bossList)
 end
 
-function modApi.world:setMissionList(islandSlot, missionListId)
+function easyEdit.world:setMissionList(islandSlot, missionListId)
 	Assert.Equals('number', type(islandSlot), "Argument #1")
 	Assert.Range(1, 4, islandSlot, "Argument #1")
 	Assert.Equals('string', type(missionListId), "Argument #2")
 
-	local missionList = modApi.missionList:get(missionListId)
+	local missionList = easyEdit.missionList:get(missionListId)
 	if not missionList then
 		LOGDF("EasyEdit - IslandSlot[%s] - Block missing mission list %q", islandSlot, missionListId)
 		return
@@ -277,12 +277,12 @@ function modApi.world:setMissionList(islandSlot, missionListId)
 	missionList.copy(base, missionList)
 end
 
-function modApi.world:setStructureList(islandSlot, structureListId)
+function easyEdit.world:setStructureList(islandSlot, structureListId)
 	Assert.Equals('number', type(islandSlot), "Argument #1")
 	Assert.Range(1, 4, islandSlot, "Argument #1")
 	Assert.Equals('string', type(structureListId), "Argument #2")
 
-	local structureList = modApi.structureList:get(structureListId)
+	local structureList = easyEdit.structureList:get(structureListId)
 	if not structureList then
 		LOGDF("EasyEdit - IslandSlot[%s] - Block missing structure list %q", islandSlot, structureListId)
 		return

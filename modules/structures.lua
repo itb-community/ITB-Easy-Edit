@@ -64,4 +64,4 @@ end
 local Structures = IndexedList(Structure)
 Structures._rewardIcons = Structure._rewardIcons
 
-modApi.structures = Structures
+easyEdit.structures = Structures

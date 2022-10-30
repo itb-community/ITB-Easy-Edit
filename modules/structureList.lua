@@ -77,7 +77,7 @@ function StructureList:getCategories()
 end
 
 function StructureList:getObject(structureId)
-	return modApi.structures:get(structureId)
+	return easyEdit.structures:get(structureId)
 end
 
 function StructureList:isContentList()
@@ -85,7 +85,7 @@ function StructureList:isContentList()
 end
 
 function StructureList:getContentType()
-	return modApi.structures
+	return easyEdit.structures
 end
 
 function StructureList:isInvalid()
@@ -101,4 +101,4 @@ function StructureList:isInvalid()
 end
 
 
-modApi.structureList = IndexedList(StructureList)
+easyEdit.structureList = IndexedList(StructureList)

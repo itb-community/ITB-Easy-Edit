@@ -1,5 +1,5 @@
 
-local Unit = modApi.units._class
+local Unit = easyEdit.units._class
 local UnitImage = Class.inherit(IndexedEntry)
 UnitImage._debugName = "UnitImage"
 UnitImage._entryType = "unitImage"
@@ -21,4 +21,4 @@ UnitImage.isBot = Unit.isBot
 UnitImage.isMission = Unit.isMission
 UnitImage.getImagePath = Unit.getImagePath
 
-modApi.unitImage = IndexedList(UnitImage)
+easyEdit.unitImage = IndexedList(UnitImage)

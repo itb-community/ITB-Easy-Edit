@@ -20,7 +20,7 @@ local surfaceReward = helpers.surfaceReward
 local makeCullable = helpers.makeCullable
 
 -- defs
-local DRAG_TYPE_STRUCTURE = modApi.structures:getDragType()
+local DRAG_TYPE_STRUCTURE = easyEdit.structures:getDragType()
 local TITLE_EDITOR = "Structure List Editor"
 local TITLE_CREATE_NEW_LIST = "Create new list"
 local FONT_TITLE = helpers.FONT_TITLE
@@ -35,7 +35,7 @@ local SCROLLBAR_WIDTH = 16
 local OBJECT_LIST_HEIGHT = helpers.OBJECT_LIST_HEIGHT
 local OBJECT_LIST_PADDING = helpers.OBJECT_LIST_PADDING
 local OBJECT_LIST_GAP = helpers.OBJECT_LIST_GAP
-local STRUCTURE_ICON_DEF = modApi.structures:getIconDef()
+local STRUCTURE_ICON_DEF = easyEdit.structures:getIconDef()
 local TRANSFORM_STRUCTURE = helpers.transformStructure
 local TRANSFORM_STRUCTURE_HL = helpers.transformStructureHl
 local TRANSFORM_STRUCTURE_DRAG_HL = helpers.transformStructureDragHl
@@ -47,7 +47,7 @@ CONTENT_ENTRY_DEF.clip = false
 -- ui
 local contentListContainers
 local structureListEditor = {}
-local dragObject = contentListDragObject(modApi.structures:getDragType())
+local dragObject = contentListDragObject(easyEdit.structures:getDragType())
 	:setVar("createObject", getCreateStructureDragSourceCopyFunc(CONTENT_ENTRY_DEF))
 	:decorate{ DecoImmutable.ObjectSurface2xOutline }
 
@@ -191,7 +191,7 @@ local function buildFrameContent(parentUi)
 			:endUi()
 	end
 
-	local structureLists_sorted = to_array(modApi.structureList._children)
+	local structureLists_sorted = to_array(easyEdit.structureList._children)
 
 	stablesort(structureLists_sorted, function(a, b)
 		return alphanum(a:getName():lower(), b:getName():lower())
@@ -201,7 +201,7 @@ local function buildFrameContent(parentUi)
 		addObjectList(objectList)
 	end
 
-	local structures_sorted = to_array(modApi.structures._children)
+	local structures_sorted = to_array(easyEdit.structures._children)
 
 	stablesort(structures_sorted, function(a, b)
 		return alphanum(a:getName():lower(), b:getName():lower())
@@ -234,8 +234,8 @@ local function buildFrameContent(parentUi)
 
 	function createNewList:onEnter()
 		local name = self.textfield
-		if name:len() > 0 and modApi.structureList:get(name) == nil then
-			local objectList = modApi.structureList:add(name)
+		if name:len() > 0 and easyEdit.structureList:get(name) == nil then
+			local objectList = easyEdit.structureList:add(name)
 			objectList:lock()
 			addObjectList(objectList)
 		end
@@ -274,7 +274,7 @@ local function buildFrameButtons(buttonLayout)
 end
 
 local function onExit()
-	modApi.structureList:save()
+	easyEdit.structureList:save()
 end
 
 -- main button

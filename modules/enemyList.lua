@@ -44,11 +44,11 @@ end
 
 function EnemyList:getObject(unitId, suffix)
 	suffix = suffix or "1"
-	return modApi.units:get(unitId..suffix)
+	return easyEdit.units:get(unitId..suffix)
 end
 
 function EnemyList:getContentType()
-	return modApi.units
+	return easyEdit.units
 end
 
 function EnemyList:isInvalid()
@@ -64,4 +64,4 @@ function EnemyList:isInvalid()
 end
 
 
-modApi.enemyList = IndexedList(EnemyList)
+easyEdit.enemyList = IndexedList(EnemyList)

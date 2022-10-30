@@ -19,7 +19,7 @@ local getTextSurface = sdl.text
 local makeCullable = helpers.makeCullable
 
 -- defs
-local DRAG_TYPE_MISSION = modApi.missions:getDragType()
+local DRAG_TYPE_MISSION = easyEdit.missions:getDragType()
 local TITLE_EDITOR = "Boss List Editor"
 local TITLE_CREATE_NEW_LIST = "Create new list"
 local FONT_TITLE = helpers.FONT_TITLE
@@ -34,7 +34,7 @@ local SCROLLBAR_WIDTH = 16
 local OBJECT_LIST_HEIGHT = helpers.OBJECT_LIST_HEIGHT
 local OBJECT_LIST_PADDING = helpers.OBJECT_LIST_PADDING
 local OBJECT_LIST_GAP = helpers.OBJECT_LIST_GAP
-local UNIT_ICON_DEF = modApi.units:getIconDef()
+local UNIT_ICON_DEF = easyEdit.units:getIconDef()
 local TRANSFORM_UNIT = helpers.transformUnit
 local TRANSFORM_UNIT_HL = helpers.transformUnitHl
 local TRANSFORM_UNIT_DRAG_HL = helpers.transformUnitDragHl
@@ -46,7 +46,7 @@ CONTENT_ENTRY_DEF.clip = false
 -- ui
 local contentListContainers
 local bossListEditor = {}
-local dragObject = contentListDragObject(modApi.missions:getDragType())
+local dragObject = contentListDragObject(easyEdit.missions:getDragType())
 	:setVar("createObject", getCreateUnitDragSourceCopyFunc(CONTENT_ENTRY_DEF))
 	:decorate{ DecoImmutable.ObjectSurface2xOutline }
 
@@ -190,7 +190,7 @@ local function buildFrameContent(parentUi)
 			:endUi()
 	end
 
-	local bossMissionLists_sorted = to_array(modApi.bossList._children)
+	local bossMissionLists_sorted = to_array(easyEdit.bossList._children)
 
 	stablesort(bossMissionLists_sorted, function(a, b)
 		return alphanum(a:getName():lower(), b:getName():lower())
@@ -200,13 +200,13 @@ local function buildFrameContent(parentUi)
 		addObjectList(objectList)
 	end
 
-	local bossMissions_sorted = to_array(filter_table(modApi.missions._children, function(k, v)
+	local bossMissions_sorted = to_array(filter_table(easyEdit.missions._children, function(k, v)
 		return v.BossPawn ~= nil
 	end))
 
 	stablesort(bossMissions_sorted, function(a, b)
-		local boss_a = a.BossPawn and modApi.units:get(a.BossPawn) or nil
-		local boss_b = b.BossPawn and modApi.units:get(b.BossPawn) or nil
+		local boss_a = a.BossPawn and easyEdit.units:get(a.BossPawn) or nil
+		local boss_b = b.BossPawn and easyEdit.units:get(b.BossPawn) or nil
 		local name_a = boss_a and boss_a:getName():lower() or ""
 		local name_b = boss_b and boss_b:getName():lower() or ""
 		return alphanum(name_a, name_b)
@@ -216,7 +216,7 @@ local function buildFrameContent(parentUi)
 		if bossMission.BossPawn then
 			local bossMissionId = bossMission._id
 			local entry = UiDragSource(dragObject)
-			local unit = modApi.units:get(bossMission.BossPawn)
+			local unit = easyEdit.units:get(bossMission.BossPawn)
 
 			entry.data = unit
 			entry.saveId = bossMissionId
@@ -240,8 +240,8 @@ local function buildFrameContent(parentUi)
 
 	function createNewList:onEnter()
 		local name = self.textfield
-		if name:len() > 0 and modApi.bossList:get(name) == nil then
-			local objectList = modApi.bossList:add(name)
+		if name:len() > 0 and easyEdit.bossList:get(name) == nil then
+			local objectList = easyEdit.bossList:add(name)
 			objectList:lock()
 			addObjectList(objectList)
 		end
@@ -280,7 +280,7 @@ local function buildFrameButtons(buttonLayout)
 end
 
 local function onExit()
-	modApi.bossList:save()
+	easyEdit.bossList:save()
 end
 
 -- main button

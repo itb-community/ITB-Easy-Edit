@@ -3,12 +3,12 @@
 local path = GetParentPath(...)
 
 local modules = {
-	modApi.enemyList,
-	modApi.missionList,
-	modApi.bossList,
-	modApi.structureList,
-	modApi.islandComposite,
-	modApi.world,
+	easyEdit.enemyList,
+	easyEdit.missionList,
+	easyEdit.bossList,
+	easyEdit.structureList,
+	easyEdit.islandComposite,
+	easyEdit.world,
 }
 
 -- defs

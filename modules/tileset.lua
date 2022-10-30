@@ -243,4 +243,4 @@ function Tileset:getImagePath()
 end
 
 
-modApi.tileset = IndexedList(Tileset)
+easyEdit.tileset = IndexedList(Tileset)

@@ -35,7 +35,7 @@ function MissionList:getCategories()
 end
 
 function MissionList:getObject(missionId)
-	return modApi.missions:get(missionId)
+	return easyEdit.missions:get(missionId)
 end
 
 function MissionList:isContentList()
@@ -43,7 +43,7 @@ function MissionList:isContentList()
 end
 
 function MissionList:getContentType()
-	return modApi.missions
+	return easyEdit.missions
 end
 
 function MissionList:isInvalid()
@@ -59,4 +59,4 @@ function MissionList:isInvalid()
 end
 
 
-modApi.missionList = IndexedList(MissionList)
+easyEdit.missionList = IndexedList(MissionList)

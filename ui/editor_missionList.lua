@@ -20,7 +20,7 @@ local getTextSurface = sdl.text
 local makeCullable = helpers.makeCullable
 
 -- defs
-local DRAG_TYPE_MISSION = modApi.missions:getDragType()
+local DRAG_TYPE_MISSION = easyEdit.missions:getDragType()
 local TITLE_EDITOR = "Mission List Editor"
 local TITLE_CREATE_NEW_LIST = "Create new list"
 local FONT_TITLE = helpers.FONT_TITLE
@@ -35,8 +35,8 @@ local SCROLLBAR_WIDTH = 16
 local OBJECT_LIST_HEIGHT = helpers.OBJECT_LIST_HEIGHT
 local OBJECT_LIST_PADDING = helpers.OBJECT_LIST_PADDING
 local OBJECT_LIST_GAP = helpers.OBJECT_LIST_GAP
-local MISSION_ICON_DEF = modApi.missions:getIconDef()
-local MISSION_TOOLTIP_DEF = modApi.missions:getTooltipDef()
+local MISSION_ICON_DEF = easyEdit.missions:getIconDef()
+local MISSION_TOOLTIP_DEF = easyEdit.missions:getTooltipDef()
 local TRANSFORM_MISSION = helpers.transform_2x_outline
 local TRANSFORM_MISSION_HL = helpers.transform_2x_outline_hl
 local TRANSFORM_MISSION_TOOLTIP = helpers.transform_2x
@@ -48,7 +48,7 @@ CONTENT_ENTRY_DEF.clip = false
 -- ui
 local contentListContainers
 local missionListEditor = {}
-local dragObject = contentListDragObject(modApi.missions:getDragType())
+local dragObject = contentListDragObject(easyEdit.missions:getDragType())
 	:setVar("createObject", getCreateMissionDragSourceCopyFunc(CONTENT_ENTRY_DEF))
 	:decorate{ DecoImmutable.ObjectSurface2xOutline }
 
@@ -192,7 +192,7 @@ local function buildFrameContent(parentUi)
 			:endUi()
 	end
 
-	local missionLists_sorted = to_array(modApi.missionList._children)
+	local missionLists_sorted = to_array(easyEdit.missionList._children)
 
 	stablesort(missionLists_sorted, function(a, b)
 		return alphanum(a:getName():lower(), b:getName():lower())
@@ -202,7 +202,7 @@ local function buildFrameContent(parentUi)
 		addObjectList(objectList)
 	end
 
-	local missions_sorted = to_array(filter_table(modApi.missions._children, function(k, v)
+	local missions_sorted = to_array(filter_table(easyEdit.missions._children, function(k, v)
 		return v.BossPawn == nil
 	end))
 
@@ -235,8 +235,8 @@ local function buildFrameContent(parentUi)
 
 	function createNewList:onEnter()
 		local name = self.textfield
-		if name:len() > 0 and modApi.missionList:get(name) == nil then
-			local objectList = modApi.missionList:add(name)
+		if name:len() > 0 and easyEdit.missionList:get(name) == nil then
+			local objectList = easyEdit.missionList:add(name)
 			objectList:lock()
 			addObjectList(objectList)
 		end
@@ -275,7 +275,7 @@ local function buildFrameButtons(buttonLayout)
 end
 
 local function onExit()
-	modApi.missionList:save()
+	easyEdit.missionList:save()
 end
 
 -- main button

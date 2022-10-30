@@ -20,7 +20,7 @@ local makeCullable = helpers.makeCullable
 
 
 -- defs
-local DRAG_TYPE_ENEMY = modApi.units:getDragType()
+local DRAG_TYPE_ENEMY = easyEdit.units:getDragType()
 local TITLE_EDITOR = "Enemy List Editor"
 local TITLE_CREATE_NEW_LIST = "Create new list"
 local FONT_TITLE = helpers.FONT_TITLE
@@ -35,7 +35,7 @@ local SCROLLBAR_WIDTH = 16
 local OBJECT_LIST_HEIGHT = helpers.OBJECT_LIST_HEIGHT
 local OBJECT_LIST_PADDING = helpers.OBJECT_LIST_PADDING
 local OBJECT_LIST_GAP = helpers.OBJECT_LIST_GAP
-local UNIT_ICON_DEF = modApi.units:getIconDef()
+local UNIT_ICON_DEF = easyEdit.units:getIconDef()
 local TRANSFORM_UNIT = helpers.transformUnit
 local TRANSFORM_UNIT_HL = helpers.transformUnitHl
 local TRANSFORM_UNIT_DRAG_HL = helpers.transformUnitDragHl
@@ -48,7 +48,7 @@ CONTENT_ENTRY_DEF.clip = false
 -- ui
 local contentListContainers
 local enemyListEditor = {}
-local dragObject = contentListDragObject(modApi.units:getDragType())
+local dragObject = contentListDragObject(easyEdit.units:getDragType())
 	:setVar("createObject", getCreateUnitDragSourceCopyFunc(CONTENT_ENTRY_DEF))
 	:decorate{ DecoImmutable.ObjectSurface2xOutline }
 
@@ -192,7 +192,7 @@ local function buildFrameContent(parentUi)
 			:endUi()
 	end
 
-	local enemyLists_sorted = to_array(modApi.enemyList._children)
+	local enemyLists_sorted = to_array(easyEdit.enemyList._children)
 
 	stablesort(enemyLists_sorted, function(a, b)
 		return alphanum(a:getName():lower(), b:getName():lower())
@@ -202,7 +202,7 @@ local function buildFrameContent(parentUi)
 		addObjectList(objectList)
 	end
 
-	local enemies_sorted = to_array(filter_table(modApi.units._children, function(k, v)
+	local enemies_sorted = to_array(filter_table(easyEdit.units._children, function(k, v)
 		return v:isBaseEnemy()
 	end))
 
@@ -235,8 +235,8 @@ local function buildFrameContent(parentUi)
 
 	function createNewList:onEnter()
 		local name = self.textfield
-		if name:len() > 0 and modApi.enemyList:get(name) == nil then
-			local objectList = modApi.enemyList:add(name)
+		if name:len() > 0 and easyEdit.enemyList:get(name) == nil then
+			local objectList = easyEdit.enemyList:add(name)
 			objectList:lock()
 			addObjectList(objectList)
 		end
@@ -275,7 +275,7 @@ local function buildFrameButtons(buttonLayout)
 end
 
 local function onExit()
-	modApi.enemyList:save()
+	easyEdit.enemyList:save()
 end
 
 -- main button

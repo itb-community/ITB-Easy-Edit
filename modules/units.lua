@@ -191,7 +191,7 @@ function Units:update()
 	local cache_units = easyEdit.savedata.cache.units or {}
 
 	for unit_id, unit_data in pairs(cache_units) do
-		local livedata = modApi.units:get(unit_id)
+		local livedata = easyEdit.units:get(unit_id)
 		local unit = _G[unit_id]
 
 		-- if unit_data.ImageOffset then
@@ -204,7 +204,7 @@ function Units:update()
 		end
 
 		if livedata == nil then
-			livedata = modApi.units:add(unit_id, self._baseMech)
+			livedata = easyEdit.units:add(unit_id, self._baseMech)
 			livedata:lock()
 		end
 
@@ -216,4 +216,4 @@ function Units:update()
 	end
 end
 
-modApi.units = Units
+easyEdit.units = Units

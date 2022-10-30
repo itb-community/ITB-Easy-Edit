@@ -142,5 +142,5 @@ function Ceo:getImagePath()
 	return string.format(self._iconDef.pathformat, self._id)
 end
 
-modApi.corporation = IndexedList(Corporation)
-modApi.ceo = IndexedList(Ceo)
+easyEdit.corporation = IndexedList(Corporation)
+easyEdit.ceo = IndexedList(Ceo)

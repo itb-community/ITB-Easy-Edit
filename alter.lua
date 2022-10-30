@@ -187,9 +187,9 @@ local function registerWeapon(weapon_id)
 		return
 	end
 
-	local weapon = modApi.weapons:get(weapon_id)
+	local weapon = easyEdit.weapons:get(weapon_id)
 
-	weapon = weapon or modApi.weapons:add(weapon_id)
+	weapon = weapon or easyEdit.weapons:add(weapon_id)
 	weapon:copy(base)
 	weapon.__Id = weapon_id
 	weapon.Name = GetText(weapon_id.."_Name") or base.Name
@@ -203,8 +203,8 @@ local function registerWeapons()
 	end
 end
 
-local units = modApi.units
-local unitImages = modApi.unitImage
+local units = easyEdit.units
+local unitImages = easyEdit.unitImage
 local isValidUnit = units._class.isValid
 local function registerUnit(unit_id)
 	local base = _G[unit_id]
@@ -275,9 +275,9 @@ local function registerMission(mission_id)
 		return
 	end
 
-	local mission = modApi.missions:get(mission_id)
+	local mission = easyEdit.missions:get(mission_id)
 
-	mission = mission or modApi.missions:add(mission_id)
+	mission = mission or easyEdit.missions:add(mission_id)
 	mission:copy(base)
 	mission:lock()
 
@@ -348,9 +348,9 @@ local function registerStructure(structure_id)
 		return
 	end
 
-	local structure = modApi.structures:get(structure_id)
+	local structure = easyEdit.structures:get(structure_id)
 
-	structure = structure or modApi.structures:add(structure_id)
+	structure = structure or easyEdit.structures:add(structure_id)
 	structure.Name = GetText(structure_id.."_Name")
 	structure:copy(base)
 	structure:lock()
@@ -390,7 +390,7 @@ end
 
 local function registerIslands()
 	for i, id in ipairs(islands) do
-		local island = modApi.island:add(id)
+		local island = easyEdit.island:add(id)
 		local n = i-1
 
 		island:copyAssets({_id = tostring(n)})
@@ -416,7 +416,7 @@ end
 
 local function registerCorporations()
 	for i, id in ipairs(corporations) do
-		local corp = modApi.corporation:add(id)
+		local corp = easyEdit.corporation:add(id)
 		local corp_id = vanillaCorporations[i]
 		local base = _G[corp_id]
 
@@ -430,7 +430,7 @@ end
 
 local function registerCEOs()
 	for i, id in ipairs(ceos) do
-		local ceo = modApi.ceo:add(id)
+		local ceo = easyEdit.ceo:add(id)
 		local corp_id = vanillaCorporations[i]
 		local base = _G[corp_id]
 
@@ -508,7 +508,7 @@ local function registerTilesets()
 		local corp_id = vanillaCorporations[i]
 
 		if corp_id then
-			local tileset = modApi.tileset:add(id)
+			local tileset = easyEdit.tileset:add(id)
 			tileset.name = upper_first(id)
 			-- fill in missing conveyor assets
 			tileset:copyAssets({_id = "acid"}, false)
@@ -527,7 +527,7 @@ local function registerTilesets()
 				end
 			end
 		else
-			local tileset = modApi.tileset:add(id)
+			local tileset = easyEdit.tileset:add(id)
 			tileset.name = upper_first(id)
 			-- set missing locations
 			tileset:copyAssets(tileset)
@@ -545,7 +545,7 @@ local function registerTilesets()
 	GetRealDifficulty = oldGetDifficulty
 
 	function getRainChance(sectorType)
-		local tileset = modApi.tileset:get(sectorType)
+		local tileset = easyEdit.tileset:get(sectorType)
 		local noDataFound = not tileset or not tileset.getRainChance
 
 		if noDataFound then
@@ -556,7 +556,7 @@ local function registerTilesets()
 	end
 
 	function getCrackChance(sectorType)
-		local tileset = modApi.tileset:get(sectorType)
+		local tileset = easyEdit.tileset:get(sectorType)
 		local noDataFound = not tileset or not tileset.getCrackChance
 
 		if noDataFound then
@@ -567,7 +567,7 @@ local function registerTilesets()
 	end
 
 	function getEnvironmentChance(sectorType, tileType)
-		local tileset = modApi.tileset:get(sectorType)
+		local tileset = easyEdit.tileset:get(sectorType)
 		local noDataFound = not tileset or not tileset.getEnvironmentChance
 
 		if noDataFound then
@@ -578,8 +578,8 @@ local function registerTilesets()
 	end
 
 	modApi.events.onTilesetChanged:subscribe(function(newTileset, oldTileset)
-		local oldTileset = modApi.tileset:get(oldTileset)
-		local newTileset = modApi.tileset:get(newTileset)
+		local oldTileset = easyEdit.tileset:get(oldTileset)
+		local newTileset = easyEdit.tileset:get(newTileset)
 
 		oldTileset:onDisabled()
 		newTileset:onEnabled()
@@ -663,7 +663,7 @@ end
 
 local function registerEnemyLists()
 	local id = "vanilla"
-	local enemyList = modApi.enemyList:add(id)
+	local enemyList = easyEdit.enemyList:add(id)
 	enemyList.name = "Vanilla"
 	enemyList.enemies = getFinalEnemyLists()
 	enemyList:lock()
@@ -697,7 +697,7 @@ end
 
 local function registerBossLists()
 	for i, id in ipairs(corporations) do
-		local bossList = modApi.bossList:add(id)
+		local bossList = easyEdit.bossList:add(id)
 		local corp_id = vanillaCorporations[i]
 		local base = _G[corp_id]
 
@@ -714,7 +714,7 @@ end
 
 local function registerMissionLists()
 	for i, id in ipairs(corporations) do
-		local missionList = modApi.missionList:add(id)
+		local missionList = easyEdit.missionList:add(id)
 		local corp_id = vanillaCorporations[i]
 		local base = _G[corp_id]
 
@@ -725,7 +725,7 @@ local function registerMissionLists()
 end
 
 local function registerStructureLists()
-	local structureList = modApi.structureList:add("vanilla")
+	local structureList = easyEdit.structureList:add("vanilla")
 	structureList:copy(Corp_Default)
 	structureList.name = "Vanilla"
 	structureList:lock()
@@ -734,7 +734,7 @@ end
 local function registerIslandComposites()
 	for i = 1, 4 do
 		local id = islands[i]
-		local islandComposite = modApi.islandComposite:add(id)
+		local islandComposite = easyEdit.islandComposite:add(id)
 		islandComposite.name = islandNames[i]
 		islandComposite.island = islands[i]
 		islandComposite.corporation = corporations[i]
@@ -766,7 +766,7 @@ local function registerIcons()
 end
 
 local function registerFinalEnemyList()
-	local enemyList = modApi.enemyList:add("finale")
+	local enemyList = easyEdit.enemyList:add("finale")
 
 	enemyList.name = "Finale"
 	enemyList.categories = { "Enemies" }
@@ -789,7 +789,7 @@ local function registerFinalEnemyList()
 		local result = oldGetSpawnList(self, island, ...)
 
 		if island == 5 then -- final island!
-			local enemyList = modApi.enemyList:get("finale")
+			local enemyList = easyEdit.enemyList:get("finale")
 			result = copy_table(enemyList.enemies.Enemies)
 		end
 
@@ -798,8 +798,8 @@ local function registerFinalEnemyList()
 end
 
 local function registerFinalBossList()
-	local bossList_phase1 = modApi.bossList:add("finale1")
-	local bossList_phase2 = modApi.bossList:add("finale2")
+	local bossList_phase1 = easyEdit.bossList:add("finale1")
+	local bossList_phase2 = easyEdit.bossList:add("finale2")
 	bossList_phase1.name = "Finale I"
 	bossList_phase2.name = "Finale II"
 
@@ -819,19 +819,19 @@ local function markRegisteredAsVanilla()
 		end
 	end
 
-	markAsVanilla(modApi.units)
-	markAsVanilla(modApi.unitImage)
-	markAsVanilla(modApi.weapons)
-	markAsVanilla(modApi.missions)
-	markAsVanilla(modApi.structures)
-	markAsVanilla(modApi.corporation)
-	markAsVanilla(modApi.tileset)
-	markAsVanilla(modApi.structureList)
-	markAsVanilla(modApi.enemyList)
-	markAsVanilla(modApi.bossList)
-	markAsVanilla(modApi.missionList)
-	markAsVanilla(modApi.island)
-	markAsVanilla(modApi.islandComposite)
+	markAsVanilla(easyEdit.units)
+	markAsVanilla(easyEdit.unitImage)
+	markAsVanilla(easyEdit.weapons)
+	markAsVanilla(easyEdit.missions)
+	markAsVanilla(easyEdit.structures)
+	markAsVanilla(easyEdit.corporation)
+	markAsVanilla(easyEdit.tileset)
+	markAsVanilla(easyEdit.structureList)
+	markAsVanilla(easyEdit.enemyList)
+	markAsVanilla(easyEdit.bossList)
+	markAsVanilla(easyEdit.missionList)
+	markAsVanilla(easyEdit.island)
+	markAsVanilla(easyEdit.islandComposite)
 end
 
 local function markRegisteredAsMod(modId)
@@ -843,19 +843,19 @@ local function markRegisteredAsMod(modId)
 		end
 	end
 
-	markAsMod(modApi.units)
-	markAsMod(modApi.unitImage)
-	markAsMod(modApi.weapons)
-	markAsMod(modApi.missions)
-	markAsMod(modApi.structures)
-	markAsMod(modApi.corporation)
-	markAsMod(modApi.tileset)
-	markAsMod(modApi.structureList)
-	markAsMod(modApi.enemyList)
-	markAsMod(modApi.bossList)
-	markAsMod(modApi.missionList)
-	markAsMod(modApi.island)
-	markAsMod(modApi.islandComposite)
+	markAsMod(easyEdit.units)
+	markAsMod(easyEdit.unitImage)
+	markAsMod(easyEdit.weapons)
+	markAsMod(easyEdit.missions)
+	markAsMod(easyEdit.structures)
+	markAsMod(easyEdit.corporation)
+	markAsMod(easyEdit.tileset)
+	markAsMod(easyEdit.structureList)
+	markAsMod(easyEdit.enemyList)
+	markAsMod(easyEdit.bossList)
+	markAsMod(easyEdit.missionList)
+	markAsMod(easyEdit.island)
+	markAsMod(easyEdit.islandComposite)
 end
 
 local function lockEverything()
@@ -865,16 +865,16 @@ local function lockEverything()
 		end
 	end
 
-	lockChildren(modApi.ceo)
-	lockChildren(modApi.corporation)
-	lockChildren(modApi.units)
-	lockChildren(modApi.tileset)
-	lockChildren(modApi.island)
-	lockChildren(modApi.islandComposite)
-	lockChildren(modApi.structureList)
-	lockChildren(modApi.enemyList)
-	lockChildren(modApi.bossList)
-	lockChildren(modApi.missionList)
+	lockChildren(easyEdit.ceo)
+	lockChildren(easyEdit.corporation)
+	lockChildren(easyEdit.units)
+	lockChildren(easyEdit.tileset)
+	lockChildren(easyEdit.island)
+	lockChildren(easyEdit.islandComposite)
+	lockChildren(easyEdit.structureList)
+	lockChildren(easyEdit.enemyList)
+	lockChildren(easyEdit.bossList)
+	lockChildren(easyEdit.missionList)
 end
 
 local function onModInitialized(modId)

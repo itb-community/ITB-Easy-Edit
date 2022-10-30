@@ -104,4 +104,4 @@ function Island:getImagePath()
 end
 
 
-modApi.island = IndexedList(Island)
+easyEdit.island = IndexedList(Island)

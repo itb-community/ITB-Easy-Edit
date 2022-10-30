@@ -29,7 +29,7 @@ function BossList:getCategories()
 end
 
 function BossList:getObject(missionId)
-	return modApi.missions:get(missionId)
+	return easyEdit.missions:get(missionId)
 end
 
 function BossList:isContentList()
@@ -37,7 +37,7 @@ function BossList:isContentList()
 end
 
 function BossList:getContentType()
-	return modApi.missions
+	return easyEdit.missions
 end
 
 function BossList:isInvalid()
@@ -57,22 +57,22 @@ local BossLists = IndexedList(BossList)
 function BossLists:update()
 	IndexedList.update(self)
 
-	local bossList = modApi.bossList:get("finale1")
+	local bossList = easyEdit.bossList:get("finale1")
 	local unitList = {}
 
 	for _, bossMissionId in ipairs(bossList.Bosses) do
-		local bossMission = modApi.missions:get(bossMissionId)
+		local bossMission = easyEdit.missions:get(bossMissionId)
 		if bossMission then
 			unitList[#unitList+1] = bossMission.BossPawn
 		end
 	end
 	Mission_Final.BossList = unitList
 
-	local bossList = modApi.bossList:get("finale2")
+	local bossList = easyEdit.bossList:get("finale2")
 	local unitList = {}
 
 	for _, bossMissionId in ipairs(bossList.Bosses) do
-		local bossMission = modApi.missions:get(bossMissionId)
+		local bossMission = easyEdit.missions:get(bossMissionId)
 		if bossMission then
 			unitList[#unitList+1] = bossMission.BossPawn
 		end
@@ -81,4 +81,4 @@ function BossLists:update()
 end
 
 
-modApi.bossList = BossLists
+easyEdit.bossList = BossLists

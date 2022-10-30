@@ -31,7 +31,7 @@ end
 
 function Mission:getImagePath()
 	if self.BossPawn then
-		local unit = modApi.units:get(self.BossPawn)
+		local unit = easyEdit.units:get(self.BossPawn)
 		if unit then
 			return unit:getImagePath()
 		end
@@ -42,7 +42,7 @@ end
 
 function Mission:getTooltipImagePath()
 	if self.BossPawn then
-		local unit = modApi.units:get(self.BossPawn)
+		local unit = easyEdit.units:get(self.BossPawn)
 		if unit then
 			return unit:getTooltipImagePath()
 		end
@@ -53,7 +53,7 @@ end
 
 function Mission:getImageRows(anim)
 	if self.BossPawn then
-		local unit = modApi.units:get(self.BossPawn)
+		local unit = easyEdit.units:get(self.BossPawn)
 		if unit then
 			return unit:getImageRows()
 		end
@@ -64,7 +64,7 @@ end
 
 function Mission:getImageColumns(anim)
 	if self.BossPawn then
-		local unit = modApi.units:get(self.BossPawn)
+		local unit = easyEdit.units:get(self.BossPawn)
 		if unit then
 			return unit:getImageColumns()
 		end
@@ -75,7 +75,7 @@ end
 
 function Mission:getImageOffset()
 	if self.BossPawn then
-		local unit = modApi.units:get(self.BossPawn)
+		local unit = easyEdit.units:get(self.BossPawn)
 		if unit then
 			return unit:getImageOffset()
 		end
@@ -84,4 +84,4 @@ function Mission:getImageOffset()
 	return 0
 end
 
-modApi.missions = IndexedList(Mission)
+easyEdit.missions = IndexedList(Mission)

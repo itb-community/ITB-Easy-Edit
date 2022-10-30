@@ -29,4 +29,4 @@ function Weapon:getImagePath()
 	return "img/"..self.Icon
 end
 
-modApi.weapons = IndexedList(Weapon)
+easyEdit.weapons = IndexedList(Weapon)

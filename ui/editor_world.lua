@@ -22,10 +22,10 @@ local PADDING = 8
 local SCROLLBAR_WIDTH = 16
 local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
 local ORIENTATION_HORIZONTAL = helpers.ORIENTATION_HORIZONTAL
-local DRAG_TARGET_TYPE = modApi.islandComposite:getDragType()
+local DRAG_TARGET_TYPE = easyEdit.islandComposite:getDragType()
 local TOOLTIP_ISLAND_COMPOSITE = tooltip_islandComposite
 local DEFAULT_ISLAND_SLOTS = { "archive", "rst", "pinnacle", "detritus" }
-local ISLAND_ICON_DEF = modApi.island:getIconDef()
+local ISLAND_ICON_DEF = easyEdit.island:getIconDef()
 local ISLAND_COMPOSTE_COMPONENTS = {
 	"island",
 	"corporation",
@@ -44,8 +44,8 @@ local dragObject = UiDragObject_Island(DRAG_TARGET_TYPE)
 
 local function resetAll()
 	for i = 1, 4 do
-		local islandComposite = modApi.islandComposite:get(DEFAULT_ISLAND_SLOTS[i])
-		local island = modApi.island:get(islandComposite.island)
+		local islandComposite = easyEdit.islandComposite:get(DEFAULT_ISLAND_SLOTS[i])
+		local island = easyEdit.island:get(islandComposite.island)
 		local islandInSlot = islandSlots[i]
 
 		islandInSlot.data = islandComposite
@@ -56,7 +56,7 @@ local function getEditedIslandCompositeId(islandSlot)
 	local islandComposite = islandSlots[islandSlot].data
 
 	if islandComposite == nil then
-		return modApi.world[islandSlot].island
+		return easyEdit.world[islandSlot].island
 	end
 
 	return islandComposite._id
@@ -78,8 +78,8 @@ local function buildFrameContent(parentUi)
 	}
 
 	for islandSlot, islandUi in ipairs(islandSlots) do
-		local currentIslandComposite = modApi.world[islandSlot]
-		local currentIsland = modApi.island:get(currentIslandComposite.island)
+		local currentIslandComposite = easyEdit.world[islandSlot]
+		local currentIsland = easyEdit.island:get(currentIslandComposite.island)
 
 		local function updateTooltipState(self)
 			local missing = false
@@ -94,7 +94,7 @@ local function buildFrameContent(parentUi)
 				for _, name in ipairs(ISLAND_COMPOSTE_COMPONENTS) do
 
 					local componentId = editedIslandComposite[name]
-					local component = modApi[name]:get(componentId)
+					local component = easyEdit[name]:get(componentId)
 					if componentId == nil then
 						missing = true
 						tooltip[#tooltip+1] = "Missing "..name.."\n"
@@ -111,7 +111,7 @@ local function buildFrameContent(parentUi)
 					self.tooltip_title = "Update blocked"
 					self.tooltip = table.concat(tooltip):sub(1,-2)
 				else
-					local editedIsland = modApi.island:get(editedIslandComposite.island)
+					local editedIsland = easyEdit.island:get(editedIslandComposite.island)
 					self.tooltip_title = "Restart required"
 					self.tooltip = string.format("Restart required for island graphics to change from %s to %s", currentIsland:getName(), editedIsland:getName())
 				end
@@ -233,7 +233,7 @@ local function buildFrameContent(parentUi)
 	local cache_world = easyEdit.savedata.cache.world or DEFAULT_ISLAND_SLOTS
 
 	for islandSlot, cache_data in ipairs(cache_world) do
-		local islandComposite = modApi.islandComposite:get(cache_data)
+		local islandComposite = easyEdit.islandComposite:get(cache_data)
 		local islandInSlot = islandSlots[islandSlot]
 
 		islandInSlot
@@ -242,7 +242,7 @@ local function buildFrameContent(parentUi)
 			:decorate{ DecoImmutableIslandOutline }
 	end
 
-	for _, islandComposite in pairs(modApi.islandComposite._children) do
+	for _, islandComposite in pairs(easyEdit.islandComposite._children) do
 		local entry = UiDragSource(dragObject)
 
 		entry

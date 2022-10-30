@@ -39,7 +39,7 @@ function IslandComposite:getDragType()
 end
 
 function IslandComposite:getImagePath()
-	local island = modApi.island:get(self.island)
+	local island = easyEdit.island:get(self.island)
 
 	if island == nil then
 		return "img/nullResource.png"
@@ -51,7 +51,7 @@ end
 function IslandComposite:isInvalid()
 	for _, name in ipairs(ISLAND_COMPOSTE_COMPONENTS) do
 
-		local component = modApi[name]:get(self[name])
+		local component = easyEdit[name]:get(self[name])
 		if component == nil or component:isInvalid() then
 			return true
 		end
@@ -66,10 +66,10 @@ function IslandComposites:update()
 	local cache_islandComposites = easyEdit.savedata.cache.islandComposite or NULLTABLE
 
 	for cache_id, cache_islandComposite in pairs(cache_islandComposites) do
-		local livedata = modApi.islandComposite:get(cache_id)
+		local livedata = easyEdit.islandComposite:get(cache_id)
 
 		if livedata == nil then
-			livedata = modApi.islandComposite:add(cache_id)
+			livedata = easyEdit.islandComposite:add(cache_id)
 			livedata:lock()
 		end
 
@@ -79,7 +79,7 @@ function IslandComposites:update()
 		end
 	end
 
-	modApi.world:update()
+	easyEdit.world:update()
 end
 
-modApi.islandComposite = IslandComposites
+easyEdit.islandComposite = IslandComposites

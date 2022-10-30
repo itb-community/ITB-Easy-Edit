@@ -113,10 +113,10 @@ function IndexedList:update()
 	local cache_savedata = easyEdit.savedata.cache[entryType] or NULLTABLE
 
 	for cache_id, cache_data in pairs(cache_savedata) do
-		local livedata = modApi[entryType]:get(cache_id)
+		local livedata = easyEdit[entryType]:get(cache_id)
 
 		if livedata == nil then
-			livedata = modApi[entryType]:add(cache_id)
+			livedata = easyEdit[entryType]:add(cache_id)
 			livedata:lock()
 		end
 
@@ -129,12 +129,12 @@ function IndexedList:update()
 	local cache_world = easyEdit.savedata.cache.world or DEFAULT_ISLAND_SLOTS
 
 	for islandSlot, cache_data in ipairs(cache_world) do
-		local cache_islandComposite = modApi.islandComposite:get(cache_data)
+		local cache_islandComposite = easyEdit.islandComposite:get(cache_data)
 		if cache_islandComposite then
 			local livedataId = cache_islandComposite[entryType]
 
 			if livedataId then
-				modApi.world[setFunction](modApi.world, islandSlot, livedataId)
+				easyEdit.world[setFunction](easyEdit.world, islandSlot, livedataId)
 			end
 		end
 	end
@@ -253,7 +253,7 @@ function IndexedEntry:getEntryType()
 end
 
 function IndexedEntry:getIndexedList()
-	return modApi[self._entryType]
+	return easyEdit[self._entryType]
 end
 
 function IndexedEntry:getObjectId(entry)
@@ -292,10 +292,10 @@ function IndexedEntry:delete(save)
 
 	local id = self:getId()
 	local entryType = self:getEntryType()
-	modApi[entryType]._children[id] = nil
+	easyEdit[entryType]._children[id] = nil
 
 	if save then
-		modApi[entryType]:save()
+		easyEdit[entryType]:save()
 	end
 
 	return true

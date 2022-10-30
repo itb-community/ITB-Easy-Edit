@@ -40,12 +40,12 @@ local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
 local FONT_TITLE = helpers.FONT_TITLE
 local TEXT_SETTINGS_TITLE = helpers.TEXT_SETTINGS_TITLE
 local COLOR_RED = helpers.COLOR_RED
-local ISLAND_ICON_DEF = modApi.island:getIconDef()
+local ISLAND_ICON_DEF = easyEdit.island:getIconDef()
 local ISLAND_ICON_DEF_SMALL = copy_table(ISLAND_ICON_DEF)
 ISLAND_ICON_DEF_SMALL.width = 61
-local CEO_ICON_DEF = modApi.ceo:getIconDef()
-local TILESET_ICON_DEF = modApi.tileset:getIconDef()
-local CORPORATION_ICON_DEF = modApi.corporation:getIconDef()
+local CEO_ICON_DEF = easyEdit.ceo:getIconDef()
+local TILESET_ICON_DEF = easyEdit.tileset:getIconDef()
+local CORPORATION_ICON_DEF = easyEdit.corporation:getIconDef()
 local ENEMY_LIST_EXCLUSION = { "finale" }
 local BOSS_LIST_EXCLUSION = { "finale1", "finale2" }
 
@@ -96,14 +96,14 @@ end
 
 local function mkRecieve_popup(objName)
 	return function(reciever, sender)
-		local obj = modApi[objName]:get(sender.data[objName])
+		local obj = easyEdit[objName]:get(sender.data[objName])
 		reciever.data = obj
 	end
 end
 
 local function mkSend_list(objName)
 	return function(sender, reciever)
-		local objList = modApi[objName]:get(sender.data)
+		local objList = easyEdit[objName]:get(sender.data)
 		reciever.data[objName] = sender.data._id
 		sender.staticContentList.data = sender.data
 		sender.staticContentListLabel.data = sender.data
@@ -112,7 +112,7 @@ end
 
 local function mkRecieve_list(objName)
 	return function(reciever, sender)
-		local objList = modApi[objName]:get(sender.data[objName])
+		local objList = easyEdit[objName]:get(sender.data[objName])
 		reciever.staticContentList.data = objList
 		reciever.staticContentListLabel.data = objList
 	end
@@ -207,7 +207,7 @@ local function buildFrameContent(parentUi)
 	local icon_island_height = ISLAND_ICON_DEF.height * ISLAND_ICON_DEF.scale
 	local createNewIsland = UiInputField()
 
-	local enemyLists_sorted = to_array(filter_table(modApi.enemyList._children, function(k, v)
+	local enemyLists_sorted = to_array(filter_table(easyEdit.enemyList._children, function(k, v)
 		return not list_contains(ENEMY_LIST_EXCLUSION, k)
 	end))
 
@@ -215,7 +215,7 @@ local function buildFrameContent(parentUi)
 		return alphanum(a:getName():lower(), b:getName():lower())
 	end)
 
-	local bossLists_sorted = to_array(filter_table(modApi.bossList._children, function(k, v)
+	local bossLists_sorted = to_array(filter_table(easyEdit.bossList._children, function(k, v)
 		return not list_contains(BOSS_LIST_EXCLUSION, k)
 	end))
 
@@ -223,13 +223,13 @@ local function buildFrameContent(parentUi)
 		return alphanum(a:getName():lower(), b:getName():lower())
 	end)
 
-	local missionLists_sorted = to_array(modApi.missionList._children)
+	local missionLists_sorted = to_array(easyEdit.missionList._children)
 
 	stablesort(missionLists_sorted, function(a, b)
 		return alphanum(a:getName():lower(), b:getName():lower())
 	end)
 
-	local structureLists_sorted = to_array(modApi.structureList._children)
+	local structureLists_sorted = to_array(easyEdit.structureList._children)
 
 	stablesort(structureLists_sorted, function(a, b)
 		return alphanum(a:getName():lower(), b:getName():lower())
@@ -361,7 +361,7 @@ local function buildFrameContent(parentUi)
 									}
 									:settooltip("Change island graphics", nil, true)
 									:addList(
-										modApi.island._children,
+										easyEdit.island._children,
 										createPopupEntryFunc_icon1x(ISLAND_ICON_DEF),
 										onPopupEntryClicked
 									)
@@ -394,7 +394,7 @@ local function buildFrameContent(parentUi)
 									}
 									:settooltip("Change island corporation", nil, true)
 									:addList(
-										modApi.corporation._children,
+										easyEdit.corporation._children,
 										createPopupEntryFunc_icon2x(CORPORATION_ICON_DEF),
 										onPopupEntryClicked
 									)
@@ -427,7 +427,7 @@ local function buildFrameContent(parentUi)
 									}
 									:settooltip("Change island ceo", nil, true)
 									:addList(
-										modApi.ceo._children,
+										easyEdit.ceo._children,
 										createPopupEntryFunc_icon2x(CEO_ICON_DEF),
 										onPopupEntryClicked
 									)
@@ -460,7 +460,7 @@ local function buildFrameContent(parentUi)
 									}
 									:settooltip("Change island tileset", nil, true)
 									:addList(
-										modApi.tileset._children,
+										easyEdit.tileset._children,
 										createPopupEntryFunc_icon1x(TILESET_ICON_DEF),
 										onPopupEntryClicked
 									)
@@ -576,7 +576,7 @@ local function buildFrameContent(parentUi)
 		return entry
 	end
 
-	local islands_sorted = to_sorted_array(modApi.islandComposite._children, sortLessThan)
+	local islands_sorted = to_sorted_array(easyEdit.islandComposite._children, sortLessThan)
 
 	-- populate island list
 	for _, islandComposite in ipairs(islands_sorted) do
@@ -585,8 +585,8 @@ local function buildFrameContent(parentUi)
 
 	function createNewIsland:onEnter()
 		local name = self.textfield
-		if name:len() > 0 and modApi.islandComposite:get(name) == nil then
-			local islandComposite = modApi.islandComposite:add(name)
+		if name:len() > 0 and easyEdit.islandComposite:get(name) == nil then
+			local islandComposite = easyEdit.islandComposite:add(name)
 			local scrollarea = islandList.parent
 			islandComposite:lock()
 			addIslandCompositeObject(islandComposite)
@@ -636,7 +636,7 @@ end
 local function onExit()
 	UiEditorButton:resetGlobalVariables()
 
-	modApi.islandComposite:save()
+	easyEdit.islandComposite:save()
 end
 
 function islandEditor.mainButton()

@@ -15,8 +15,8 @@ local LIST_GAP = 30
 local HEADER_HEIGHT = 180
 local ORIENTATION_HORIZONTAL = helpers.ORIENTATION_HORIZONTAL
 local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
-local CEO_ICON_DEF = modApi.ceo:getIconDef()
-local TILESET_ICON_DEF = modApi.tileset:getIconDef()
+local CEO_ICON_DEF = easyEdit.ceo:getIconDef()
+local TILESET_ICON_DEF = easyEdit.tileset:getIconDef()
 local PAD_L = 40
 local PAD_R = 40
 local PAD_T = 20
@@ -134,13 +134,13 @@ function UiTooltipIslandComposite:onTooltipShown(hoveredUi)
 		return
 	end
 
-	local island = modApi.island:get(islandComposite.island)
-	local ceo = modApi.ceo:get(islandComposite.ceo)
-	local tileset = modApi.tileset:get(islandComposite.tileset)
-	local enemyList = modApi.enemyList:get(islandComposite.enemyList)
-	local bossList = modApi.bossList:get(islandComposite.bossList)
-	local missionList = modApi.missionList:get(islandComposite.missionList)
-	local structureList = modApi.structureList:get(islandComposite.structureList)
+	local island = easyEdit.island:get(islandComposite.island)
+	local ceo = easyEdit.ceo:get(islandComposite.ceo)
+	local tileset = easyEdit.tileset:get(islandComposite.tileset)
+	local enemyList = easyEdit.enemyList:get(islandComposite.enemyList)
+	local bossList = easyEdit.bossList:get(islandComposite.bossList)
+	local missionList = easyEdit.missionList:get(islandComposite.missionList)
+	local structureList = easyEdit.structureList:get(islandComposite.structureList)
 
 	self.uiCeo_icon.data = ceo
 	self.uiCeo_label.data = ceo
