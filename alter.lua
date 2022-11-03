@@ -264,6 +264,26 @@ local function registerUnits()
 	end
 end
 
+local function appendMissionImage(mission_id, subpath)
+	local appendLoc = string.format("img/strategy/%s%s.png", subpath, mission_id)
+
+	if modApi.resource:file_exists(appendLoc) then
+		return
+	end
+
+	local filename = string.format("%simg/%s%s.png", path, subpath, mission_id)
+
+	if not modApi:fileExists(filename) then
+		filename = string.format("%simg/%sIcon_Missing.png", path, subpath)
+	end
+
+	modApi:appendAsset(appendLoc, filename)
+end
+
+local function appendMissionSmallImage(mission_id)
+	
+end
+
 local function registerMission(mission_id)
 	local base = _G[mission_id]
 
@@ -281,23 +301,8 @@ local function registerMission(mission_id)
 	mission:copy(base)
 	mission:lock()
 
-	local appendLoc = string.format("img/strategy/mission/%s.png", mission_id)
-	local filename = string.format("%simg/mission/%s.png", path, mission_id)
-
-	if not modApi:fileExists(filename) then
-		filename = string.format("%simg/mission/Icon_Missing.png", path)
-	end
-
-	modApi:appendAsset(appendLoc, filename)
-
-	local appendLoc = string.format("img/strategy/mission/small/%s.png", mission_id)
-	local filename = string.format("%simg/mission/small/%s.png", path, mission_id)
-
-	if not modApi:fileExists(filename) then
-		filename = string.format("%simg/mission/small/Icon_Missing.png", path)
-	end
-
-	modApi:appendAsset(appendLoc, filename)
+	appendMissionImage(mission_id, "mission/")
+	appendMissionImage(mission_id, "mission/small/")
 end
 
 local function registerMissions()
