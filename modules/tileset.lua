@@ -127,16 +127,18 @@ function Tileset:appendAssets(tilePath)
 
 	Assert.NotEquals('nil', type(self.tilePath), "self.tilePath")
 
-	local modPath = getModPath()
-	local files = mod_loader:enumerateFilesIn(modPath .. self.tilePath)
+	local modRoot = getModPath()
 	local images = {}
+	local appendDir = Directory(modRoot .. self.tilePath)
 
-	for _, file in ipairs(files) do
-		if modApi:stringEndsWith(file, ".png") then
-			if file == "env.png" then
-				self:setTilesetIcon(self.tilePath .. file)
+	for _, file in ipairs(appendDir:files()) do
+		local name = file:name()
+
+		if modApi:stringEndsWith(name, ".png") then
+			if name == "env.png" then
+				self:setTilesetIcon(self.tilePath .. name)
 			else
-				table.insert(images, file:sub(1, -5))
+				table.insert(images, name:sub(1, -5))
 			end
 		end
 	end
@@ -149,8 +151,8 @@ function Tileset:setTilesetIcon(filePath)
 	Assert.Equals('string', type(filePath), "Argument #1")
 	Assert.FileRelativeToCurrentModExists(filePath)
 
-	local modPath = getModPath()
-	modApi:appendAsset(string.format("img/strategy/corp/%s_env.png", self._id), modPath .. filePath)
+	local modRoot = getModPath()
+	modApi:appendAsset(string.format("img/strategy/corp/%s_env.png", self._id), modRoot .. filePath)
 end
 
 function Tileset:setClimate(climate)
