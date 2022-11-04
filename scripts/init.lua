@@ -1,9 +1,9 @@
 
 local extension = {
-	id = "easyedit",
+	id = "easyEdit",
 	name = "Easy Edit",
 	version = "2.0.0",
-	modApiVersion = "2.7.3dev",
+	modApiVersion = "2.8.0",
 	gameVersion = "1.2.83",
 	isExtension = true,
 	enabled = false,
