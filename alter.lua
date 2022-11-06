@@ -730,10 +730,15 @@ local function registerMissionLists()
 end
 
 local function registerStructureLists()
-	local structureList = easyEdit.structureList:add("vanilla")
-	structureList:copy(Corp_Default)
-	structureList.name = "Vanilla"
-	structureList:lock()
+	for i, id in ipairs(corporations) do
+		local corp_id = vanillaCorporations[i]
+		local base = _G[corp_id]
+
+		local structureList = easyEdit.structureList:add(id)
+		structureList:copy(Corp_Default)
+		structureList.name = base.Bark_Name
+		structureList:lock()
+	end
 end
 
 local function registerIslandComposites()
@@ -748,7 +753,7 @@ local function registerIslandComposites()
 		islandComposite.missionList = missionLists[i]
 		islandComposite.bossList = bossLists[i]
 		islandComposite.enemyList = "vanilla"
-		islandComposite.structureList = "vanilla"
+		islandComposite.structureList = corporations[i]
 
 		islandComposite:lock()
 	end
