@@ -667,16 +667,21 @@ local function getNoNewBosses()
 end
 
 local function registerEnemyLists()
-	local id = "vanilla"
-	local enemyList = easyEdit.enemyList:add(id)
-	enemyList.name = "Vanilla"
-	enemyList.enemies = getFinalEnemyLists()
-	enemyList:lock()
+	for i, id in ipairs(corporations) do
+		local enemyList = easyEdit.enemyList:add(id)
+		local corp_id = vanillaCorporations[i]
+		local base = _G[corp_id]
+
+		enemyList.name = base.Bark_Name
+		enemyList.enemies = getFinalEnemyLists()
+		enemyList:lock()
+	end
 
 	for i, corp_id in ipairs(vanillaCorporations) do
+		local categories = easyEdit.enemyList:get("archive").categories
 		local corp = _G[corp_id]
 		corp.Enemies = getFinalEnemyLists()
-		corp.EnemyCategories = copy_table(enemyList.categories)
+		corp.EnemyCategories = copy_table(categories)
 	end
 
 	local oldStartNewGame = startNewGame
@@ -752,7 +757,7 @@ local function registerIslandComposites()
 		islandComposite.tileset = tilesets[i]
 		islandComposite.missionList = missionLists[i]
 		islandComposite.bossList = bossLists[i]
-		islandComposite.enemyList = "vanilla"
+		islandComposite.enemyList = corporations[i]
 		islandComposite.structureList = corporations[i]
 
 		islandComposite:lock()
