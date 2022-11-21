@@ -18,6 +18,9 @@ return {
 }
 ```
 
+# Non-Modders
+See [here](https://github.com/itb-community/ITB-Easy-Edit/wiki/EasyEdit) for details on how to use Easy Edit in the game.
+
 # Documentation
  See the [wiki](../../wiki) for documentation.
 
