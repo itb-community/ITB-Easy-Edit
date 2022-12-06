@@ -18,6 +18,9 @@ end
 
 function extension:init(options)
 	local path = self.resourcePath
+	--Add randomization
+	math.randomseed(os.time())
+	math.random()
 
 	require(path.."modules/events")
 	require(path.."modules/indexedList")
