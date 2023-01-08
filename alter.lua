@@ -6,7 +6,7 @@ sdlext.surface_cache_max = 1024
 local path = GetParentPath(...)
 
 local vanillaCorporations = { "Corp_Grass", "Corp_Desert", "Corp_Snow", "Corp_Factory" }
-local difficulties = { DIFF_EASY, DIFF_NORMAL, DIFF_HARD }
+local difficulties = { DIFF_EASY, DIFF_NORMAL, DIFF_HARD, DIFF_UNFAIR }
 
 local islands = { "archive", "rst", "pinnacle", "detritus" }
 local islandNames = { "Archive", "R.S.T.", "Pinnacle", "Detritus" }
