@@ -610,6 +610,12 @@ function pickEnemies(categories, enemies, islandNumber, timesPicked)
 				end
 			end
 		end
+		--Flying Enemies
+		if FlyingEnemies[unit] then --If flying exclude all flying
+			for excludedId, _ in pairs(FlyingEnemies) do
+				excluded[excludedId] = true
+			end
+		end
 	end
 
 	local function getEnemyChoices(category)
