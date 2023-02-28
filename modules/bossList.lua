@@ -11,8 +11,8 @@ end
 function BossList:copy(base)
 	if type(base) ~= 'table' then return end
 
-	if base.UniqueBosses then
-		self.Bosses = add_arrays(base.Bosses, base.UniqueBosses)
+	if base.OldUniqueBosses then
+		self.Bosses = add_arrays(base.Bosses, base.OldUniqueBosses)
 	else
 		self.Bosses = copy_table(base.Bosses)
 	end
