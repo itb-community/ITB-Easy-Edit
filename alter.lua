@@ -69,7 +69,7 @@ local MISSION_EXCLUSION = {
 }
 
 local STRUCTURE_EXCLUSION = {
-	
+
 }
 
 local function updateMissingNames()
@@ -281,7 +281,7 @@ local function appendMissionImage(mission_id, subpath)
 end
 
 local function appendMissionSmallImage(mission_id)
-	
+
 end
 
 local function registerMission(mission_id)
@@ -426,6 +426,7 @@ local function registerCorporations()
 		local base = _G[corp_id]
 
 		corp:copy(base)
+		base.OldUniqueBosses = base.UniqueBosses
 		base.UniqueBosses = {}
 		corp.Name = GetText(corp_id.."_Name")
 		corp.Description = GetText(corp_id.."_Description")
