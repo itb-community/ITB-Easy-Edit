@@ -691,6 +691,17 @@ local function registerEnemyLists()
 		corp.EnemyCategories = copy_table(categories)
 	end
 
+	function Mission:NextRobot(name_only)
+		local islandSlot = easyEdit:getCurrentIslandSlot()
+		local bots = GAME.Bots[islandSlot]
+
+		if bots == nil or #bots == 0 then
+			bots = EnemyLists.Bots
+		end
+
+		return self:NextPawn(bots, name_only or false)
+	end
+
 	local oldStartNewGame = startNewGame
 	function startNewGame()
 		-- Give Easy Edit full control of which bosses are added
@@ -698,6 +709,7 @@ local function registerEnemyLists()
 		getNewBosses = getNoNewBosses
 
 		oldStartNewGame()
+		GAME.Bots = {}
 
 		getNewBosses = getNewBossesVanilla
 
@@ -708,6 +720,7 @@ local function registerEnemyLists()
 			local categories = corp.EnemyCategories
 
 			GAME.Enemies[i] = pickEnemies(categories, enemies, i, timesPicked)
+			GAME.Bots[i] = copy_table(enemies.Bots)
 		end
 	end
 end
