@@ -558,6 +558,8 @@ local function registerTilesets()
 			return 0
 		end
 
+		easyEdit.events.onGeneratingTerrain:dispatch(sectorType)
+
 		return tileset:getRainChance()
 	end
 
