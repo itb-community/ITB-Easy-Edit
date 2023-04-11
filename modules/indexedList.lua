@@ -285,6 +285,19 @@ function IndexedEntry:lock()
 	end
 end
 
+function IndexedEntry:unlock()
+	if not self._locked then
+		return
+	end
+
+	self._locked = false
+	setmetatable(self, IndexedEntryMetatableUnlocked)
+
+	for key, entry in pairs(self._default) do
+		self[key] = nil
+	end
+end
+
 function IndexedEntry:delete(save)
 	if not self:isCustom() then
 		return false
