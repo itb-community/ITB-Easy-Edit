@@ -101,7 +101,15 @@ end
 function IndexedList:save()
 	-- overrideable method
 	local entryType = self:getEntryType()
-	easyEdit.savedata:saveAsDir(entryType, self._children)
+	local data = {}
+
+	for key, child in pairs(self._children) do
+		if child.edited then
+			data[key] = child
+		end
+	end
+
+	easyEdit.savedata:saveAsDir(entryType, data)
 end
 
 -- Update lists from savedata,
@@ -303,6 +311,7 @@ end
 
 function IndexedEntry:reset()
 	self:copy(self._default)
+	self.edited = nil
 end
 
 function IndexedEntry:copy(base)
