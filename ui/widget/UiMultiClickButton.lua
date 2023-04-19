@@ -20,7 +20,7 @@ function UiMultiClickButton:setTooltips(tooltips)
 end
 
 function UiMultiClickButton:clicked(button)
-	if button == 1 then
+	if not self.disabled and button == 1 then
 		self.clickCount = self.clickCount + 1
 		if self.clickCount == self.clickTarget then
 			Ui.clicked(self, button)
@@ -32,7 +32,7 @@ function UiMultiClickButton:clicked(button)
 end
 
 function UiMultiClickButton:relayout()
-	if self.focused ~= true then
+	if self.disabled or not self.focused then
 		self.clickCount = 0
 	end
 
