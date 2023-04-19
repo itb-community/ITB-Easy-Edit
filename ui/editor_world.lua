@@ -49,6 +49,7 @@ local function resetAll()
 		local islandInSlot = islandSlots[i]
 
 		islandInSlot.data = islandComposite
+		islandInSlot.data.edited = false
 	end
 end
 
@@ -262,11 +263,43 @@ local function buildFrameContent(parentUi)
 end
 
 local function buildFrameButtons(buttonLayout)
-	sdlext.buildButton(
-		"Default",
-		"Reset everything to default.",
-		resetAll
- 	):addTo(buttonLayout)
+	local tooltip = "Reset everything to default."
+	local tooltip_disabled = "Everything is already set to default"
+	local button = sdlext.buildButton("Default"):addTo(buttonLayout)
+
+	function button:relayout()
+		self.disabled = true
+
+		for _, island in ipairs(islandSlots) do
+			if island.data.edited then
+				self.disabled = false
+				break
+			end
+		end
+
+		if self.disabled then
+			if self.tooltip ~= tooltip_disabled then
+				self:settooltip(tooltip_disabled)
+			end
+		else
+			if self.tooltip ~= tooltip then
+				self:settooltip(tooltip)
+			end
+		end
+
+		Ui.relayout(self)
+	end
+
+	local onclicked = button.onclicked
+	function button:onclicked(button)
+		if self.disabled then
+			return true
+		end
+
+		resetAll()
+
+		return true
+	end
 end
 
 local function onExit()

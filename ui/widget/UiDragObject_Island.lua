@@ -17,6 +17,7 @@ function UiDragObject_Island:new(...)
 end
 
 function UiDragObject_Island:onDropTargetDropped(dropTarget)
+	dropTarget.data.edited = true
 	self.data_prev = nil
 end
 

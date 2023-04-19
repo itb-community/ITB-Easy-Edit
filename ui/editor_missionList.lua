@@ -267,11 +267,46 @@ local function buildFrameContent(parentUi)
 end
 
 local function buildFrameButtons(buttonLayout)
-	sdlext.buildButton(
-		"Default",
-		"Reset everything to default\n\nWARNING: This will delete all custom mission lists",
-		resetAll
- 	):addTo(buttonLayout)
+	local tooltip = "Reset everything to default\n\nWARNING: This will delete all custom mission lists"
+	local tooltip_disabled = "Everything is already set to default"
+	local button = sdlext.buildButton("Default"):addTo(buttonLayout)
+
+	function button:relayout()
+		self.disabled = true
+
+		for _, contentListContainer in ipairs(contentListContainers.children) do
+			local contentList = contentListContainer.contentList
+			local objectList = contentList.data
+
+			if objectList.edited then
+				self.disabled = false
+				break
+			end
+		end
+
+		if self.disabled then
+			if self.tooltip ~= tooltip_disabled then
+				self:settooltip(tooltip_disabled)
+			end
+		else
+			if self.tooltip ~= tooltip then
+				self:settooltip(tooltip)
+			end
+		end
+
+		Ui.relayout(self)
+	end
+
+	local onclicked = button.onclicked
+	function button:onclicked(button)
+		if self.disabled then
+			return true
+		end
+
+		resetAll()
+
+		return true
+	end
 end
 
 local function onExit()

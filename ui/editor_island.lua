@@ -86,11 +86,13 @@ end
 local function onSend_island(sender, reciever)
 	reciever.data.island = sender.data._id
 	reciever.decorations[3]:updateSurfacesForce(reciever)
+	reciever.data.edited = true
 end
 
 local function mkSend_popup(objName)
 	return function(sender, reciever)
 		reciever.data[objName] = sender.data._id
+		reciever.data.edited = true
 	end
 end
 
@@ -105,6 +107,7 @@ local function mkSend_list(objName)
 	return function(sender, reciever)
 		local objList = easyEdit[objName]:get(sender.data)
 		reciever.data[objName] = sender.data._id
+		reciever.data.edited = true
 		sender.staticContentList.data = sender.data
 		sender.staticContentListLabel.data = sender.data
 	end
@@ -625,12 +628,43 @@ local function buildFrameContent(parentUi)
 end
 
 local function buildFrameButtons(buttonLayout)
+	local tooltip = "Reset everything to default\n\nWARNING: This will delete all custom islands"
+	local tooltip_disabled = "Everything is already set to default"
+	local button = sdlext.buildButton("Default"):addTo(buttonLayout)
 
-	sdlext.buildButton(
-		"Default",
-		"Reset everything to default\n\nWARNING: This will delete all custom islands",
-		resetAll
- 	):addTo(buttonLayout)
+	function button:relayout()
+		self.disabled = true
+
+		for _, island in ipairs(islandList.children) do
+			if island.data.edited then
+				self.disabled = false
+				break
+			end
+		end
+
+		if self.disabled then
+			if self.tooltip ~= tooltip_disabled then
+				self:settooltip(tooltip_disabled)
+			end
+		else
+			if self.tooltip ~= tooltip then
+				self:settooltip(tooltip)
+			end
+		end
+
+		Ui.relayout(self)
+	end
+
+	local onclicked = button.onclicked
+	function button:onclicked(button)
+		if self.disabled then
+			return true
+		end
+
+		resetAll()
+
+		return true
+	end
 end
 
 local function onExit()
