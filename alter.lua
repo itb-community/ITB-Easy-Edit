@@ -194,7 +194,6 @@ local function registerWeapon(weapon_id)
 	weapon.__Id = weapon_id
 	weapon.Name = GetText(weapon_id.."_Name") or base.Name
 	weapon.Description = GetText(weapon_id.."_Description") or base.Description
-	weapon:lock()
 end
 
 local function registerWeapons()
@@ -225,8 +224,6 @@ local function registerUnit(unit_id)
 
 	if isValidUnit(base) then
 		unit = unit or units:add(unit_id, base)
-		unit:lock()
-
 		units:addSoundBase(unit)
 	end
 
@@ -238,7 +235,6 @@ local function registerUnit(unit_id)
 		unitImage.Name = unitImageId
 		unitImage.Image = base.Image
 		unitImage.ImageOffset = base.ImageOffset
-		unitImage:lock()
 	end
 
 	for _, weaponId in ipairs(base.SkillList) do
@@ -299,7 +295,6 @@ local function registerMission(mission_id)
 
 	mission = mission or easyEdit.missions:add(mission_id)
 	mission:copy(base)
-	mission:lock()
 
 	appendMissionImage(mission_id, "mission/")
 	appendMissionImage(mission_id, "mission/small/")
@@ -358,7 +353,6 @@ local function registerStructure(structure_id)
 	structure = structure or easyEdit.structures:add(structure_id)
 	structure.Name = GetText(structure_id.."_Name")
 	structure:copy(base)
-	structure:lock()
 end
 
 local function registerStructures()
@@ -414,8 +408,6 @@ local function registerIslands()
 				table.insert(island.network, _G["Network_Island_".. n][tostring(k)])
 			end
 		end
-
-		island:lock()
 	end
 end
 
@@ -430,7 +422,6 @@ local function registerCorporations()
 		base.UniqueBosses = {}
 		corp.Name = GetText(corp_id.."_Name")
 		corp.Description = GetText(corp_id.."_Description")
-		corp:lock()
 	end
 end
 
@@ -443,7 +434,6 @@ local function registerCEOs()
 		ceo:copyAssets({_id = "ceo_"..corporations[i]})
 		ceo:copy(base)
 		ceo.CEO_Name = GetText(corp_id.."_CEO_Name")
-		ceo:lock()
 	end
 end
 
@@ -681,7 +671,6 @@ local function registerEnemyLists()
 
 		enemyList.name = base.Bark_Name
 		enemyList.enemies = getFinalEnemyLists()
-		enemyList:lock()
 	end
 
 	for i, corp_id in ipairs(vanillaCorporations) do
@@ -738,7 +727,6 @@ local function registerBossLists()
 		end
 
 		bossList.name = base.Bark_Name
-		bossList:lock()
 	end
 end
 
@@ -750,7 +738,6 @@ local function registerMissionLists()
 
 		missionList:copy(base)
 		missionList.name = base.Bark_Name
-		missionList:lock()
 	end
 end
 
@@ -762,7 +749,6 @@ local function registerStructureLists()
 		local structureList = easyEdit.structureList:add(id)
 		structureList:copy(Corp_Default)
 		structureList.name = base.Bark_Name
-		structureList:lock()
 	end
 end
 
@@ -779,8 +765,6 @@ local function registerIslandComposites()
 		islandComposite.bossList = bossLists[i]
 		islandComposite.enemyList = corporations[i]
 		islandComposite.structureList = corporations[i]
-
-		islandComposite:lock()
 	end
 end
 
