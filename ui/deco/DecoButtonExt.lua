@@ -10,6 +10,9 @@ function DecoButtonExt:new(...)
 	self.bordertargetcolor = nil
 		or self.borderhlcolor
 		or deco.colors.buttonborderhl
+
+	self.disabledcolor = deco.colors.buttondisabled
+	self.disabledbordercolor = deco.colors.buttonborderdisabled
 end
 
 function DecoButtonExt:isHighlighted(widget)
@@ -31,7 +34,7 @@ function DecoButtonExt:draw(screen, widget)
 
 	if widget.disabled then
 		basecolor = self.disabledcolor
-		bordercolor = self.disabledcolor
+		bordercolor = self.disabledbordercolor
 
 	elseif self:isHighlighted(widget) then
 		basecolor = self.hlcolor

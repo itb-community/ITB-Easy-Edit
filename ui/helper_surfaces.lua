@@ -8,6 +8,7 @@ local defs = require(path.."helper_defs")
 local COLOR_RED = defs.COLOR_RED
 local TRANSFORM_RED = { { multiply = COLOR_RED } }
 local TRANSFORM_HL = { { multiply = deco.colors.buttonborderhl } }
+local TRANSFORM_DISABLED = { { multiply = deco.colors.buttonborderdisabled } }
 
 
 local helpers = {
@@ -17,16 +18,21 @@ local helpers = {
 modApi.events.onFtldatFinalized:subscribe(function()
 	local surfaceDef = { transformations = TRANSFORM_RED }
 	local surfaceDefHl = { transformations = TRANSFORM_HL }
+	local surfaceDefDisabled = { transformations = TRANSFORM_DISABLED }
 
 	surfaceDef.path = "img/ui/easyEdit/delete.png"
 	surfaceDefHl.path = "img/ui/easyEdit/delete.png"
+	surfaceDefDisabled.path = "img/ui/easyEdit/delete.png"
 	helpers.surfaceDelete = sdlext.getSurface(surfaceDef)
 	helpers.surfaceDeleteHl = sdlext.getSurface(surfaceDefHl)
+	helpers.surfaceDeleteDisabled = sdlext.getSurface(surfaceDefDisabled)
 
 	surfaceDef.path = "img/ui/easyEdit/reset.png"
 	surfaceDefHl.path = "img/ui/easyEdit/reset.png"
+	surfaceDefDisabled.path = "img/ui/easyEdit/reset.png"
 	helpers.surfaceReset = sdlext.getSurface(surfaceDef)
 	helpers.surfaceResetHl = sdlext.getSurface(surfaceDefHl)
+	helpers.surfaceResetDisabled = sdlext.getSurface(surfaceDefDisabled)
 
 	surfaceDef.path = "img/ui/warning_symbol.png"
 	surfaceDefHl.path = "img/ui/warning_symbol.png"
@@ -35,13 +41,17 @@ modApi.events.onFtldatFinalized:subscribe(function()
 
 	surfaceDef.path = "img/ui/easyEdit/delete_small.png"
 	surfaceDefHl.path = "img/ui/easyEdit/delete_small.png"
+	surfaceDefDisabled.path = "img/ui/easyEdit/delete_small.png"
 	helpers.surfaceDeleteSmall = sdlext.getSurface(surfaceDef)
 	helpers.surfaceDeleteSmallHl = sdlext.getSurface(surfaceDefHl)
+	helpers.surfaceDeleteSmallDisabled = sdlext.getSurface(surfaceDefDisabled)
 
 	surfaceDef.path = "img/ui/easyEdit/reset_small.png"
 	surfaceDefHl.path = "img/ui/easyEdit/reset_small.png"
+	surfaceDefDisabled.path = "img/ui/easyEdit/reset_small.png"
 	helpers.surfaceResetSmall = sdlext.getSurface(surfaceDef)
 	helpers.surfaceResetSmallHl = sdlext.getSurface(surfaceDefHl)
+	helpers.surfaceResetSmallDisabled = sdlext.getSurface(surfaceDefDisabled)
 
 	surfaceDef.path = "img/ui/easyEdit/warning_small.png"
 	surfaceDefHl.path = "img/ui/easyEdit/warning_small.png"

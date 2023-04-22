@@ -18,6 +18,7 @@ local function addSaveEntry(ui)
 	local saveId = ui.saveId
 	local saveCategories = objList:getCategories()
 
+	objList.edited = true
 	table.insert(saveCategories[categoryId], saveId)
 end
 
@@ -30,6 +31,7 @@ local function remSaveEntry(ui)
 	local saveId = ui.saveId
 	local saveCategories = objList:getCategories()
 
+	objList.edited = true
 	remove_element(saveId, saveCategories[categoryId])
 end
 

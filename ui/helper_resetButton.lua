@@ -35,6 +35,7 @@ modApi.events.onFtldatFinalized:subscribe(function()
 			surfaces.surfaceResetHl,
 			surfaces.surfaceWarningHl
 		},
+		surfaces.surfaceResetDisabled,
 		"center",
 		"center"
 	)
@@ -47,6 +48,7 @@ modApi.events.onFtldatFinalized:subscribe(function()
 			surfaces.surfaceDeleteHl,
 			surfaces.surfaceWarningHl
 		},
+		surfaces.surfaceDeleteDisabled,
 		"center",
 		"center"
 	)
@@ -59,6 +61,7 @@ modApi.events.onFtldatFinalized:subscribe(function()
 			surfaces.surfaceResetSmallHl,
 			surfaces.surfaceWarningSmallHl
 		},
+		surfaces.surfaceResetSmallDisabled,
 		"center",
 		"center"
 	)
@@ -71,6 +74,7 @@ modApi.events.onFtldatFinalized:subscribe(function()
 			surfaces.surfaceDeleteSmallHl,
 			surfaces.surfaceWarningSmallHl
 		},
+		surfaces.surfaceDeleteSmallDisabled,
 		"center",
 		"center"
 	)
@@ -104,6 +108,15 @@ function resetButton_contentList:onclicked()
 	contentList:populate()
 
 	return true
+end
+
+function resetButton_contentList:relayout()
+	local contentListContainer = self.parent
+	local contentList = contentListContainer.contentList
+	local objectList = contentList.data
+
+	self.disabled = not objectList.edited
+	UiMultiClickButton.relayout(self)
 end
 
 
