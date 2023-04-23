@@ -49,7 +49,6 @@ local function resetAll()
 		local islandInSlot = islandSlots[i]
 
 		islandInSlot.data = islandComposite
-		islandInSlot.data.edited = false
 	end
 end
 
@@ -270,8 +269,8 @@ local function buildFrameButtons(buttonLayout)
 	function button:relayout()
 		self.disabled = true
 
-		for _, island in ipairs(islandSlots) do
-			if island.data.edited then
+		for islandSlot, island in ipairs(islandSlots) do
+			if island.data:getId() ~= DEFAULT_ISLAND_SLOTS[islandSlot] then
 				self.disabled = false
 				break
 			end
