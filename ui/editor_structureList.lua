@@ -186,7 +186,9 @@ local function buildFrameContent(parentUi)
 					:size(1,1)
 					:setVar("isGroupTooltip", true)
 					:settooltip("Drag-and-drop structures to edit the structure list"
-						.."\n\nMouse-wheel to scroll the list", nil, true)
+						.."\n\nHold [CTRL] while dragging to duplicate entries"
+						.."\n\nMouse-wheel to scroll the list"
+						, nil, true)
 				:endUi()
 			:endUi()
 	end

@@ -185,7 +185,9 @@ local function buildFrameContent(parentUi)
 					:size(1,1)
 					:setVar("isGroupTooltip", true)
 					:settooltip("Drag-and-drop units to edit the boss list"
-						.."\n\nMouse-wheel to scroll the list", nil, true)
+						.."\n\nHold [CTRL] while dragging to duplicate entries"
+						.."\n\nMouse-wheel to scroll the list"
+						, nil, true)
 				:endUi()
 			:endUi()
 	end
