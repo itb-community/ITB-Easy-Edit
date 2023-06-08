@@ -160,7 +160,7 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 
-	local function addObjectList(objectList)
+	function contentListContainers:addObjectList(objectList)
 		local resetButton
 		local contentList = UiContentList{
 			data = objectList,
@@ -176,7 +176,7 @@ local function buildFrameContent(parentUi)
 
 		contentList:populate()
 
-		contentListContainers
+		self
 			:beginUi(UiWeightLayout)
 				:width(1):heightpx(40)
 				:format(makeCullable)
@@ -201,7 +201,7 @@ local function buildFrameContent(parentUi)
 	end)
 
 	for _, objectList in ipairs(enemyLists_sorted) do
-		addObjectList(objectList)
+		contentListContainers:addObjectList(objectList)
 	end
 
 	local enemies_sorted = to_array(filter_table(easyEdit.units._children, function(k, v)
@@ -241,7 +241,7 @@ local function buildFrameContent(parentUi)
 			local objectList = easyEdit.enemyList:add(name)
 			objectList:lock()
 			objectList.edited = true
-			addObjectList(objectList)
+			contentListContainers:addObjectList(objectList)
 		end
 
 		self.root:setfocus(content)
