@@ -159,7 +159,7 @@ local function buildFrameContent(parentUi)
 			:endUi()
 		:endUi()
 
-	local function addObjectList(objectList)
+	function contentListContainers:addObjectList(objectList)
 		local resetButton
 		local contentList = UiContentList{
 			data = objectList,
@@ -175,7 +175,7 @@ local function buildFrameContent(parentUi)
 
 		contentList:populate()
 
-		contentListContainers
+		self
 			:beginUi(UiWeightLayout)
 				:width(1):heightpx(40)
 				:format(makeCullable)
@@ -186,7 +186,9 @@ local function buildFrameContent(parentUi)
 					:size(1,1)
 					:setVar("isGroupTooltip", true)
 					:settooltip("Drag-and-drop structures to edit the structure list"
-						.."\n\nMouse-wheel to scroll the list", nil, true)
+						.."\n\nHold [CTRL] while dragging to duplicate entries"
+						.."\n\nMouse-wheel to scroll the list"
+						, nil, true)
 				:endUi()
 			:endUi()
 	end
@@ -198,7 +200,7 @@ local function buildFrameContent(parentUi)
 	end)
 
 	for _, objectList in pairs(structureLists_sorted) do
-		addObjectList(objectList)
+		contentListContainers:addObjectList(objectList)
 	end
 
 	local structures_sorted = to_array(easyEdit.structures._children)
@@ -237,7 +239,7 @@ local function buildFrameContent(parentUi)
 		if name:len() > 0 and easyEdit.structureList:get(name) == nil then
 			local objectList = easyEdit.structureList:add(name)
 			objectList:lock()
-			addObjectList(objectList)
+			contentListContainers:addObjectList(objectList)
 		end
 
 		self.root:setfocus(content)

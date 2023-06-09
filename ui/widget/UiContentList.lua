@@ -18,6 +18,8 @@ local totalWidth = sdlext.totalWidth
 local CASCADE = true
 local FONT_LABEL = helpers.FONT_LABEL
 local TEXT_SETTINGS_LABEL = helpers.TEXT_SETTINGS_LABEL
+local FONT_TITLE = helpers.FONT_TITLE
+local TEXT_SETTINGS_TITLE = helpers.TEXT_SETTINGS_TITLE
 
 
 local UiCategoryEntries = Class.inherit(Ui)
@@ -142,6 +144,7 @@ function UiContentList:new(opt)
 	self.scrollarea = scrollarea
 	self.content = content
 	self.categories = {}
+	self.nameObject = UiInputField()
 
 	self
 		:beginUi(UiWeightLayout)
@@ -163,14 +166,58 @@ function UiContentList:new(opt)
 				:endUi()
 			:endUi()
 			:setTranslucent(true, CASCADE)
-			:beginUi()
+			:beginUi(self.nameObject)
 				:widthpx(200):height(1)
-				:setVar("text_title_bounce_center_clip", tostring(self.data:getName()))
+				:setVar("textfield", self.data:getName())
 				:setGroupOwner(self)
-				:settooltip("Name of content list", nil, true)
-				:decorate{ DecoImmutable.TextTitleBounceCenterClip }
+				:settooltip("Name of content list\n\nType a new name and press [ENTER] to duplicate this list", nil, true)
+				:decorate{
+					DecoInputField{
+						font = FONT_TITLE,
+						textset = TEXT_SETTINGS_TITLE,
+						alignH = "center",
+						alignV = "center",
+					}
+				}
 			:endUi()
 		:endUi()
+
+	self.nameObject.relayout = function(self)
+		local focused = self.focused
+		local focused_prev = self.focused_prev
+
+		if focused ~= focused_prev then
+
+			if not focused then
+				self.selection = nil
+			end
+
+			self.focused_prev = focused
+			if focused then
+				self.textfield = ""
+				self:setCaret(0)
+				self.selection = nil
+			else
+				self.textfield = self.parent.parent.data:getName()
+				self:setCaret(0)
+				self.selection = nil
+			end
+		end
+	end
+
+	self.nameObject.onEnter = function(self)
+		local name = self.textfield
+		local data = self.parent.parent.data
+		if name:len() > 0 and easyEdit[data._entryType]:get(name) == nil then
+			local objectList = easyEdit[data._entryType]:add(name)
+			objectList:lock()
+			objectList.edited = true
+			objectList:copy(data)
+			self.parent.parent.parent.parent:addObjectList(objectList)
+		end
+
+		self.root:setfocus(self.parent.parent)
+	end
 end
 
 function UiContentList:reset()
