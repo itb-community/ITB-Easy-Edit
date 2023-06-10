@@ -52,14 +52,16 @@ local function resetAll()
 	end
 end
 
-local function getEditedIslandCompositeId(islandSlot)
-	local islandComposite = islandSlots[islandSlot].data
+local function updateWorldCache()
+	for i = 1, 4 do
+		local islandComposite = islandSlots[i].data
 
-	if islandComposite == nil then
-		return easyEdit.world[islandSlot].island
+		if islandComposite then
+			easyEdit.savedata.cache.world[i] = islandComposite._id
+		else
+			easyEdit.savedata.cache.world[i] = easyEdit.savedata.cache.world[i] or DEFAULT_ISLAND_SLOTS[i]
+		end
 	end
-
-	return islandComposite._id
 end
 
 local function setParentAsGroupOwner(self)
@@ -270,7 +272,7 @@ local function buildFrameButtons(buttonLayout)
 		self.disabled = true
 
 		for islandSlot, island in ipairs(islandSlots) do
-			if island.data:getId() ~= DEFAULT_ISLAND_SLOTS[islandSlot] then
+			if island.data == nil or island.data:getId() ~= DEFAULT_ISLAND_SLOTS[islandSlot] then
 				self.disabled = false
 				break
 			end
@@ -302,12 +304,7 @@ local function buildFrameButtons(buttonLayout)
 end
 
 local function onExit()
-	easyEdit.savedata.cache.world = {
-		getEditedIslandCompositeId(1),
-		getEditedIslandCompositeId(2),
-		getEditedIslandCompositeId(3),
-		getEditedIslandCompositeId(4),
-	}
+	updateWorldCache()
 
 	easyEdit.savedata:saveAsFile("world", easyEdit.savedata.cache.world)
 	easyEdit.savedata:updateLiveData()
