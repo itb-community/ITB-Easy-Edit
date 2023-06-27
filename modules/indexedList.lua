@@ -314,12 +314,18 @@ function IndexedEntry:reset()
 	self:copy(self._default)
 end
 
+local function iterationExceptions(key, value)
+	local t = type(value)
+	return tostring(key):sub(1, 1) == "_"
+			or t == "function"
+			or t == "userdata"
+			or t == "thread"
+end
+
 function IndexedEntry:copy(base)
 	if type(base) ~= 'table' then return end
 
-	for key, value in pairs(base) do
-		if not modApi:stringStartsWith(key, "_") then
-			self[key] = copy_table(value)
-		end
+	for key, value in iterateInstanceAndParents(base, iterationExceptions) do
+		self[key] = copy_table(value)
 	end
 end
