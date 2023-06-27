@@ -1,41 +1,6 @@
 
 modApi:appendAsset("img/units/nullUnit.png", "resources/mods/game/img/placeholders/mech.png")
 
-local function getTableKeys(tbl)
-	local keys = {}
-	local index = tbl
-
-	while type(index) == 'table' do
-		for i, v in pairs(index) do
-			if tostring(i):sub(1,1) ~= "_" then
-				if keys[i] == nil then
-					keys[i] = true
-				end
-			end
-		end
-
-		local prev_index = index
-		index = index.__index
-
-		if index == prev_index then
-			index = nil
-		end
-	end
-
-	return keys
-end
-
-local function getTableContent(tbl)
-	local keys = getTableKeys(tbl)
-	local content = {}
-
-	for key, _ in pairs(keys) do
-		content[key] = tbl[key]
-	end
-
-	return content
-end
-
 local Unit = Class.inherit(IndexedEntry)
 Unit._debugName = "Unit"
 Unit._entryType = "units"
@@ -139,27 +104,6 @@ function Unit:isBaseEnemy()
 		and tonumber(self._id:sub(-1,-1)) == 1
 
 	return isBaseEnemy
-end
-
-local excludeFields = {
-	-- ImageOffset = true,
-}
-
-function Unit:copy(base)
-	if type(base) ~= 'table' then return end
-
-	local keys = getTableKeys(base)
-	for key, _ in pairs(keys) do
-		local value = copy_table(base[key])
-		local copyValue = true
-			and type(value) ~= 'function'
-			and self[key] ~= value
-			and excludeFields[key] ~= true
-
-		if copyValue then
-			self[key] = value
-		end
-	end
 end
 
 function Unit:getCategory()
