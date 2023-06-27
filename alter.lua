@@ -44,6 +44,32 @@ local UNIT_EXCLUSION = {
 	"Slug1",
 	"Slug2",
 	"Jelly_Necro1",
+
+	-- AE unfinished mechs
+	"PunchMech_Bonus",
+	"TankMech_Bonus",
+	"ArtiMech_Bonus",
+	"JudoMech_Bonus",
+	"DStrikeMech_Bonus",
+	"GravMech_Bonus",
+	"RocketMech_Bonus",
+	"JetMech_Bonus",
+	"PulseMech_Bonus",
+	"FlameMech_Bonus",
+	"IgniteMech_Bonus",
+	"TeleMech_Bonus",
+	"LaserMech_Bonus",
+	"ChargeMech_Bonus",
+	"ScienceMech_Bonus",
+	"GuardMech_Bonus",
+	"MirrorMech_Bonus",
+	"IceMech_Bonus",
+	"ElectricMech_Bonus",
+	"WallMech_Bonus",
+	"RockartMech_Bonus",
+	"LeapMech_Bonus",
+	"UnstableTank_Bonus",
+	"NanoMech_Bonus",
 }
 
 local WEAPON_EXCLUSION = {
