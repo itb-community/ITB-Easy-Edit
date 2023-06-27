@@ -4,9 +4,9 @@ MissionList._debugName = "MissionList"
 MissionList._entryType = "missionList"
 
 function MissionList:new(id, base)
-	IndexedEntry.new(self, id, base)
 	self.Missions_High = {}
 	self.Missions_Low = {}
+	IndexedEntry.new(self, id, base)
 end
 
 function MissionList:copy(base)

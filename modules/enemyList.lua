@@ -13,7 +13,6 @@ EnemyList._debugName = "EnemyList"
 EnemyList._entryType = "enemyList"
 
 function EnemyList:new(id, base)
-	IndexedEntry.new(self, id, base)
 	self.enemies = {
 		Core = {},
 		Unique = {},
@@ -21,6 +20,7 @@ function EnemyList:new(id, base)
 		Bots = {}
 	}
 	self.categories = { "Core", "Core", "Core", "Leaders", "Unique", "Unique" }
+	IndexedEntry.new(self, id, base)
 end
 
 function EnemyList:copy(base)

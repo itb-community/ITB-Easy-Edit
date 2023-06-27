@@ -4,8 +4,8 @@ BossList._debugName = "BossList"
 BossList._entryType = "bossList"
 
 function BossList:new(id, base)
-	IndexedEntry.new(self, id, base)
 	self["Bosses"] = {}
+	IndexedEntry.new(self, id, base)
 end
 
 function BossList:copy(base)
