@@ -310,8 +310,8 @@ function IndexedEntry:delete(save)
 end
 
 function IndexedEntry:reset()
+	clear_table(self)
 	self:copy(self._default)
-	self.edited = nil
 end
 
 function IndexedEntry:copy(base)
