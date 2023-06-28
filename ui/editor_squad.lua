@@ -236,6 +236,7 @@ local function buildFrameContent(parentUi)
 		local name = self.textfield
 		if name:len() > 0 and easyEdit.squads:get(name) == nil then
 			local objectList = easyEdit.squads:add(name)
+			objectList.name = name
 			objectList:lock()
 			objectList.edited = true
 			contentListContainers:addObjectList(objectList)
