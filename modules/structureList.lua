@@ -4,10 +4,10 @@ StructureList._debugName = "StructureList"
 StructureList._entryType = "structureList"
 
 function StructureList:new(id, base)
-	self.PowAssets = {}
-	self.TechAssets = {}
-	self.RepAssets = {}
 	IndexedEntry.new(self, id, base)
+	self._default.PowAssets = {}
+	self._default.TechAssets = {}
+	self._default.RepAssets = {}
 end
 
 function StructureList:copy(base)
