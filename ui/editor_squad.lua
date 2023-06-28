@@ -183,7 +183,7 @@ local function buildFrameContent(parentUi)
 				:beginUi(contentList)
 					:size(1,1)
 					:setVar("isGroupTooltip", true)
-					:settooltip("Drag-and-drop units to edit the enemy list"
+					:settooltip("Drag-and-drop units to edit the squad"
 						.."\n\nHold [CTRL] while dragging to duplicate entries"
 						.."\n\nMouse-wheel to scroll the list"
 						, nil, true)
@@ -209,18 +209,18 @@ local function buildFrameContent(parentUi)
 		return alphanum(a:getName():lower(), b:getName():lower())
 	end)
 
-	for _, enemy in ipairs(mechs_sorted) do
-		local enemyId = enemy._id
+	for _, mech in ipairs(mechs_sorted) do
+		local mechId = mech._id
 		local entry = UiDragSource(dragObject)
 
-		entry.data = enemy
-		entry.saveId = enemyId:sub(1,-2)
+		entry.data = mech
+		entry.saveId = mechId
 		entry.createObject = getCreateUnitDragSourceCopyFunc(CONTENT_ENTRY_DEF)
 
 		entry
 			:widthpx(UNIT_ICON_DEF.width * UNIT_ICON_DEF.scale)
 			:heightpx(UNIT_ICON_DEF.height * UNIT_ICON_DEF.scale)
-			:settooltip("Drag-and-drop to add to an enemy list", nil, true)
+			:settooltip("Drag-and-drop to add to a mech", nil, true)
 			:decorate{
 				DecoImmutable.Button,
 				DecoImmutable.Anchor,
