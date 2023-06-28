@@ -16,7 +16,7 @@ Corporation._iconDef = {
 
 function Corporation:new(id, base)
 	IndexedEntry.new(self, id, base)
-	self:copy(Corp_Default)
+	self.copy(self._default, Corp_Default)
 end
 
 function Corporation:copy(base)
