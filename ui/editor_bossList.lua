@@ -245,6 +245,7 @@ local function buildFrameContent(parentUi)
 		if name:len() > 0 and easyEdit.bossList:get(name) == nil then
 			local objectList = easyEdit.bossList:add(name)
 			objectList:lock()
+			objectList.edited = true
 			contentListContainers:addObjectList(objectList)
 		end
 

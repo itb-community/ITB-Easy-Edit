@@ -928,6 +928,7 @@ local function buildFrameContent(parentUi)
 				local unit = easyEdit.units:add(name, easyEdit.units._baseMech)
 				unit.Name = name
 				unit:lock()
+				unit.edited = true
 				addUnitObject(unit)
 					:bringToTop()
 			end

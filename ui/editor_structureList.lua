@@ -239,6 +239,7 @@ local function buildFrameContent(parentUi)
 		if name:len() > 0 and easyEdit.structureList:get(name) == nil then
 			local objectList = easyEdit.structureList:add(name)
 			objectList:lock()
+			objectList.edited = true
 			contentListContainers:addObjectList(objectList)
 		end
 
