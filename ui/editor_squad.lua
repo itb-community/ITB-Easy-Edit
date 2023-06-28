@@ -38,6 +38,7 @@ CONTENT_ENTRY_DEF.width = 25
 CONTENT_ENTRY_DEF.height = 25
 CONTENT_ENTRY_DEF.clip = false
 
+local CLASSES = { "Prime", "Brute", "Ranged", "Science", "TechnoVek" }
 
 -- ui
 local contentListContainers
@@ -201,7 +202,7 @@ local function buildFrameContent(parentUi)
 	end
 
 	local mechs_sorted = to_array(filter_table(easyEdit.units._children, function(k, v)
-		return v:isMech()
+		return v:isMech() and list_contains(CLASSES, v.Class)
 	end))
 
 	stablesort(mechs_sorted, function(a, b)

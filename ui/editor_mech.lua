@@ -948,7 +948,7 @@ local function buildFrameContent(parentUi)
 	end)
 
 	local units_filtered = filter_table(easyEdit.units._children, function(k, unit)
-		return unit._default:isMech()
+		return unit._default:isMech() and list_contains(CLASSES, unit.Class)
 	end)
 
 	local mechs_sorted = to_sorted_array(units_filtered, function(a, b)
