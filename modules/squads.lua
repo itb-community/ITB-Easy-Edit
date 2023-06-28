@@ -1,7 +1,7 @@
 
 local Squad = Class.inherit(IndexedEntry)
 Squad._debugName = "Squad"
-Squad._entryType = "squad"
+Squad._entryType = "squads"
 
 function Squad:new(id, base)
 	IndexedEntry.new(self, id, base)

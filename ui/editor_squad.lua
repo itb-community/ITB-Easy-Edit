@@ -311,7 +311,7 @@ end
 
 
 local function onExit()
-	-- easyEdit.squads:save()
+	easyEdit.squads:save()
 end
 
 
