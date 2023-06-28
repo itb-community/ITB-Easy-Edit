@@ -143,6 +143,7 @@ function Units:update()
 		if livedata_unit == nil then
 			livedata_unit = easyEdit.units:add(unit_id, self._baseMech)
 			livedata_unit:lock()
+			livedata_unit:copy(savedata_unit)
 		end
 	end
 
