@@ -1,7 +1,7 @@
 
 local path = GetParentPath(...)
 local mechEditor = require(path.."editor_mech")
--- local squadEditor = require(path.."editor_squad")
+local squadEditor = require(path.."editor_squad")
 local enemyListEditor = require(path.."editor_enemyList")
 local bossListEditor = require(path.."editor_bossList")
 local missionListEditor = require(path.."editor_missionList")
@@ -29,7 +29,7 @@ local WORLD_TITLE = "World Editor"
 local WORLD_TOOLTIP = "Arrange the content of the 4 playable islands"
 
 sdlext.addModContent(MECH_TITLE, mechEditor.mainButton, MECH_TOOLTIP)
--- sdlext.addModContent(SQUAD_TITLE, squadEditor.mainButton, SQUAD_TOOLTIP)
+sdlext.addModContent(SQUAD_TITLE, squadEditor.mainButton, SQUAD_TOOLTIP)
 sdlext.addModContent(ENEMY_LIST_TITLE, enemyListEditor.mainButton, ENEMY_LIST_TOOLTIP)
 sdlext.addModContent(BOSS_LIST_TITLE, bossListEditor.mainButton, BOSS_LIST_TOOLTIP)
 sdlext.addModContent(MISSION_LIST_TITLE, missionListEditor.mainButton, MISSION_LIST_TOOLTIP)
