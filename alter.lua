@@ -35,6 +35,32 @@ local mechList = {
 	"LeapMech", "UnstableTank", "NanoMech",
 }
 
+-- When Easy Edit initializes, the mod loader has overridden getStartingSquad,
+-- but has not yet populated modApi.mod_squads.
+-- Therefor we cannot use getStartingSquad to fetch vanilla squads.
+-- Hard code the vanilla squads.
+local vanillaSquads = {
+	-- normal
+	Archive_A = { "PunchMech", "TankMech", "ArtiMech" },
+	Rust_A = { "JetMech", "RocketMech", "PulseMech" },
+	Pinnacle_A = { "LaserMech", "ChargeMech", "ScienceMech" },
+	Detritus_A = { "ElectricMech", "WallMech", "RockartMech" },
+	Archive_B = { "JudoMech", "DStrikeMech", "GravMech" },
+	Rust_B = { "FlameMech", "IgniteMech", "TeleMech" },
+	Pinnacle_B = { "GuardMech", "MirrorMech", "IceMech" },
+	Detritus_B = { "LeapMech", "UnstableTank", "NanoMech" },
+
+	-- secret
+	Secret = { "BeetleMech", "HornetMech", "ScarabMech" },
+
+	-- advanced
+	Squad_Bomber = { "PierceMech", "BomblingMech", "ExchangeMech" },
+	Squad_Spiders = { "BulkMech", "ScorpioMech", "FourwayMech" },
+	Squad_Mist = { "NeedleMech", "SmokeMech", "SupermanMech" },
+	Squad_Heat = { "InfernoMech", "DoubletankMech", "NapalmMech" },
+	Squad_Cataclysm = { "BottlecapMech", "TrimissileMech", "HydrantMech" },
+}
+
 local UNIT_EXCLUSION = {
 	"Pawn",
 	"PawnTable",
@@ -283,6 +309,32 @@ local function registerUnits()
 		if isUnit then
 			registerUnit(unit_id)
 		end
+	end
+end
+
+local function registerModSquads(mod_id)
+	for squad_id, base in pairs(modApi.mod_squads_by_id) do
+		local squad = easyEdit.squads:get(squad_id)
+		if squad == nil then
+			squad = easyEdit.squads:add(squad_id)
+			squad.name = base[1]
+			squad.mechs = { base[2], base[3], base[4] }
+
+			-- This is non-standard, but since
+			-- squads are added on load we
+			-- have to be creative
+			squad.mod = mod_id
+			squad:lock()
+		end
+	end
+end
+
+local function registerVanillaSquads()
+	for squad_id, mechs in pairs(vanillaSquads) do
+		local squad = easyEdit.squads:add(squad_id)
+		squad.name = GetVanillaText("TipTitle_"..squad_id)
+		squad.mechs = shallow_copy(mechs)
+		squad._vanilla = true
 	end
 end
 
@@ -920,6 +972,7 @@ local function lockEverything()
 	lockChildren(easyEdit.enemyList)
 	lockChildren(easyEdit.bossList)
 	lockChildren(easyEdit.missionList)
+	lockChildren(easyEdit.squads)
 end
 
 local function onModInitialized(modId)
@@ -933,6 +986,11 @@ end
 local function onModsInitialized()
 	lockEverything()
 	easyEdit.savedata:init()
+end
+
+local function onModLoaded(modId)
+	-- For some reason mods add their squads on load instead of init
+	registerModSquads(modId)
 end
 
 updateMissingNames()
@@ -952,7 +1010,9 @@ registerIslandComposites()
 registerIcons()
 registerFinalEnemyList()
 registerFinalBossList()
+registerVanillaSquads()
 markRegisteredAsVanilla()
 
+modApi.events.onModLoaded:subscribe(onModLoaded)
 modApi.events.onModInitialized:subscribe(onModInitialized)
 modApi.events.onModsInitialized:subscribe(onModsInitialized)
