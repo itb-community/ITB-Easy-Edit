@@ -589,7 +589,7 @@ function pickEnemies(categories, enemies, islandNumber, timesPicked)
 	local excluded = {}
 
 	local function isUnlocked(unit)
-		local lock = IslandLocks[unit] or 4
+		local lock = IslandLocks[unit] or 0
 		return islandNumber == nil or islandNumber >= lock or Game:IsIslandUnlocked(lock-1)
 	end
 
