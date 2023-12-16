@@ -29,12 +29,12 @@ Tileset._iconDef = {
 }
 
 function Tileset:new(id, base)
-	self._id = id
 	IndexedEntry.new(self, id, base)
-	self.tileLoc = {}
-	self.tileTooltip = {}
-	self:setEmitters()
-	self:copyAssets(base)
+	self._default.tileLoc = {}
+	self._default.tileTooltip = {}
+	self._default._id = id
+	self.setEmitters(self._default)
+	self.copyAssets(self._default, base)
 end
 
 function Tileset:copy(base)
