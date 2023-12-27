@@ -51,6 +51,7 @@ easyEdit.world = {
 
 function easyEdit.world:update()
 	local world = easyEdit.savedata.cache.world or DEFAULT_ISLAND_SLOTS
+	easyEdit.savedata.cache.world = world
 
 	for islandSlot, islandCompositeId in ipairs(world) do
 		local islandComposite = easyEdit.islandComposite:get(islandCompositeId)
