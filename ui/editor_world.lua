@@ -52,6 +52,37 @@ local function resetAll()
 	end
 end
 
+local function getIslandsAvaliable()
+	local t = copy_table(easyEdit.islandComposite._children)
+	local ret = {}
+	for island, composite in pairs(t) do
+		table.insert(ret, island)
+	end
+	return ret
+end
+
+local function chaosRoll()
+	local islands_avaliable = getIslandsAvaliable()
+	for i = 1, 4 do
+		local choice = islands_avaliable[random_int(#islands_avaliable)+1]
+		local islandComposite = easyEdit.islandComposite:get(choice)
+		local islandInSlot = islandSlots[i]
+
+		islandInSlot.data = islandComposite
+	end
+end
+
+local function balancedRoll()
+	local islands_avaliable = getIslandsAvaliable()
+	for i = 1, 4 do
+		local choice = random_removal(islands_avaliable)
+		local islandComposite = easyEdit.islandComposite:get(choice)
+		local islandInSlot = islandSlots[i]
+
+		islandInSlot.data = islandComposite
+	end
+end
+
 local function updateWorldCache()
 	for i = 1, 4 do
 		local islandComposite = islandSlots[i].data
@@ -299,6 +330,22 @@ local function buildFrameButtons(buttonLayout)
 
 		resetAll()
 
+		return true
+	end
+
+	local chaos_tooltip = "Randomize the islands, with duplicates"
+	local chaos_button = sdlext.buildButton("Chaos Roll"):addTo(buttonLayout)
+	chaos_button:settooltip(chaos_tooltip)
+	function chaos_button:onclicked(chaos_button)
+		chaosRoll()
+		return true
+	end
+
+	local balanced_tooltip = "Randomize the islands, without duplicates"
+	local balanced_button = sdlext.buildButton("Balanced Roll"):addTo(buttonLayout)
+	balanced_button:settooltip(balanced_tooltip)
+	function balanced_button:onclicked(balanced_button)
+		balancedRoll()
 		return true
 	end
 end
