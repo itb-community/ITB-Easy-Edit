@@ -4,29 +4,26 @@ local path = GetParentPath(...)
 local helpers = require(path.."helpers")
 local DecoImmutable = require(path.."deco/DecoImmutable")
 local UiDragSource = require(path.."widget/UiDragSource")
+local UiContentList = require(path.."widget/UiContentList")
 local UiScrollAreaExt = require(path.."widget/UiScrollAreaExt")
 local UiScrollArea = UiScrollAreaExt.vertical
 local UiScrollAreaH = UiScrollAreaExt.horizontal
-local UiContentList = require(path.."widget/UiContentList")
 
-local getCreateStructureDragSourceFunc = helpers.getCreateStructureDragSourceFunc
-local getCreateStructureDragSourceCopyFunc = helpers.getCreateStructureDragSourceCopyFunc
+local getCreateUnitDragSourceCopyFunc = helpers.getCreateUnitDragSourceCopyFunc
+local getCreateUnitDragSourceFunc = helpers.getCreateUnitDragSourceFunc
 local contentListDragObject = helpers.contentListDragObject
 local resetButton_contentList = helpers.resetButton_contentList
 local deleteButton_contentList = helpers.deleteButton_contentList
 local getSurface = sdlext.getSurface
 local getTextSurface = sdl.text
-local surfaceReward = helpers.surfaceReward
 local makeCullable = helpers.makeCullable
 
+
 -- defs
-local DRAG_TYPE_STRUCTURE = easyEdit.structures:getDragType()
-local TITLE_EDITOR = "Structure List Editor"
-local TITLE_CREATE_NEW_LIST = "Create new list"
+local TITLE_EDITOR = "Squad Editor"
+local TITLE_CREATE_NEW_LIST = "Create new squad"
 local FONT_TITLE = helpers.FONT_TITLE
 local TEXT_SETTINGS_TITLE = helpers.TEXT_SETTINGS_TITLE
-local FONT_LABEL = helpers.FONT_LABEL
-local TEXT_SETTINGS_LABEL = helpers.TEXT_SETTINGS_LABEL
 local ORIENTATION_VERTICAL = helpers.ORIENTATION_VERTICAL
 local ORIENTATION_HORIZONTAL = helpers.ORIENTATION_HORIZONTAL
 local ENTRY_HEIGHT = helpers.ENTRY_HEIGHT
@@ -35,22 +32,22 @@ local SCROLLBAR_WIDTH = 16
 local OBJECT_LIST_HEIGHT = helpers.OBJECT_LIST_HEIGHT
 local OBJECT_LIST_PADDING = helpers.OBJECT_LIST_PADDING
 local OBJECT_LIST_GAP = helpers.OBJECT_LIST_GAP
-local STRUCTURE_ICON_DEF = easyEdit.structures:getIconDef()
-local TRANSFORM_STRUCTURE = helpers.transformStructure
-local TRANSFORM_STRUCTURE_HL = helpers.transformStructureHl
-local TRANSFORM_STRUCTURE_DRAG_HL = helpers.transformStructureDragHl
-local CONTENT_ENTRY_DEF = copy_table(STRUCTURE_ICON_DEF)
+local UNIT_ICON_DEF = easyEdit.units:getIconDef()
+local CONTENT_ENTRY_DEF = copy_table(UNIT_ICON_DEF)
 CONTENT_ENTRY_DEF.width = 25
 CONTENT_ENTRY_DEF.height = 25
 CONTENT_ENTRY_DEF.clip = false
 
+local CLASSES = { "Prime", "Brute", "Ranged", "Science", "TechnoVek" }
+
 -- ui
 local contentListContainers
-local structureListEditor = {}
-local dragObject = contentListDragObject(easyEdit.structures:getDragType())
-	:setVar("createObject", getCreateStructureDragSourceCopyFunc(CONTENT_ENTRY_DEF))
+local squadEditor = {}
+local dragObject = contentListDragObject(easyEdit.units:getDragType())
+	:setVar("createObject", getCreateUnitDragSourceCopyFunc(CONTENT_ENTRY_DEF))
 	:decorate{ DecoImmutable.ObjectSurface2xOutline }
 
+	
 local function resetAll()
 	for i = #contentListContainers.children, 1, -1 do
 		local contentListContainer = contentListContainers.children[i]
@@ -69,16 +66,17 @@ local function resetAll()
 	end
 end
 
+
 local function buildFrameContent(parentUi)
 	contentListContainers = UiBoxLayout()
-	local structures = UiBoxLayout()
+	local mechs = UiBoxLayout()
 	local createNewList = UiInputField()
 	local dropTargets = {}
 
 	local content = UiWeightLayout()
 		:size(1,1)
 		:hgap(0)
-		:beginUi(Ui)
+		:beginUi()
 			:size(1,1)
 			:padding(PADDING)
 			:beginUi(UiWeightLayout)
@@ -89,7 +87,7 @@ local function buildFrameContent(parentUi)
 					:width(1):heightpx(ENTRY_HEIGHT)
 					:decorate{
 						DecoImmutable.Frame,
-						DecoText("Structure Lists", FONT_TITLE, TEXT_SETTINGS_TITLE),
+						DecoText("Squads", FONT_TITLE, TEXT_SETTINGS_TITLE),
 					}
 				:endUi()
 				:beginUi(UiScrollArea)
@@ -114,7 +112,7 @@ local function buildFrameContent(parentUi)
 								:size(1,1)
 								:format(function(self) self:setGroupOwner(self.parent) end)
 								:setVar("textfield", TITLE_CREATE_NEW_LIST)
-								:settooltip("Create a new structure list", nil, true)
+								:settooltip("Create a new squad", nil, true)
 								:decorate{
 									DecoInputField{
 										font = FONT_TITLE,
@@ -131,7 +129,7 @@ local function buildFrameContent(parentUi)
 		:endUi()
 		:beginUi(Ui)
 			:widthpx(0
-				+ STRUCTURE_ICON_DEF.width * STRUCTURE_ICON_DEF.scale
+				+ UNIT_ICON_DEF.width * UNIT_ICON_DEF.scale
 				+ 4 * PADDING + SCROLLBAR_WIDTH
 			)
 			:height(1)
@@ -144,13 +142,13 @@ local function buildFrameContent(parentUi)
 					:width(1):heightpx(ENTRY_HEIGHT)
 					:decorate{
 						DecoImmutable.Frame,
-						DecoText("Structures", FONT_TITLE, TEXT_SETTINGS_TITLE),
+						DecoText("Mechs", FONT_TITLE, TEXT_SETTINGS_TITLE),
 					}
 				:endUi()
 				:beginUi(UiScrollArea)
 					:size(1,1)
 					:decorate{ DecoImmutable.Frame }
-					:beginUi(structures)
+					:beginUi(mechs)
 						:size(1,1)
 						:padding(PADDING)
 						:vgap(7)
@@ -164,7 +162,7 @@ local function buildFrameContent(parentUi)
 		local contentList = UiContentList{
 			data = objectList,
 			dragObject = dragObject,
-			createEntry = getCreateStructureDragSourceFunc(CONTENT_ENTRY_DEF, dragObject),
+			createEntry = getCreateUnitDragSourceFunc(CONTENT_ENTRY_DEF, dragObject),
 		}
 
 		if objectList:isCustom() then
@@ -185,7 +183,7 @@ local function buildFrameContent(parentUi)
 				:beginUi(contentList)
 					:size(1,1)
 					:setVar("isGroupTooltip", true)
-					:settooltip("Drag-and-drop structures to edit the structure list"
+					:settooltip("Drag-and-drop units to edit the squad"
 						.."\n\nHold [CTRL] while dragging to duplicate entries"
 						.."\n\nMouse-wheel to scroll the list"
 						, nil, true)
@@ -193,51 +191,52 @@ local function buildFrameContent(parentUi)
 			:endUi()
 	end
 
-	local structureLists_sorted = to_array(easyEdit.structureList._children)
+	local squads_sorted = to_array(easyEdit.squads._children)
 
-	stablesort(structureLists_sorted, function(a, b)
+	stablesort(squads_sorted, function(a, b)
 		return alphanum(a:getName():lower(), b:getName():lower())
 	end)
 
-	for _, objectList in pairs(structureLists_sorted) do
+	for _, objectList in ipairs(squads_sorted) do
 		contentListContainers:addObjectList(objectList)
 	end
 
-	local structures_sorted = to_array(easyEdit.structures._children)
+	local mechs_sorted = to_array(filter_table(easyEdit.units._children, function(k, v)
+		return v:isMech() and list_contains(CLASSES, v.Class)
+	end))
 
-	stablesort(structures_sorted, function(a, b)
+	stablesort(mechs_sorted, function(a, b)
 		return alphanum(a:getName():lower(), b:getName():lower())
 	end)
 
-	for _, structure in ipairs(structures_sorted) do
-		local structureId = structure._id
+	for _, mech in ipairs(mechs_sorted) do
+		local mechId = mech._id
 		local entry = UiDragSource(dragObject)
 
-		entry.data = structure
-		entry.saveId = structureId
-		entry.categoryId = structure:getCategory()
-		entry.createObject = getCreateStructureDragSourceCopyFunc(CONTENT_ENTRY_DEF)
+		entry.data = mech
+		entry.saveId = mechId
+		entry.createObject = getCreateUnitDragSourceCopyFunc(CONTENT_ENTRY_DEF)
 
 		entry
-			:widthpx(STRUCTURE_ICON_DEF.width * STRUCTURE_ICON_DEF.scale)
-			:heightpx(STRUCTURE_ICON_DEF.height * STRUCTURE_ICON_DEF.scale)
-			:settooltip("Drag-and-drop to add to a structure list", nil, true)
+			:widthpx(UNIT_ICON_DEF.width * UNIT_ICON_DEF.scale)
+			:heightpx(UNIT_ICON_DEF.height * UNIT_ICON_DEF.scale)
+			:settooltip("Drag-and-drop to add to a mech", nil, true)
 			:decorate{
 				DecoImmutable.Button,
 				DecoImmutable.Anchor,
 				DecoImmutable.ObjectSurface2xOutlineCenterClip,
-				DecoImmutable.StructureReward,
 				DecoImmutable.TransHeader,
 				DecoImmutable.ObjectNameLabelBounceCenterHClip,
 			}
 			:format(makeCullable)
-			:addTo(structures)
+			:addTo(mechs)
 	end
 
 	function createNewList:onEnter()
 		local name = self.textfield
-		if name:len() > 0 and easyEdit.structureList:get(name) == nil then
-			local objectList = easyEdit.structureList:add(name)
+		if name:len() > 0 and easyEdit.squads:get(name) == nil then
+			local objectList = easyEdit.squads:add(name)
+			objectList.name = name
 			objectList:lock()
 			objectList.edited = true
 			contentListContainers:addObjectList(objectList)
@@ -268,8 +267,9 @@ local function buildFrameContent(parentUi)
 	return content
 end
 
+
 local function buildFrameButtons(buttonLayout)
-	local tooltip = "Reset everything to default\n\nWARNING: This will delete all custom structure lists"
+	local tooltip = "Reset everything to default\n\nWARNING: This will delete all custom squads"
 	local tooltip_disabled = "Everything is already set to default"
 	local button = sdlext.buildButton("Default"):addTo(buttonLayout)
 
@@ -311,12 +311,14 @@ local function buildFrameButtons(buttonLayout)
 	end
 end
 
+
 local function onExit()
-	easyEdit.structureList:save()
+	easyEdit.squads:save()
 end
 
+
 -- main button
-function structureListEditor.mainButton()
+function squadEditor.mainButton()
 
 	sdlext.showDialog(function(ui, quit)
 		ui.onDialogExit = onExit
@@ -330,7 +332,7 @@ function structureListEditor.mainButton()
 		function frame:onGameWindowResized(screen, oldSize)
 			local minW = 800
 			local minH = 600
-			local maxW = 1400
+			local maxW = 1200
 			local maxH = 800
 			local width = math.min(maxW, math.max(minW, ScreenSizeX() - 200))
 			local height = math.min(maxH, math.max(minH, ScreenSizeY() - 100))
@@ -347,4 +349,5 @@ function structureListEditor.mainButton()
 	end)
 end
 
-return structureListEditor
+
+return squadEditor

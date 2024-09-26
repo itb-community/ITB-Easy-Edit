@@ -73,7 +73,9 @@ function Object:updateSurfaces(widget)
 	if object ~= decoDef.object then
 		local getSurface = sdlext.getSurface
 		local imagePath = object:getImagePath()
-		local isMech = imagePath:find("^img/units/player")
+		local isMech = false
+			or imagePath:sub(1,17) == "img/units/player/"
+			or imagePath:sub(1,26) == "img/advanced/units/player/"
 
 		decoDef.object = object
 		decoDef.imageColumns = object:getImageColumns()
@@ -194,7 +196,9 @@ function ObjectTooltip:updateSurfaces(widget)
 	if object ~= decoDef.object then
 		local getSurface = sdlext.getSurface
 		local imagePath = object:getTooltipImagePath()
-		local isMech = imagePath:find("^img/units/player")
+		local isMech = false
+			or imagePath:sub(1,17) == "img/units/player/"
+			or imagePath:sub(1,26) == "img/advanced/units/player/"
 
 		decoDef.object = object
 		decoDef.imageColumns = object:getImageColumns()

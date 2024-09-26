@@ -17,10 +17,11 @@ Island._iconDef = {
 
 function Island:new(id, base)
 	IndexedEntry.new(self, id, base)
-	self:copyAssets({_id = "0"})
-	self:copyAssets(base)
+	self._default._id = id
+	self.copyAssets(self._default, {_id = "0"})
+	self.copyAssets(self._default, base)
 
-	self.paths = {
+	self._default.paths = {
 		["island"] = string.format("island%s", id),
 		["island1x"] = string.format("island1x_%s", id),
 		["island1x_out"] = string.format("island1x_%s_out", id),

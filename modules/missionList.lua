@@ -5,8 +5,8 @@ MissionList._entryType = "missionList"
 
 function MissionList:new(id, base)
 	IndexedEntry.new(self, id, base)
-	self.Missions_High = {}
-	self.Missions_Low = {}
+	self._default.Missions_High = {}
+	self._default.Missions_Low = {}
 end
 
 function MissionList:copy(base)

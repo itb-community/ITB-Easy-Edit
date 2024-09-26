@@ -1,41 +1,6 @@
 
 modApi:appendAsset("img/units/nullUnit.png", "resources/mods/game/img/placeholders/mech.png")
 
-local function getTableKeys(tbl)
-	local keys = {}
-	local index = tbl
-
-	while type(index) == 'table' do
-		for i, v in pairs(index) do
-			if tostring(i):sub(1,1) ~= "_" then
-				if keys[i] == nil then
-					keys[i] = true
-				end
-			end
-		end
-
-		local prev_index = index
-		index = index.__index
-
-		if index == prev_index then
-			index = nil
-		end
-	end
-
-	return keys
-end
-
-local function getTableContent(tbl)
-	local keys = getTableKeys(tbl)
-	local content = {}
-
-	for key, _ in pairs(keys) do
-		content[key] = tbl[key]
-	end
-
-	return content
-end
-
 local Unit = Class.inherit(IndexedEntry)
 Unit._debugName = "Unit"
 Unit._entryType = "units"
@@ -141,27 +106,6 @@ function Unit:isBaseEnemy()
 	return isBaseEnemy
 end
 
-local excludeFields = {
-	-- ImageOffset = true,
-}
-
-function Unit:copy(base)
-	if type(base) ~= 'table' then return end
-
-	local keys = getTableKeys(base)
-	for key, _ in pairs(keys) do
-		local value = copy_table(base[key])
-		local copyValue = true
-			and type(value) ~= 'function'
-			and self[key] ~= value
-			and excludeFields[key] ~= true
-
-		if copyValue then
-			self[key] = value
-		end
-	end
-end
-
 function Unit:getCategory()
 	return nil
 end
@@ -188,30 +132,52 @@ function Units:addSoundBase(unit)
 end
 
 function Units:update()
-	local cache_units = easyEdit.savedata.cache.units or {}
+	local savedata_units = easyEdit.savedata.cache.units or {}
+	local livedata_units = easyEdit.units._children
+	local deleted_units = {}
 
-	for unit_id, unit_data in pairs(cache_units) do
-		local livedata = easyEdit.units:get(unit_id)
+	-- Ensure every cached entry has a live entry.
+	for unit_id, savedata_unit in pairs(savedata_units) do
+		local livedata_unit = livedata_units[unit_id]
+
+		if livedata_unit == nil then
+			livedata_unit = easyEdit.units:add(unit_id, self._baseMech)
+			livedata_unit:lock()
+			livedata_unit:copy(savedata_unit)
+		end
+	end
+
+	for unit_id, livedata_unit in pairs(livedata_units) do
+		local savedata_unit = savedata_units[unit_id]
 		local unit = _G[unit_id]
 
-		-- if unit_data.ImageOffset then
-			-- unit_data.ImageOffset = nil
-		-- end
+		if savedata_unit == nil then
+			if livedata_unit:isCustom() then
+				-- Delete custom units without savedata
+				table.insert(deleted_units, unit_id)
+			else
+				-- Reset non-custom units without savedata
+				livedata_unit:reset()
+				livedata_unit.copy(unit, livedata_unit._default)
+			end
+		else
+			-- Update units with savedata
+			livedata_unit:reset()
+			livedata_unit:copy(savedata_unit)
 
-		if unit == nil then
-			unit = self._baseMech:new(unit_data)
-			_G[unit_id] = unit
+			-- Create new unit or copy data to existing unit
+			if unit == nil then
+				unit = self._baseMech:new(livedata_unit)
+				_G[unit_id] = unit
+			else
+				livedata_unit.copy(unit, livedata_unit)
+			end
 		end
 
-		if livedata == nil then
-			livedata = easyEdit.units:add(unit_id, self._baseMech)
-			livedata:lock()
-		end
-
-		if livedata then
-			clear_table(livedata)
-			merge_table(livedata, unit_data)
-			livedata.copy(unit, livedata)
+		for _, unit_id in ipairs(deleted_units) do
+			local livedata_unit = livedata_units[unit_id]
+			livedata_unit:delete()
+			_G[unit_id] = nil
 		end
 	end
 end

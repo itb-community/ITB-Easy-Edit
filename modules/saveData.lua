@@ -3,6 +3,8 @@
 local path = GetParentPath(...)
 
 local modules = {
+	easyEdit.units,
+	easyEdit.squads,
 	easyEdit.enemyList,
 	easyEdit.missionList,
 	easyEdit.bossList,
@@ -13,6 +15,8 @@ local modules = {
 
 -- defs
 local DIRS = {
+	"units",
+	"squads",
 	"enemyList",
 	"bossList",
 	"missionList",
