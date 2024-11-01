@@ -142,6 +142,7 @@ function easyEdit.world:setCorporation(islandSlot, corpId)
 
 	corp.copy(base, corp)
 	modApi.modLoaderDictionary[baseCorpId .."_Name"] = corp.Name
+	modApi.modLoaderDictionary[baseCorpId .."_Bark"] = corp.Bark_Name
 	modApi.modLoaderDictionary[baseCorpId .."_Description"] = corp.Description
 end
 
