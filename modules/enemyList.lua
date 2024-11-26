@@ -14,13 +14,13 @@ EnemyList._entryType = "enemyList"
 
 function EnemyList:new(id, base)
 	IndexedEntry.new(self, id, base)
-	self.enemies = {
+	self._default.enemies = {
 		Core = {},
 		Unique = {},
 		Leaders = {},
 		Bots = {}
 	}
-	self.categories = { "Core", "Core", "Core", "Leaders", "Unique", "Unique" }
+	self._default.categories = { "Core", "Core", "Core", "Leaders", "Unique", "Unique" }
 end
 
 function EnemyList:copy(base)

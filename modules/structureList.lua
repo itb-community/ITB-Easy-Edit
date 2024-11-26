@@ -5,9 +5,9 @@ StructureList._entryType = "structureList"
 
 function StructureList:new(id, base)
 	IndexedEntry.new(self, id, base)
-	self.PowAssets = {}
-	self.TechAssets = {}
-	self.RepAssets = {}
+	self._default.PowAssets = {}
+	self._default.TechAssets = {}
+	self._default.RepAssets = {}
 end
 
 function StructureList:copy(base)

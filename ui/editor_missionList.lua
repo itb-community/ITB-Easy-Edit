@@ -240,6 +240,7 @@ local function buildFrameContent(parentUi)
 		if name:len() > 0 and easyEdit.missionList:get(name) == nil then
 			local objectList = easyEdit.missionList:add(name)
 			objectList:lock()
+			objectList.edited = true
 			contentListContainers:addObjectList(objectList)
 		end
 

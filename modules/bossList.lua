@@ -5,7 +5,7 @@ BossList._entryType = "bossList"
 
 function BossList:new(id, base)
 	IndexedEntry.new(self, id, base)
-	self["Bosses"] = {}
+	self._default.Bosses = {}
 end
 
 function BossList:copy(base)
